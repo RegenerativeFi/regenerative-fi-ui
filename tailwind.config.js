@@ -79,6 +79,9 @@ module.exports = {
           850: '#162031',
           900: '#0F172A',
         },
+        'primary-refi': '#001C52',
+        'refi-text': '#0468be',
+        container: '#F3FAFF',
         primary: {
           50: '#53555e',
           100: '#494b54',
