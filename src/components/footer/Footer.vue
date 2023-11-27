@@ -2,9 +2,9 @@
 import IconGithub from '@/components/icons/IconGithub.vue';
 import IconLinkedin from '@/components/icons/IconLinkedin.vue';
 import IconMail from '@/components/icons/IconMail.vue';
+import IconTelegram from '@/components/icons/IconTelegram.vue';
 import IconTwitter from '@/components/icons/IconTwitter.vue';
 import { EXTERNAL_LINKS } from '@/constants/links';
-import IconTelegram from '../icons/IconTelegram.vue';
 
 import useNetwork from '@/composables/useNetwork';
 
