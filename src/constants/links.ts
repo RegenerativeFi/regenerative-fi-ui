@@ -8,6 +8,7 @@ export const EXTERNAL_LINKS = {
     Docs: 'https://docs.balancer.fi',
     Forum: 'https://forum.balancer.finance/',
     Grants: 'http://grants.balancer.community/',
+    Placeholder: 'https://placeholder.vc/',
     Social: {
       Discord: 'https://discord.balancer.fi',
       Github: 'https://github.com/balancer-labs/',
