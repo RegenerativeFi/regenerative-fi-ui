@@ -1,8 +1,8 @@
 <script lang="ts" setup>
+import { Goals, trackGoal } from '@/composables/useFathom';
+import useNetwork from '@/composables/useNetwork';
 import { useRoute } from 'vue-router';
 import DesktopLinkItem from './DesktopLinkItem.vue';
-import useNetwork, { isTestnet } from '@/composables/useNetwork';
-import { Goals, trackGoal } from '@/composables/useFathom';
 
 /**
  * COMPOSABLES
@@ -22,14 +22,6 @@ function isActive(page: string): boolean {
 <template>
   <div class="desktop-links">
     <DesktopLinkItem
-      :to="{ name: 'home', params: { networkSlug } }"
-      :active="isActive('home')"
-      prefetch
-      @click="trackGoal(Goals.ClickNavPools)"
-    >
-      {{ $t('pool') }}
-    </DesktopLinkItem>
-    <DesktopLinkItem
       :to="{ name: 'swap', params: { networkSlug } }"
       :active="isActive('swap')"
       prefetch
@@ -38,6 +30,30 @@ function isActive(page: string): boolean {
       {{ $t('swap') }}
     </DesktopLinkItem>
     <DesktopLinkItem
+      :to="{ name: 'home', params: { networkSlug } }"
+      :active="isActive('home')"
+      prefetch
+      @click="trackGoal(Goals.ClickNavPools)"
+    >
+      {{ $t('pool') }}
+    </DesktopLinkItem>
+    <DesktopLinkItem
+      :to="{ name: 'home', params: { networkSlug } }"
+      :active="isActive('home')"
+      prefetch
+      @click="trackGoal(Goals.ClickNavPools)"
+    >
+      {{ $t('vote') }}
+    </DesktopLinkItem>
+    <DesktopLinkItem
+      :to="{ name: 'home', params: { networkSlug } }"
+      :active="isActive('home')"
+      prefetch
+      @click="trackGoal(Goals.ClickNavPools)"
+    >
+      {{ $t('dashboard') }}
+    </DesktopLinkItem>
+    <!-- <DesktopLinkItem
       :to="{ name: 'claim', params: { networkSlug } }"
       :active="isActive('claim')"
       prefetch
@@ -69,7 +85,7 @@ function isActive(page: string): boolean {
       @click="trackGoal(Goals.ClickNavVebal)"
     >
       veBAL
-    </DesktopLinkItem>
+    </DesktopLinkItem> -->
   </div>
 </template>
 

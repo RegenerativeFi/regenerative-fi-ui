@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { RouterLinkProps } from 'vue-router';
 import PrefetchLinks from '@/components/links/PrefetchLinks.vue';
+import { RouterLinkProps } from 'vue-router';
 
 interface Props extends RouterLinkProps {
   active: boolean;
@@ -48,9 +48,8 @@ const classes = computed(() => ({
 
 .desktop-link-item.router-link-active::before {
   content: '';
-  border-color: theme('colors.blue.600');
 
-  @apply w-full block absolute top-0 left-0;
+  @apply w-full block absolute top-0 left-0 border-refi-text;
 
   transform: translate3d(0, 0, 0);
 }
@@ -69,7 +68,7 @@ const classes = computed(() => ({
 }
 
 .desktop-link-item.router-link-active {
-  @apply text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors;
+  @apply text-refi-text dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors;
 }
 
 .desktop-link-item:hover::before {
