@@ -28,6 +28,6 @@ export default {};
 
 <style scoped>
 .social-icon:hover .bg {
-  fill: #ffc017;
+  fill: theme('colors.accent-refi');
 }
 </style>

@@ -3,20 +3,18 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
+import GithubIcon from '@/components/_global/icons/brands/GithubIcon.vue';
+import LinkedinIcon from '@/components/_global/icons/brands/LinkedinIcon.vue';
+import TelegramIcon from '@/components/_global/icons/brands/TelegramIcon.vue';
+import TwitterIcon from '@/components/_global/icons/brands/TwitterIcon.vue';
 import AppLogo from '@/components/images/AppLogo.vue';
 import { version } from '@/composables/useApp';
+import { useAppzi } from '@/composables/useAppzi';
 import useConfig from '@/composables/useConfig';
-import useDarkMode from '@/composables/useDarkMode';
+import { Goals, trackGoal } from '@/composables/useFathom';
+import useNetwork from '@/composables/useNetwork';
 import { sleep } from '@/lib/utils';
 import useWeb3 from '@/services/web3/useWeb3';
-import useNetwork from '@/composables/useNetwork';
-import { Goals, trackGoal } from '@/composables/useFathom';
-import TwitterIcon from '@/components/_global/icons/brands/TwitterIcon.vue';
-import DiscordIcon from '@/components/_global/icons/brands/DiscordIcon.vue';
-import MediumIcon from '@/components/_global/icons/brands/MediumIcon.vue';
-import YoutubeIcon from '@/components/_global/icons/brands/YoutubeIcon.vue';
-import GithubIcon from '@/components/_global/icons/brands/GithubIcon.vue';
-import { useAppzi } from '@/composables/useAppzi';
 
 /**
  * PROPS & EMITS
@@ -26,7 +24,6 @@ const emit = defineEmits(['close']);
 /**
  * COMPOSABLES
  */
-const { darkMode, toggleDarkMode } = useDarkMode();
 const { blockNumber } = useWeb3();
 const { networkConfig } = useConfig();
 const { networkSlug } = useNetwork();
@@ -40,32 +37,19 @@ const { openNpsModal } = useAppzi();
 const blockIcon = ref<HTMLDivElement>();
 
 const navLinks = [
-  { label: t('pool'), path: '/', goal: Goals.ClickNavPools },
   { label: t('swap'), path: `/${networkSlug}/swap`, goal: Goals.ClickNavSwap },
-  {
-    label: t('claim'),
-    path: `/${networkSlug}/claim`,
-    goal: Goals.ClickNavClaim,
-  },
-  {
-    label: t('portfolio'),
-    path: `/${networkSlug}/portfolio`,
-    goal: Goals.ClickNavPortfolio,
-  },
-  { label: 'veBAL', path: `/${networkSlug}/vebal`, goal: Goals.ClickNavVebal },
+  { label: t('pool'), path: '/', goal: Goals.ClickNavPools },
+  { label: t('vote'), path: '/', goal: Goals.ClickNavPools },
+  { label: t('dashboard'), path: '/', goal: Goals.ClickNavPools },
 ];
 
 const ecosystemLinks = [
-  { label: t('build'), url: 'https://balancer.fi/build' },
-  { label: t('blog'), url: 'https://medium.com/balancer-protocol' },
   { label: t('docs'), url: 'https://docs.balancer.fi/' },
   { label: t('governance'), url: 'https://vote.balancer.fi/#/' },
   { label: t('analytics'), url: 'https://dune.com/balancer' },
   { label: t('forum'), url: 'https://forum.balancer.fi/' },
-  {
-    label: t('grants'),
-    url: 'http://grants.balancer.community',
-  },
+  { label: t('support'), url: 'https://forum.balancer.fi/' },
+  { label: t('analytics'), url: 'https://forum.balancer.fi/' },
 ];
 
 const socialLinks = {
@@ -74,22 +58,16 @@ const socialLinks = {
     url: 'https://twitter.com/BalancerLabs',
   },
   DiscordIcon: {
-    component: DiscordIcon,
+    component: TelegramIcon,
     url: 'https://discord.balancer.fi/',
   },
-  MediumIcon: {
-    component: MediumIcon,
-    url: 'https://medium.com/balancer-protocol',
-  },
-
-  YoutubeIcon: {
-    component: YoutubeIcon,
-    url: 'https://www.youtube.com/channel/UCBRHug6Hu3nmbxwVMt8x_Ow',
-  },
-
   GithubIcon: {
     url: 'https://github.com/balancer/',
     component: GithubIcon,
+  },
+  LinkedinIcon: {
+    url: 'https://github.com/balancer/',
+    component: LinkedinIcon,
   },
 };
 
@@ -121,7 +99,7 @@ watch(blockNumber, async () => {
     <div
       class="flex flex-col justify-center px-4 h-20 border-b border-gray-800"
     >
-      <AppLogo forceDark />
+      <AppLogo forceDark color="#ffffff" />
     </div>
 
     <div class="grid mt-2 text-lg grid-col-1">
@@ -153,13 +131,13 @@ watch(blockNumber, async () => {
       }}</span>
     </div>
 
-    <div class="px-4 mt-6">
+    <!-- <div class="px-4 mt-6">
       <div class="mt-2 side-bar-btn" @click="toggleDarkMode">
         <MoonIcon v-if="!darkMode" class="mr-2" />
         <SunIcon v-else class="mr-2" />
         <span>{{ darkMode ? 'Light' : 'Dark' }} mode</span>
       </div>
-    </div>
+    </div> -->
 
     <div class="grid grid-rows-1 grid-flow-col auto-cols-min gap-2 px-4 mt-4">
       <BalLink
