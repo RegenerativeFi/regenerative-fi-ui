@@ -3,28 +3,28 @@
 import BalLoadingIcon from '../BalLoadingIcon/BalLoadingIcon.vue';
 
 import {
-  hoverFrom,
-  hoverTo,
+  background,
+  backgroundFlat,
+  border,
+  darkBackground,
+  darkBackgroundFlat,
+  darkBorder,
+  darkFocusBorder,
+  darkHoverBackground,
+  darkHoverBackgroundFlat,
+  darkHoverBorder,
+  darkText,
   gradientFrom,
   gradientTo,
-  loadingFrom,
-  loadingTo,
-  backgroundFlat,
-  darkBackgroundFlat,
-  darkHoverBackgroundFlat,
-  hoverBackgroundFlat,
   hoverBackground,
+  hoverBackgroundFlat,
+  hoverFrom,
+  hoverTo,
   loadingBackground,
   loadingDarkBackground,
-  background,
-  darkHoverBackground,
-  darkBackground,
-  border,
-  darkBorder,
-  darkHoverBorder,
+  loadingFrom,
+  loadingTo,
   text,
-  darkText,
-  darkFocusBorder,
 } from 'button-options';
 
 type Props = {
@@ -137,7 +137,7 @@ const bgColorClasses = computed(() => {
   else if (props.outline) return 'bg-transparent';
   else if (props.flat) return bgFlatClasses.value;
   else if (props.color === 'white') {
-    return 'bg-gray-50 hover:bg-white dark:bg-gray-800';
+    return 'bg-white hover:bg-transparent dark:bg-gray-800';
   } else {
     if (props.disabled) {
       return `bg-gray-300 dark:bg-gray-700 text-white dark:text-gray-500`;

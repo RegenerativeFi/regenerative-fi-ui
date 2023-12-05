@@ -4,9 +4,12 @@
  */
 type Props = {
   forceDark?: boolean;
-  color?: string;
+  fillColor?: string;
+  hoverFillColor?: string;
   text?: boolean;
   size?: string;
+  color?: string;
+  hoverColor?: string;
 };
 
 /**
@@ -14,7 +17,10 @@ type Props = {
  */
 const props = withDefaults(defineProps<Props>(), {
   forceDark: false,
+  fillColor: '',
+  hoverFillColor: '',
   color: '',
+  hoverColor: '',
   text: false,
   size: 'small',
 });
@@ -49,6 +55,7 @@ const logoText = computed(() => {
       <title id="logoTitle">Balancer logo homepage link</title>
       <desc id="logoDesc">Balancer Logotype homepage link</desc>
       <path
+        class="svg-path"
         d="M6.09193 1.78711C6.76483 1.78711 7.31032 2.33188 7.31032
       3.0039V13.955C7.31032 14.6271 7.85581 15.1718 8.52871 15.1718C9.2016
       15.1718 9.74709 14.6271 9.74709 13.955V5.43748C9.74709 4.76547 10.2926
@@ -65,7 +72,6 @@ const logoText = computed(() => {
       2.43677 7.87107V11.5215C2.43677 12.1935 2.98226 12.7382 3.65516
       12.7382C4.32806 12.7382 4.87355 12.1935 4.87355 11.5215V3.0039C4.87355
       2.33188 5.41904 1.78711 6.09193 1.78711Z"
-        :fill="color"
       />
       <defs>
         <linearGradient
@@ -79,13 +85,29 @@ const logoText = computed(() => {
           <stop stop-color="#05DBF3" />
           <stop offset="1" stop-color="#0468BE" />
         </linearGradient>
+        <linearGradient
+          id="paint0_linear_407_28737"
+          xmlns="http://www.w3.org/2000/svg"
+          x1="13.9827"
+          y1="-27.4343"
+          x2="-8.17363"
+          y2="-22.3144"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stop-color="#05DBF3" />
+          <stop offset="1" stop-color="#0468BE" />
+        </linearGradient>
       </defs>
     </svg>
-    <div v-html="logoText"></div>
+    <div class="logoText" v-html="logoText"></div>
   </div>
 </template>
 
 <style scoped>
+.logoText {
+  color: v-bind('color');
+}
+
 .app-logo :deep(.logotype) {
   @apply origin-top-left relative;
 
@@ -96,8 +118,16 @@ const logoText = computed(() => {
   transition: fill 0.2s ease-out;
 }
 
-.logo-svg:hover .svg-path {
-  fill: theme('colors.purple.700');
+.logo-svg .svg-path {
+  fill: v-bind('fillColor');
+}
+
+.app-logo:hover .logo-svg .svg-path {
+  fill: v-bind('hoverFillColor');
+}
+
+.app-logo:hover .logoText {
+  color: v-bind('hoverColor');
 }
 
 .dark .logo-svg:hover .svg-path {

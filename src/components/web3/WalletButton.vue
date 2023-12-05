@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import useWeb3 from '@/services/web3/useWeb3';
 import { buildConnectorIconURL } from '@/lib/utils/urls';
 import { Wallet, WalletNameMap } from '@/providers/wallet.provider';
+import useWeb3 from '@/services/web3/useWeb3';
 
 const props = defineProps<{ wallet: Wallet }>();
 
@@ -26,8 +26,8 @@ function handleClick() {
 <style>
 .wallet-connect-btn {
   @apply transition-all;
-  @apply bg-white dark:bg-gray-850 hover:bg-gray-50 dark:hover:bg-gray-800;
-  @apply border dark:border-gray-900;
+  @apply bg-[#F3FAFF] dark:bg-gray-850 hover:bg-transparent dark:hover:bg-gray-800;
+  @apply border hover:border-none hover:shadow-transparent dark:border-gray-900;
   @apply p-4 flex justify-start items-center w-full h-14 rounded-md mb-3 shadow-lg;
 }
 </style>

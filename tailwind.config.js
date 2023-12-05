@@ -80,6 +80,7 @@ module.exports = {
           900: '#0F172A',
         },
         'primary-refi': '#001C52',
+        'accent-refi': '#FA7369',
         'refi-text': '#0468be',
         container: '#F3FAFF',
         primary: {

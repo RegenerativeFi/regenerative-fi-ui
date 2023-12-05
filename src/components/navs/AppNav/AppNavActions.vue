@@ -5,13 +5,15 @@ import useWeb3 from '@/services/web3/useWeb3';
 
 import { Goals, trackGoal } from '@/composables/useFathom';
 import AppNavAccountBtn from './AppNavAccountBtn.vue';
+import AppNavNetworkSelect from './AppNavNetworkSelect.vue';
 
 /**
  * COMPOSABLES
  */
 const { isMobile } = useBreakpoints();
-const { account, startConnectWithInjectedProvider } = useWeb3();
+const { account, startConnectWithInjectedProvider, connector } = useWeb3();
 const { setSidebarOpen } = useSidebar();
+const hideNetworkSelect = computed(() => connector.value?.id === 'gnosis');
 
 /**
  * COMPUTED
@@ -29,6 +31,7 @@ function connectWalletHandler() {
 <template>
   <div class="grid grid-rows-1 grid-flow-col gap-2">
     <AppNavActivityBtn v-if="account" />
+    <AppNavNetworkSelect v-if="!hideNetworkSelect" />
     <AppNavAccountBtn v-if="account" />
     <BalBtn
       v-else

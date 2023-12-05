@@ -28,7 +28,7 @@ const classes = computed(() => ({
 
 <style scoped>
 .desktop-link-item {
-  @apply h-full flex-col justify-center cursor-pointer hover:text-purple-600 dark:hover:text-yellow-500 flex relative
+  @apply h-full flex-col justify-center cursor-pointer hover:text-accent-refi dark:hover:text-yellow-500 flex relative
     overflow-hidden p-0 transition-all
     ease-in-out duration-500;
 }
@@ -38,7 +38,6 @@ const classes = computed(() => ({
 
   @apply top-0 left-0 w-full block absolute overflow-hidden transition-all;
 
-  border-top: 4px solid theme('colors.purple.600');
   transform: translate3d(0%, -101%, 0);
 }
 

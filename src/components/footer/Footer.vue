@@ -28,7 +28,15 @@ const { openNpsModal } = useAppzi();
             class="font-medium link"
             :to="{ name: 'home', params: { networkSlug } }"
           >
-            <AppLogo class="mb-4" color="#ffffff" :text="true" size="large" />
+            <AppLogo
+              class="mb-4"
+              fillColor="#ffffff"
+              hoverFillColor="#FA7369"
+              color="#ffffff"
+              hoverColor="#FA7369"
+              :text="true"
+              size="large"
+            />
           </router-link>
 
           <div class="flex md:hidden flex-col gap-2">
@@ -204,7 +212,7 @@ footer :deep(.logotype) {
 }
 
 .link {
-  @apply text-white dark:text-white transition-colors flex items-center no-underline hover:text-purple-600;
+  @apply text-white dark:text-white transition-colors flex items-center no-underline hover:text-accent-refi;
 }
 
 .link--external {
@@ -213,7 +221,7 @@ footer :deep(.logotype) {
 
 .link:hover,
 .link:focus-visible {
-  @apply text-purple-600 dark:text-yellow-500 no-underline;
+  @apply text-accent-refi dark:text-yellow-500 no-underline;
 }
 
 .link:focus:not(:focus-visible) {
@@ -221,11 +229,11 @@ footer :deep(.logotype) {
 }
 
 .policy {
-  @apply text-sm text-white dark:text-gray-400 hover:text-purple-600 dark:hover:text-yellow-500;
+  @apply text-sm text-white dark:text-gray-400 hover:text-accent-refi dark:hover:text-yellow-500;
 }
 
 .arrow {
-  @apply text-gray-300 dark:text-gray-600 group-hover:text-purple-600 dark:group-hover:text-yellow-500;
+  @apply text-gray-300 dark:text-gray-600 group-hover:text-accent-refi dark:group-hover:text-yellow-500;
 }
 
 .router-link-active {
