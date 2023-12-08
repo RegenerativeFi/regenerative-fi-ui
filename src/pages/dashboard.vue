@@ -16,7 +16,9 @@ import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTab
             </p>
           </div>
           <BalCard>
-            <div class="flex flex-col gap-5 justify-center items-start p-4">
+            <div
+              class="flex flex-col gap-5 justify-center items-start p-4 h-80"
+            >
               <h3 class="text-base">Weekly progress</h3>
               <p class="text-sm text-[#7B7B7B]">
                 Participate in the
@@ -63,9 +65,9 @@ import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTab
             </h2>
           </div>
           <BalCard>
-            <div>
-              <h3>Weekly progress</h3>
-              <p>
+            <div class="flex flex-row gap-6 p-6 h-80">
+              <span class="w-48 h-full rounded-sm bg-slate-500"></span>
+              <p class="flex-1">
                 Participate in the <a href="#"> Early Growth Campaign</a> by
                 trading each week to level up your ReFi Profile and earn more
                 Voting Power. Each Monday at 12:00 CET weekly snapshots are
