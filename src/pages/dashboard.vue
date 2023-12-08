@@ -67,12 +67,24 @@ import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTab
           <BalCard>
             <div class="flex flex-row gap-6 p-6 h-80">
               <span class="w-48 h-full rounded-sm bg-slate-500"></span>
-              <p class="flex-1">
-                Participate in the <a href="#"> Early Growth Campaign</a> by
-                trading each week to level up your ReFi Profile and earn more
-                Voting Power. Each Monday at 12:00 CET weekly snapshots are
-                taken and rewards are allocated.
-              </p>
+              <div class="flex flex-col w-80">
+                <h3 class="text-lg">Connect Wallet</h3>
+                <div class="flex justify-between items-center">
+                  <p>Voting Power</p>
+                  <p>- Votes</p>
+                </div>
+                <div class="flex flex-col mt-28">
+                  <div class="flex justify-between items-center">
+                    <p>My Points</p>
+                    <p>- RFP</p>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <p>Next Leve</p>
+                    <p>- RFP</p>
+                  </div>
+                </div>
+                <button>Connect Wallet</button>
+              </div>
             </div>
           </BalCard>
         </div>
