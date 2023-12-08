@@ -6,29 +6,58 @@ import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTab
   <div class="xl:container xl:px-4 xl:mx-auto">
     <BalStack vertical spacing="xl">
       <BalStack horizontal spacing="lg">
-        <div>
-          <div class="flex flex-row gap-2 justify-center items-center">
+        <BalStack vertical class="w-full" spacing="sm">
+          <div class="flex flex-row gap-2 justify-start items-center">
             <h2 class="text-lg font-light">Campaigns</h2>
             <p
-              class="p-1 text-sm font-bold text-white rounded-full bg-[#0468BE]"
+              class="p-1 px-3 text-sm font-bold text-white rounded-full bg-[#0468BE]"
             >
               Early Growth Campaign
             </p>
           </div>
           <BalCard>
-            <div>
-              <h3>Weekly progress</h3>
-              <p>
-                Participate in the <a href="#"> Early Growth Campaign</a> by
+            <div class="flex flex-col gap-5 justify-center items-start p-4">
+              <h3 class="text-base">Weekly progress</h3>
+              <p class="text-sm text-[#7B7B7B]">
+                Participate in the
+                <a class="text-[#4654D2]" href="#"> Early Growth Campaign</a> by
                 trading each week to level up your ReFi Profile and earn more
                 Voting Power. Each Monday at 12:00 CET weekly snapshots are
                 taken and rewards are allocated.
               </p>
+              <BalStack horizontal spacing="base">
+                <div
+                  class="flex flex-col justify-center items-center pt-5 rounded-md border-[1px] border-[#B6C7D6]"
+                >
+                  <div
+                    class="flex flex-col justify-center px-10 pb-5 w-full text-center items-cente"
+                  >
+                    <h4 class="text-sm text-[#7B7B7B]">
+                      Your Volume this week
+                    </h4>
+                    <p>-</p>
+                  </div>
+
+                  <div class="w-full h-10 border-t-[1px] border-[#B6C7D6]" />
+                </div>
+                <div
+                  class="flex flex-col justify-center items-center pt-5 rounded-md border-[1px] border-[#B6C7D6]"
+                >
+                  <div
+                    class="flex flex-col justify-center px-10 pb-5 w-full text-center items-cente"
+                  >
+                    <h4 class="text-sm text-[#7B7B7B]">Volume for next tier</h4>
+                    <p>-</p>
+                  </div>
+
+                  <div class="w-full h-10 border-t-[1px] border-[#B6C7D6]" />
+                </div>
+              </BalStack>
             </div>
           </BalCard>
-        </div>
+        </BalStack>
         <div>
-          <div class="flex flex-row gap-2 justify-center items-center">
+          <div class="flex flex-row gap-2 justify-start items-center">
             <h2 class="text-lg font-light">Campaigns</h2>
             <p
               class="p-1 text-sm font-bold text-white rounded-full bg-[#0468BE]"
