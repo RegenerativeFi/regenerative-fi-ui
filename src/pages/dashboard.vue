@@ -8,7 +8,7 @@ import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTab
       <BalStack horizontal spacing="lg">
         <BalStack vertical class="w-full" spacing="sm">
           <div class="flex flex-row gap-2 justify-start items-center">
-            <h2 class="text-lg font-light">Campaigns</h2>
+            <h2 class="mb-0 text-lg font-medium text-gray-900">Campaigns</h2>
             <p
               class="p-1 px-3 text-sm font-bold text-white rounded-full bg-[#0468BE]"
             >
@@ -58,12 +58,9 @@ import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTab
         </BalStack>
         <div>
           <div class="flex flex-row gap-2 justify-start items-center">
-            <h2 class="text-lg font-light">Campaigns</h2>
-            <p
-              class="p-1 text-sm font-bold text-white rounded-full bg-[#0468BE]"
-            >
-              Early Growth Campaign
-            </p>
+            <h2 class="mb-2 text-lg font-medium text-gray-900">
+              My Refi Profile
+            </h2>
           </div>
           <BalCard>
             <div>
