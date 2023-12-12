@@ -22,11 +22,14 @@ const config: Config = {
   publicRpc: 'https://alfajores-forno.celo-testnet.org  ',
   explorer: 'https://alfajores.celoscan.io/',
   explorerName: 'Celoscan',
-  subgraph: 'http://127.0.0.1:8000/subgraphs/name/balancer-labs/balancer-v2',
+  subgraph:
+    'https://api.studio.thegraph.com/query/10166/balancer-rfi/version/latest',
   balancerApi: '',
   poolsUrlV2: '',
   subgraphs: {
-    main: ['http://127.0.0.1:8000/subgraphs/name/balancer-labs/balancer-v2'],
+    main: [
+      'https://api.studio.thegraph.com/query/10166/balancer-rfi/version/latest',
+    ],
     aave: '',
     gauge: '',
     blocks: '',
