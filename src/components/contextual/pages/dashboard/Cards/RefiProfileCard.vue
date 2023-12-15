@@ -32,7 +32,7 @@ const { isMobile, bp } = useBreakpoints();
             </div>
           </div>
           <BalBtn
-            color="gradient-blue"
+            color="gradient"
             class="self-end w-fit"
             size="sm"
             @click="startConnectWithInjectedProvider"
@@ -66,7 +66,7 @@ const { isMobile, bp } = useBreakpoints();
             </div>
           </div>
           <BalBtn
-            color="gradient-blue"
+            color="gradient"
             class="self-end w-fit"
             size="sm"
             @click="startConnectWithInjectedProvider"
@@ -107,7 +107,7 @@ const { isMobile, bp } = useBreakpoints();
             </div>
           </div>
           <BalBtn
-            color="gradient-blue"
+            color="gradient"
             class="self-end w-fit"
             size="sm"
             @click="startConnectWithInjectedProvider"

@@ -4,7 +4,6 @@ const buttonColors = [
   'red',
   'white',
   'blue',
-  'sky',
   'pink',
   'yellow',
   'transparent',
