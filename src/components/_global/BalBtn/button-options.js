@@ -57,8 +57,8 @@ const generateButtonClassSafelist = () => {
   }, []);
 };
 
-const gradientFrom = fromColor => `from-${fromColor}`;
-const gradientTo = toColor => `to-${toColor}`;
+const gradientFrom = fromColor => `from-${fromColor}-600`;
+const gradientTo = toColor => `to-${toColor}-600`;
 
 const hoverFrom = fromColor => `hover:from-${fromColor}-700`;
 const hoverTo = toColor => `hover:to-${toColor}-700`;
