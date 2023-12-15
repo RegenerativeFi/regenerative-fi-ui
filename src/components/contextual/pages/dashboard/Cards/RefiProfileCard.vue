@@ -25,7 +25,7 @@ const { isMobile, bp } = useBreakpoints();
               <p>- RFP</p>
             </div>
             <div
-              class="flex justify-between items-center text-base text-[#9F9F9F]"
+              class="flex justify-between items-center text-base text-disabled"
             >
               <p>Next level</p>
               <p>- RFP</p>
@@ -59,7 +59,7 @@ const { isMobile, bp } = useBreakpoints();
               <p>- RFP</p>
             </div>
             <div
-              class="flex justify-between items-center text-base text-[#9F9F9F]"
+              class="flex justify-between items-center text-base text-disabled"
             >
               <p>Next level</p>
               <p>- RFP</p>
@@ -100,7 +100,7 @@ const { isMobile, bp } = useBreakpoints();
               <p class="text-sm">- RFP</p>
             </div>
             <div
-              class="flex justify-between items-center text-base text-[#9F9F9F]"
+              class="flex justify-between items-center text-base text-disabled"
             >
               <p>Next level</p>
               <p>- RFP</p>

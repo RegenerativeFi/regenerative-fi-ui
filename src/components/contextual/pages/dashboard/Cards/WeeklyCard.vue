@@ -8,9 +8,9 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
     <BalCard v-if="upToSmallBreakpoint">
       <div class="flex flex-col gap-5 justify-center items-center px-4 h-fit">
         <h3 class="self-start text-lg">Weekly progress</h3>
-        <p class="text-base text-[#7B7B7B]">
+        <p class="text-base text-complementary">
           Participate in the
-          <a class="font-medium text-[#4654D2]" href="#">
+          <a class="font-medium text-blue-700" href="#">
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
@@ -19,28 +19,32 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
-            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-[1px] border-[#B6C7D6]"
+            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-complementary-b border-[1px]"
           >
             <div
               class="flex flex-col justify-center pb-5 mr-0 w-full text-center items-cente"
             >
-              <h4 class="text-[10px] text-[#7B7B7B]">Your Volume this week</h4>
+              <h4 class="text-complementary text-[10px]">
+                Your Volume this week
+              </h4>
               <p class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-t-[1px] border-[#B6C7D6]" />
+            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
           </div>
           <div
-            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-[1px] border-[#B6C7D6]"
+            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-complementary-b border-[1px]"
           >
             <div
               class="flex flex-col justify-center pb-5 mr-0 w-full text-center items-cente"
             >
-              <h4 class="text-[10px] text-[#7B7B7B]">Volume for next tier</h4>
+              <h4 class="text-complementary text-[10px]">
+                Volume for next tier
+              </h4>
               <p class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-t-[1px] border-[#B6C7D6]" />
+            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
           </div>
         </div>
       </div>
@@ -48,7 +52,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
     <BalCard v-else>
       <div class="flex flex-col gap-5 justify-center items-center px-4 h-80">
         <h3 class="self-start text-lg leading-[1.125rem]">Weekly progress</h3>
-        <p class="text-base text-[#7B7B7B]">
+        <p class="text-base text-complementary">
           Participate in the
           <a class="font-medium text-[#4654D2]" href="#">
             Early Growth Campaign</a
@@ -59,28 +63,32 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
-            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-[1px] border-[#B6C7D6]"
+            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-complementary-b border-[1px]"
           >
             <div
               class="flex flex-col justify-center pb-5 mr-0 w-full text-center items-cente"
             >
-              <h4 class="text-[10px] text-[#7B7B7B]">Your Volume this week</h4>
+              <h4 class="text-complementary text-[10px]">
+                Your Volume this week
+              </h4>
               <p class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-t-[1px] border-[#B6C7D6]" />
+            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
           </div>
           <div
-            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-[1px] border-[#B6C7D6]"
+            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-complementary-b border-[1px]"
           >
             <div
               class="flex flex-col justify-center items-center pb-5 mr-0 w-full text-center"
             >
-              <h4 class="text-[10px] text-[#7B7B7B]">Volume for next tier</h4>
+              <h4 class="text-complementary text-[10px]">
+                Volume for next tier
+              </h4>
               <p class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-t-[1px] border-[#B6C7D6]" />
+            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
           </div>
         </div>
       </div>
@@ -92,7 +100,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
         class="flex flex-col gap-4 justify-center items-center px-4 min-h-[265px]"
       >
         <h3 class="self-start text-lg leading-[1.125rem]">Weekly progress</h3>
-        <p class="text-base text-[#7B7B7B]">
+        <p class="text-base text-complementary">
           Participate in the
           <a class="font-medium text-[#4654D2]" href="#">
             Early Growth Campaign</a
@@ -103,28 +111,32 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
-            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-[1px] border-[#B6C7D6]"
+            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-complementary-b border-[1px]"
           >
             <div
               class="flex flex-col justify-center pb-5 w-full text-center items-cente"
             >
-              <h4 class="text-[10px] text-[#7B7B7B]">Your Volume this week</h4>
+              <h4 class="text-complementary text-[10px]">
+                Your Volume this week
+              </h4>
               <p class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-t-[1px] border-[#B6C7D6]" />
+            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
           </div>
           <div
-            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-[1px] border-[#B6C7D6]"
+            class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-complementary-b border-[1px]"
           >
             <div
               class="flex flex-col justify-center pb-5 w-full text-center items-cente"
             >
-              <h4 class="text-[10px] text-[#7B7B7B]">Volume for next tier</h4>
+              <h4 class="text-complementary text-[10px]">
+                Volume for next tier
+              </h4>
               <p class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-t-[1px] border-[#B6C7D6]" />
+            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
           </div>
         </div>
       </div>

@@ -180,6 +180,10 @@ module.exports = {
           800: '#92400e',
           900: '#78350f',
         },
+        // TODO: Make a proper names for these colors
+        disabled: '#9F9F9F',
+        complementary: '#7B7B7B',
+        'complementary-b': '#B6C7D6',
       },
     },
   },
