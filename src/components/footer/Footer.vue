@@ -28,15 +28,7 @@ const { openNpsModal } = useAppzi();
             class="font-medium link"
             :to="{ name: 'home', params: { networkSlug } }"
           >
-            <AppLogo
-              class="mb-4"
-              fillColor="#ffffff"
-              hoverFillColor="#FA7369"
-              color="#ffffff"
-              hoverColor="#FA7369"
-              :text="true"
-              size="large"
-            />
+            <AppLogo class="mb-4" current="Footer" />
           </router-link>
 
           <div class="flex md:hidden flex-col gap-2">
@@ -173,7 +165,7 @@ const { openNpsModal } = useAppzi();
           </div>
 
           <div
-            class="flex flex-wrap md:order-3 gap-x-3 lg:gap-x-4 gap-y-2 md:justify-end"
+            class="flex flex-wrap md:order-3 gap-x-3 lg:gap-x-4 gap-y-2 md:justify-end h-full"
           >
             <p>
               <button class="policy" @click="openNpsModal">Feedback</button>
