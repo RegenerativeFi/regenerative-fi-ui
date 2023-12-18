@@ -77,7 +77,7 @@ const { isMobile, bp } = useBreakpoints();
     </BalCard>
   </template>
   <template v-else>
-    <div class="p-4 h-full bg-white rounded-lg shadow-lg">
+    <div class="p-4 h-full bg-white dark:bg-gray-850 rounded-lg shadow-lg">
       <div
         class="flex flex-row gap-5 justify-center items-center px-4 h-[265px]"
       >

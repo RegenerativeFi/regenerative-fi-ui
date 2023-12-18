@@ -12,7 +12,9 @@ const { isMobile } = useBreakpoints();
       <BalStack v-if="isMobile" vertical spacing="lg">
         <BalStack vertical class="w-full" spacing="sm">
           <div class="flex flex-row gap-2 justify-start items-center">
-            <h2 class="text-xl font-medium leading-5 text-gray-900">
+            <h2
+              class="text-xl font-medium leading-5 text-gray-900 dark:text-white"
+            >
               Campaigns
             </h2>
             <div
@@ -28,7 +30,9 @@ const { isMobile } = useBreakpoints();
         </BalStack>
         <BalStack vertical class="w-full" spacing="sm">
           <div class="flex flex-row gap-2 justify-start items-center h-[22px]">
-            <h2 class="text-xl font-medium leading-5 text-gray-900">
+            <h2
+              class="text-xl font-medium leading-5 text-gray-900 dark:text-white"
+            >
               My Refi Profile
             </h2>
           </div>
@@ -38,7 +42,9 @@ const { isMobile } = useBreakpoints();
       <div v-else class="flex flex-row gap-5 justify-between items-stretch">
         <div class="flex flex-col gap-4 w-full !mb-0">
           <div class="flex flex-row gap-2 justify-start items-center">
-            <h2 class="mb-0 text-xl font-medium leading-5 text-gray-900">
+            <h2
+              class="mb-0 text-xl font-medium leading-5 text-gray-900 dark:text-white"
+            >
               Campaigns
             </h2>
             <div
@@ -54,7 +60,9 @@ const { isMobile } = useBreakpoints();
         </div>
         <div class="flex flex-col gap-4 w-full !mb-0">
           <div class="h-[22px]">
-            <h2 class="text-xl font-medium leading-5 text-gray-900">
+            <h2
+              class="text-xl font-medium leading-5 text-gray-900 dark:text-white"
+            >
               My Refi Profile
             </h2>
           </div>

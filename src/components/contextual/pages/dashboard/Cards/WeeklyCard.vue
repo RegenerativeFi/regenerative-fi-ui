@@ -5,7 +5,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
 </script>
 <template>
   <template v-if="isMobile">
-    <BalCard v-if="upToSmallBreakpoint">
+    <BalCard v-if="upToSmallBreakpoint" class="dark:bg-gray-850">
       <div class="flex flex-col gap-5 justify-center items-center px-4 h-fit">
         <h3 class="self-start text-lg">Weekly progress</h3>
         <p class="text-base text-complementary">
@@ -50,8 +50,12 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
       </div>
     </BalCard>
     <BalCard v-else>
-      <div class="flex flex-col gap-5 justify-center items-center px-4 h-80">
-        <h3 class="self-start text-lg leading-[1.125rem]">Weekly progress</h3>
+      <div
+        class="flex flex-col gap-5 justify-center items-center px-4 h-80 dark:bg-gray-850"
+      >
+        <h3 class="self-start text-lg dark:text-white leading-[1.125rem]">
+          Weekly progress
+        </h3>
         <p class="text-base text-complementary">
           Participate in the
           <a class="font-medium text-[#4654D2]" href="#">
@@ -95,7 +99,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
     </BalCard>
   </template>
   <template v-else>
-    <div class="p-4 h-full bg-white rounded-lg shadow-lg">
+    <div class="p-4 h-full bg-white dark:bg-gray-850 rounded-lg shadow-lg">
       <div
         class="flex flex-col gap-4 justify-center items-center px-4 min-h-[265px]"
       >
