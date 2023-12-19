@@ -8,6 +8,9 @@ export const balancer = new BalancerSDK({
   network: configService.network.chainId as Network,
   rpcUrl: configService.rpc,
   customSubgraphUrl: configService.network.subgraph,
+  sor: {
+    tokenPriceService: 'subgraph',
+  },
 });
 
 export const hasFetchedPoolsForSor = ref(false);
