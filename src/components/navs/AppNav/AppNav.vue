@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 
-import AppIcon from '@/components/images/AppIcon.vue';
 import AppLogo from '@/components/images/AppLogo.vue';
 import useAlerts from '@/composables/useAlerts';
 import useBreakpoints from '@/composables/useBreakpoints';
@@ -20,7 +19,7 @@ const appNav = ref<HTMLDivElement>();
 /**
  * COMPOSABLES
  */
-const { bp, isDesktop } = useBreakpoints();
+const { isDesktop } = useBreakpoints();
 const { trackGoal, Goals } = useFathom();
 const { currentAlert } = useAlerts();
 const { networkSlug } = useNetwork();
@@ -62,8 +61,7 @@ onUnmounted(() => {
             :to="{ name: 'home', params: { networkSlug } }"
             @click="trackGoal(Goals.ClickNavLogo)"
           >
-            <AppIcon v-if="['xs', 'sm'].includes(bp)" />
-            <AppLogo current="Navbar" />
+            <AppLogo v-if="isDesktop" current="Navbar" />
           </router-link>
         </div>
         <DesktopLinks v-if="isDesktop" class="font-medium" />
