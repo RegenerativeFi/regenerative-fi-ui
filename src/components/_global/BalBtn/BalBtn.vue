@@ -35,6 +35,7 @@ type Props = {
     | 'gradient'
     | 'gradient-reverse'
     | 'gradient-pink-yellow'
+    | 'gradient-blue-light'
     | 'gray'
     | 'red'
     | 'white'
@@ -110,6 +111,8 @@ const bgGradientClasses = computed(() => {
   } else if (props.color === 'gradient-pink-yellow') {
     fromColor = 'pink';
     toColor = 'yellow';
+  } else if (props.color === 'gradient-blue-light') {
+    return 'bg-gradient-to-tr from-refi-text to-light-blue hover:from-blue-600 hover:to-blue-400';
   }
   if (props.disabled) {
     return `bg-gray-300 dark:bg-gray-700 text-white dark:text-gray-500`;

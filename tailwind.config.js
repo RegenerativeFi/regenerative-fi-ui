@@ -7,6 +7,8 @@ module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
 
   safelist: [
+    'from-refi-text',
+    'to-light-blue',
     ...generateButtonClassSafelist(),
     // https://tailwindcss.com/docs/content-configuration#safelisting-classes
     // https://github.com/tailwindlabs/tailwindcss/discussions/10079
@@ -77,11 +79,12 @@ module.exports = {
           700: '#334155',
           800: '#1E293B',
           850: '#162031',
-          900: '#0F172A',
+          900: '#222732',
         },
         'primary-refi': '#001C52',
         'accent-refi': '#FA7369',
         'refi-text': '#0468be',
+        'light-blue': '#05DBF3',
         container: '#F3FAFF',
         primary: {
           50: '#53555e',

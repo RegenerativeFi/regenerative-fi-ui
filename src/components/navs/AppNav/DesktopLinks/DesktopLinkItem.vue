@@ -30,7 +30,7 @@ const classes = computed(() => ({
 .desktop-link-item {
   @apply h-full flex-col justify-center cursor-pointer hover:text-accent-refi dark:hover:text-yellow-500 flex relative
     overflow-hidden p-0 transition-all
-    ease-in-out duration-500;
+    ease-in-out duration-500 !font-medium;
 }
 
 .desktop-link-item::before {
@@ -67,7 +67,7 @@ const classes = computed(() => ({
 }
 
 .desktop-link-item.router-link-active {
-  @apply text-refi-text dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors;
+  @apply text-refi-text dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors !font-semibold;
 }
 
 .desktop-link-item:hover::before {

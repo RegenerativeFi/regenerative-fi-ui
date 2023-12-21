@@ -165,26 +165,18 @@ const { openNpsModal } = useAppzi();
           </div>
 
           <div
-            class="flex flex-wrap md:order-3 gap-x-3 lg:gap-x-4 gap-y-2 md:justify-end h-full"
+            class="flex flex-wrap md:order-3 gap-x-3 lg:gap-x-4 gap-y-2 lg:gap-y-0 md:justify-start h-full"
           >
-            <p>
-              <button class="policy" @click="openNpsModal">Feedback</button>
-            </p>
-            <p>
-              <router-link class="policy" :to="{ name: 'terms-of-use' }">
-                {{ $t('policies.termsOfUse') }}
-              </router-link>
-            </p>
-            <p>
-              <router-link class="policy" :to="{ name: 'privacy-policy' }">
-                {{ $t('policies.privacyPolicy') }}
-              </router-link>
-            </p>
-            <p>
-              <router-link class="policy" :to="{ name: 'cookies-policy' }">
-                {{ $t('policies.cookiesPolicy') }}
-              </router-link>
-            </p>
+            <button class="policy" @click="openNpsModal">Feedback</button>
+            <router-link class="policy" :to="{ name: 'terms-of-use' }">
+              {{ $t('policies.termsOfUse') }}
+            </router-link>
+            <router-link class="policy" :to="{ name: 'privacy-policy' }">
+              {{ $t('policies.privacyPolicy') }}
+            </router-link>
+            <router-link class="policy" :to="{ name: 'cookies-policy' }">
+              {{ $t('policies.cookiesPolicy') }}
+            </router-link>
           </div>
         </div>
       </div>
@@ -221,7 +213,7 @@ footer :deep(.logotype) {
 }
 
 .policy {
-  @apply text-sm text-white dark:text-gray-400 hover:text-accent-refi dark:hover:text-yellow-500;
+  @apply text-sm text-white dark:text-gray-400 hover:text-accent-refi dark:hover:text-yellow-500 flex items-end;
 }
 
 .arrow {
