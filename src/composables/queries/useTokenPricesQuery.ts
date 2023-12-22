@@ -45,7 +45,7 @@ export default function useTokenPricesQuery(
 
   const api = getApi();
   const queryFn = async () => {
-    if (!api) return;
+    if (!api) return {};
     const { prices } = await api.GetCurrentTokenPrices();
 
     let pricesMap = priceArrayToMap(prices);
