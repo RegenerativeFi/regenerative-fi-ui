@@ -1,5 +1,5 @@
 import { initRelayer } from './Relayer';
-import { Relayer } from '@balancer-labs/sdk';
+import { Relayer } from '@kolektivo-labs/sdk';
 
 export const defaultRelayerSignature = 'test relayer signature';
 

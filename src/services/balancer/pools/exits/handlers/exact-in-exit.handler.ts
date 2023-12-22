@@ -1,6 +1,6 @@
 import { getBalancerSDK } from '@/dependencies/balancer-sdk';
 import { Pool } from '@/services/pool/types';
-import { BalancerSDK, PoolWithMethods } from '@balancer-labs/sdk';
+import { BalancerSDK, PoolWithMethods } from '@kolektivo-labs/sdk';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { Ref } from 'vue';
 import {

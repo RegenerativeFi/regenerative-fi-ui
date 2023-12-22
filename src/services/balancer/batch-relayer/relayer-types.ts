@@ -6,7 +6,7 @@ import {
   FundManagement,
   JoinPoolRequest,
   SwapType,
-} from '@balancer-labs/sdk';
+} from '@kolektivo-labs/sdk';
 
 export type OutputReference = {
   index: number;

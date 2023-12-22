@@ -3,7 +3,7 @@ import {
   SingleSwap,
   SwapType,
   SwapV2,
-} from '@balancer-labs/sdk';
+} from '@kolektivo-labs/sdk';
 import { BigNumber } from '@ethersproject/bignumber';
 
 import { initContractConcernWithDefaultMocks } from '@/dependencies/contract.concern.mocks';
