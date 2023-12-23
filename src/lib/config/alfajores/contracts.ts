@@ -5,7 +5,7 @@ const contracts: Contracts = {
   merkleRedeem: '',
   merkleOrchard: '',
   merkleOrchardV2: '',
-  multicall: '0xca11bde05977b3631167028862be2a173976ca11',
+  multicall: alfajores.Multicall,
   authorizer: alfajores.Authorizer,
   vault: alfajores.Vault,
   weightedPoolFactory: alfajores.WeightedPoolFactory,
