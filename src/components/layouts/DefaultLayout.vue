@@ -5,7 +5,7 @@ import AppNav from '@/components/navs/AppNav/AppNav.vue';
 
 <template>
   <div>
-    <div class="app-body">
+    <div class="dark:bg-gray-900 app-body">
       <AppNav />
       <div class="pb-16">
         <slot />

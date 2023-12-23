@@ -7,7 +7,7 @@ import GithubIcon from '@/components/_global/icons/brands/GithubIcon.vue';
 import LinkedinIcon from '@/components/_global/icons/brands/LinkedinIcon.vue';
 import TelegramIcon from '@/components/_global/icons/brands/TelegramIcon.vue';
 import TwitterIcon from '@/components/_global/icons/brands/TwitterIcon.vue';
-import AppLogo from '@/components/images/AppLogo.vue';
+import AppLogo from '@/components/images/_AppLogo.vue';
 import { version } from '@/composables/useApp';
 import { useAppzi } from '@/composables/useAppzi';
 import useConfig from '@/composables/useConfig';

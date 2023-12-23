@@ -111,7 +111,6 @@ const bgGradientClasses = computed(() => {
     fromColor = 'pink';
     toColor = 'yellow';
   }
-
   if (props.disabled) {
     return `bg-gray-300 dark:bg-gray-700 text-white dark:text-gray-500`;
   }

@@ -17,7 +17,6 @@ import PoolFeatureSelect from '@/components/inputs/PoolFeatureSelect.vue';
 import { useTokens } from '@/providers/tokens.provider';
 import { PoolAttributeFilter, PoolTypeFilter } from '@/types/pools';
 import UserInvestedInAffectedPoolAlert from '@/pages/recovery-exit/UserInvestedInAffectedPoolAlert.vue';
-
 const featuredProtocolsSentinel = ref<HTMLDivElement | null>(null);
 const isFeaturedProtocolsVisible = ref(false);
 useIntersectionObserver(featuredProtocolsSentinel, ([{ isIntersecting }]) => {
