@@ -7,7 +7,7 @@ import { Pool } from '@/services/pool/types';
 import useNetwork from '../useNetwork';
 import { useTokens } from '@/providers/tokens.provider';
 import { configService } from '@/services/config/config.service';
-import { GraphQLArgs, PoolsRepositoryFetchOptions } from '@balancer-labs/sdk';
+import { GraphQLArgs, PoolsRepositoryFetchOptions } from '@kolektivo-labs/sdk';
 import { getPoolsFallbackRepository } from '@/dependencies/PoolsFallbackRepository';
 import { PoolDecorator } from '@/services/pool/decorators/pool.decorator';
 import { flatten } from 'lodash';

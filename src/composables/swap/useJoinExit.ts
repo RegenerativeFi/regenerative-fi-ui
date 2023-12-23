@@ -3,7 +3,7 @@ import {
   SubgraphPoolBase,
   SwapInfo,
   SwapTypes,
-} from '@balancer-labs/sdk';
+} from '@kolektivo-labs/sdk';
 import { BigNumber, parseFixed } from '@ethersproject/bignumber';
 import OldBigNumber from 'bignumber.js';
 import { formatUnits } from '@ethersproject/units';
