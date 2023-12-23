@@ -67,5 +67,6 @@
   "VotingEscrowDelegationProxy": "",
   "WeightedPool2TokensFactory": "",
   "WeightedPoolFactory": "0x997252b17F61fFc6Ca2fDDd7fa1Cb0cdb98f202D",
-  "YearnLinearPoolFactory": ""
+  "YearnLinearPoolFactory": "",
+  "Multicall": "0xca11bde05977b3631167028862be2a173976ca11"
 }
