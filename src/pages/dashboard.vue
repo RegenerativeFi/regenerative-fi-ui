@@ -20,7 +20,13 @@ const poolSwaps = computed(() =>
     : []
 );
 
-// const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
+const weeklyVolume = computed(() =>
+  poolSwaps.value.length > 0
+    ? poolSwaps.value.reduce((acc, cur) => acc + parseFloat(cur.valueUSD), 0)
+    : 0
+);
+
+const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
 
 watch(
   poolSwaps,
@@ -83,7 +89,10 @@ watch(
               />
             </div>
           </div>
-          <WeeklyCard />
+          <WeeklyCard
+            :weeklyVolume="weeklyVolume"
+            :isLoading="isLoadingPoolSwaps"
+          />
         </div>
         <div class="flex flex-col gap-4 w-full !mb-0">
           <div class="h-[22px]">
