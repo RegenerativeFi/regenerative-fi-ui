@@ -4,7 +4,34 @@ import WeeklyCard from '@/components/contextual/pages/dashboard/Cards/WeeklyCard
 import ClaimTable from '@/components/contextual/pages/dashboard/DashboardTable/ClaimsTable.vue';
 import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTable/LiquidityTable.vue';
 import useBreakpoints from '@/composables/useBreakpoints';
+import useUserSwapVolumeQuery from '@/composables/queries/useUserSwapVolumeQuery';
+import { flatten } from 'lodash';
 const { isMobile } = useBreakpoints();
+
+const poolSwapsQuery = useUserSwapVolumeQuery(
+  'QmYG3Ga4ipdhGCPaudZKatGXTbteoMLdkjBsxCUKDV6dwq'
+);
+
+// COMPUTED
+
+const poolSwaps = computed(() =>
+  poolSwapsQuery.data.value
+    ? flatten(poolSwapsQuery.data.value.pages.map(page => page.poolSwaps))
+    : []
+);
+
+// const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
+
+watch(
+  poolSwaps,
+  newData => {
+    console.debug(
+      'Complete Query Data:',
+      newData.reduce((acc, cur) => acc + parseFloat(cur.valueUSD), 0)
+    );
+  },
+  { deep: true }
+);
 </script>
 <template>
   <div class="xl:container px-4 xl:px-4 xl:mx-auto pt-[30px]">
