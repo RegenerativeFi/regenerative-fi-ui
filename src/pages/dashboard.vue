@@ -8,6 +8,7 @@ import useUserSwapVolumeQuery from '@/composables/queries/useUserSwapVolumeQuery
 import { flatten } from 'lodash';
 const { isMobile } = useBreakpoints();
 
+//TODO: Add a dynamic ID
 const poolSwapsQuery = useUserSwapVolumeQuery(
   'QmYG3Ga4ipdhGCPaudZKatGXTbteoMLdkjBsxCUKDV6dwq'
 );
@@ -59,7 +60,10 @@ watch(
               />
             </div>
           </div>
-          <WeeklyCard />
+          <WeeklyCard
+            :weeklyVolume="weeklyVolume"
+            :isLoading="isLoadingPoolSwaps"
+          />
         </BalStack>
         <BalStack vertical class="w-full" spacing="sm">
           <div class="flex flex-row gap-2 justify-start items-center h-[22px]">
