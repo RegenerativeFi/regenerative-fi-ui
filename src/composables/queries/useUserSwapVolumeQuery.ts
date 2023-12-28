@@ -28,8 +28,36 @@ export default function useUserSwapVolumeQuery(
   const queryKey = reactive(QUERY_KEYS.Pools.UserSwaps(networkId, id, account));
 
   // METHODS
+
+  function getWeekRange() {
+    const now = new Date();
+    const getStartOfWeek = d => {
+      const result = new Date(d);
+      result.setUTCHours(0, 0, 0, 0); // Set to midnight
+      result.setUTCDate(result.getUTCDate() - result.getUTCDay() + 1); // Move to Monday
+      return result;
+    };
+
+    const startOfWeek = getStartOfWeek(now);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setUTCDate(startOfWeek.getUTCDate() + 7); // Next Monday (end of week)
+
+    return {
+      timestamp_gte: Math.floor(startOfWeek.getTime() / 1000), // Start of the week in seconds
+      timestamp_lte: Math.floor(endOfWeek.getTime() / 1000), // End of the week in seconds
+    };
+  }
+  const { timestamp_gte, timestamp_lte } = getWeekRange();
+
   const queryFn = async ({ pageParam = 0 }) => {
-    const poolSwaps = await balancerSubgraphService.weekly.get();
+    const poolSwaps = await balancerSubgraphService.weekly.get({
+      skip: pageParam,
+      where: {
+        userAddress: account.value.toLocaleLowerCase(),
+        timestamp_gte,
+        timestamp_lte,
+      },
+    });
     console.debug('poolSwaps', poolSwaps);
     return {
       poolSwaps,

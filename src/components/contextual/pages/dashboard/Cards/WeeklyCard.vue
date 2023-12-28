@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import useBreakpoints from '@/composables/useBreakpoints';
-
+import { formatUSD } from '@/lib/utils';
 type Props = {
   isLoading: boolean;
   weeklyVolume: number;
@@ -35,7 +35,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
                 Your Volume this week
               </h4>
               <p v-if="!props.isLoading" class="text-xl">
-                {{ props.weeklyVolume }}
+                {{ formatUSD(props.weeklyVolume) }}
               </p>
               <p v-else class="text-xl">-</p>
             </div>
@@ -86,7 +86,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
                 Your Volume this week
               </h4>
               <p v-if="!props.isLoading" class="text-xl">
-                {{ props.weeklyVolume }}
+                {{ formatUSD(props.weeklyVolume) }}
               </p>
               <p v-else class="text-xl">-</p>
             </div>
@@ -139,7 +139,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
                 Your Volume this week
               </h4>
               <p v-if="!props.isLoading" class="text-xl">
-                {{ props.weeklyVolume }}
+                {{ formatUSD(props.weeklyVolume) }}
               </p>
               <p v-else class="text-xl">-</p>
             </div>
