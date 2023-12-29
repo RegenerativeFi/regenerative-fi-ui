@@ -8,37 +8,23 @@ import useUserSwapVolumeQuery from '@/composables/queries/useUserSwapVolumeQuery
 import { flatten } from 'lodash';
 const { isMobile } = useBreakpoints();
 
-//TODO: Add a dynamic ID
-const poolSwapsQuery = useUserSwapVolumeQuery(
-  'QmYG3Ga4ipdhGCPaudZKatGXTbteoMLdkjBsxCUKDV6dwq'
-);
+const poolSwapsQuery = useUserSwapVolumeQuery();
 
 // COMPUTED
 
-const poolSwaps = computed(() =>
+const swaps = computed(() =>
   poolSwapsQuery.data.value
-    ? flatten(poolSwapsQuery.data.value.pages.map(page => page.poolSwaps))
+    ? flatten(poolSwapsQuery.data.value.pages.map(page => page.weeklySwaps))
     : []
 );
 
 const weeklyVolume = computed(() =>
-  poolSwaps.value.length > 0
-    ? poolSwaps.value.reduce((acc, cur) => acc + parseFloat(cur.valueUSD), 0)
+  swaps.value.length > 0
+    ? swaps.value.reduce((acc, cur) => acc + parseFloat(cur.valueUSD), 0)
     : 0
 );
 
 const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
-
-watch(
-  poolSwaps,
-  newData => {
-    console.debug(
-      'Complete Query Data:',
-      newData.reduce((acc, cur) => acc + parseFloat(cur.valueUSD), 0)
-    );
-  },
-  { deep: true }
-);
 </script>
 <template>
   <div class="xl:container px-4 xl:px-4 xl:mx-auto pt-[30px]">

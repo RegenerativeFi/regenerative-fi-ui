@@ -1,22 +1,17 @@
 import useWeb3 from '@/services/web3/useWeb3';
 import useNetwork from '../useNetwork';
 import QUERY_KEYS from '@/constants/queryKeys';
-import { POOLS } from '@/constants/pools';
 import { balancerSubgraphService } from '@/services/balancer/subgraph/balancer-subgraph.service';
 import { WeeklyBalance } from '@/services/pool/types';
 import { UseInfiniteQueryOptions, useInfiniteQuery } from '@tanstack/vue-query';
 
 type WeeklySwapsQueryResponse = {
-  poolSwaps: WeeklyBalance[];
-  skip?: number;
+  weeklySwaps: WeeklyBalance[];
 };
 
 type QueryOptions = UseInfiniteQueryOptions<WeeklySwapsQueryResponse>;
 
-export default function useUserSwapVolumeQuery(
-  id: string,
-  options: QueryOptions = {}
-) {
+export default function useUserSwapVolumeQuery(options: QueryOptions = {}) {
   // COMPOSABLES
   const { account, isWalletReady } = useWeb3();
   const { networkId } = useNetwork();
@@ -25,7 +20,10 @@ export default function useUserSwapVolumeQuery(
   const enabled = computed(() => isWalletReady.value && account.value != null);
 
   // DATA
-  const queryKey = reactive(QUERY_KEYS.Pools.UserSwaps(networkId, id, account));
+  const { timestamp_gte, timestamp_lte } = getWeekRange();
+  const queryKey = reactive(
+    QUERY_KEYS.Swaps.Week(networkId, account, timestamp_gte, timestamp_lte)
+  );
 
   // METHODS
 
@@ -33,24 +31,34 @@ export default function useUserSwapVolumeQuery(
     const now = new Date();
     const getStartOfWeek = d => {
       const result = new Date(d);
-      result.setUTCHours(0, 0, 0, 0); // Set to midnight
-      result.setUTCDate(result.getUTCDate() - result.getUTCDay() + 1); // Move to Monday
+      result.setUTCHours(0, 0, 0, 0);
+      result.setUTCDate(result.getUTCDate() - result.getUTCDay() + 1);
       return result;
     };
 
     const startOfWeek = getStartOfWeek(now);
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setUTCDate(startOfWeek.getUTCDate() + 7); // Next Monday (end of week)
+    endOfWeek.setUTCDate(startOfWeek.getUTCDate() + 7);
 
     return {
-      timestamp_gte: Math.floor(startOfWeek.getTime() / 1000), // Start of the week in seconds
-      timestamp_lte: Math.floor(endOfWeek.getTime() / 1000), // End of the week in seconds
+      timestamp_gte: Math.floor(startOfWeek.getTime() / 1000),
+      timestamp_lte: Math.floor(endOfWeek.getTime() / 1000),
     };
   }
-  const { timestamp_gte, timestamp_lte } = getWeekRange();
+  function filterFirstSubSwaps(swaps: WeeklyBalance[]): WeeklyBalance[] {
+    const seenTxHashes = new Map();
+
+    return swaps.filter(swap => {
+      if (!seenTxHashes.has(swap.tx)) {
+        seenTxHashes.set(swap.tx, true);
+        return true;
+      }
+      return false;
+    });
+  }
 
   const queryFn = async ({ pageParam = 0 }) => {
-    const poolSwaps = await balancerSubgraphService.weekly.get({
+    const weeklySwaps = await balancerSubgraphService.weekly.get({
       skip: pageParam,
       where: {
         userAddress: account.value.toLocaleLowerCase(),
@@ -58,18 +66,13 @@ export default function useUserSwapVolumeQuery(
         timestamp_lte,
       },
     });
-    console.debug('poolSwaps', poolSwaps);
+    const filteredWeeklySwaps = filterFirstSubSwaps(weeklySwaps);
     return {
-      poolSwaps,
-      skip:
-        poolSwaps.length >= POOLS.Pagination.PerPage
-          ? pageParam + POOLS.Pagination.PerPage
-          : undefined,
+      weeklySwaps: filteredWeeklySwaps,
     };
   };
   const queryOptions = reactive({
     enabled,
-    getNextPageParam: (lastPage: WeeklySwapsQueryResponse) => lastPage.skip,
     ...options,
   });
 
