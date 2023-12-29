@@ -277,6 +277,14 @@ const QUERY_KEYS = {
       { networkId, account },
     ],
   },
+  Swaps: {
+    Week: (
+      networkId: Ref<Network>,
+      account: Ref<string>,
+      startTime: number,
+      endTime: number
+    ) => ['swaps', 'week', { networkId, account, startTime, endTime }],
+  },
 };
 
 export default QUERY_KEYS;
