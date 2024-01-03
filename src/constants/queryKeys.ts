@@ -196,6 +196,11 @@ const QUERY_KEYS = {
       'prices',
       { networkId, pricesToInject },
     ],
+    TestnetPrices: (networkId: Ref<Network>) => [
+      'tokens',
+      'testnetPrices',
+      { networkId },
+    ],
     AllPrices: ['tokens', 'prices'],
     VeBAL: (networkId: Ref<Network>, account: Ref<string>) => [
       'tokens',
