@@ -12,7 +12,6 @@ import useWeb3 from '@/services/web3/useWeb3';
 import { TokenInfo } from '@/types/TokenList';
 import { TokenSelectProps } from '../TokenSelectInput/TokenSelectInput.vue';
 import { BalRangeInputProps } from '@/components/_global/BalRangeInput/BalRangeInput.vue';
-import useTestnetTokensPriceQuery from '@/composables/queries/useTestnetTokensPricesQuery';
 
 /**
  * TYPES
@@ -103,20 +102,10 @@ const _address = ref<string>('');
 /**
  * COMPOSABLES
  */
-const { getToken, balanceFor, nativeAsset, getMaxBalanceFor, injectPrices } =
-  useTokens();
+const { getToken, balanceFor, nativeAsset, getMaxBalanceFor } = useTokens();
 const { fNum, toFiat } = useNumbers();
 const { t } = useI18n();
 const { isWalletReady } = useWeb3();
-
-const { data, isLoading } = useTestnetTokensPriceQuery();
-
-watch(isLoading, () => {
-  console.debug(data.value);
-  if (!isLoading.value && data.value) {
-    injectPrices(data.value);
-  }
-});
 
 /**
  * COMPUTED

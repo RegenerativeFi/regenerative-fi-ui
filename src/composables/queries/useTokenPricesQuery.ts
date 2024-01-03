@@ -6,6 +6,11 @@ import { getApi } from '@/dependencies/balancer-api';
 import { GqlTokenPrice } from '@/services/api/graphql/generated/api-types';
 import { oneMinInMs } from '../useTime';
 import { getAddress } from '@ethersproject/address';
+import axios from 'axios';
+import {
+  geckoTerminalNetworks,
+  MockedTestnetTokens,
+} from '@/constants/geckoterminal';
 
 /**
  * TYPES
@@ -22,6 +27,8 @@ export default function useTokenPricesQuery(
   options: QueryOptions = {}
 ) {
   const { networkId } = useNetwork();
+  const currentGTNetwork = geckoTerminalNetworks[networkId.value];
+
   const queryKey = reactive(
     QUERY_KEYS.Tokens.Prices(networkId, pricesToInject)
   );
@@ -45,7 +52,37 @@ export default function useTokenPricesQuery(
 
   const api = getApi();
   const queryFn = async () => {
+    if (
+      Object.keys(geckoTerminalNetworks).includes(networkId.value.toString())
+    ) {
+      const reverseMockedAddress = Object.fromEntries(
+        Object.entries(MockedTestnetTokens[currentGTNetwork]).map(
+          ([original, mock]) => [(mock as string).toLowerCase(), original]
+        )
+      );
+      const response = await axios.get(
+        `https://api.geckoterminal.com/api/v2/simple/networks/${
+          geckoTerminalNetworks[networkId.value]
+        }/token_price/${Object.values(
+          MockedTestnetTokens[currentGTNetwork]
+        ).join(',')}`
+      );
+      const unformatedPrices = response.data.data.attributes.token_prices;
+
+      const formattedPrices = Object.keys(unformatedPrices).reduce(
+        (acc, mockAddress) => {
+          const originalAddress =
+            reverseMockedAddress[mockAddress.toLowerCase()] || mockAddress;
+          acc[originalAddress] = Number(unformatedPrices[mockAddress]);
+          return acc;
+        },
+        {}
+      );
+      return formattedPrices;
+    }
+
     if (!api) return {};
+
     const { prices } = await api.GetCurrentTokenPrices();
 
     let pricesMap = priceArrayToMap(prices);
