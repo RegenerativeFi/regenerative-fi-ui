@@ -78,6 +78,8 @@ export default function useTokenPricesQuery(
         },
         {}
       );
+      console.log('Fetching', Object.values(formattedPrices).length, 'prices');
+
       return formattedPrices;
     }
 
