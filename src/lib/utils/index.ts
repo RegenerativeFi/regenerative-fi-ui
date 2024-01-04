@@ -224,13 +224,3 @@ export function formatAddressForSor(address: string): string {
     ? POOLS.ZeroAddress
     : address;
 }
-
-export function formatUSD(value: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    // Adjust the number of decimal places as needed
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-}

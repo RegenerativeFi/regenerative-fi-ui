@@ -5,7 +5,7 @@ import { QueryBuilder } from '@/types/subgraph';
 import Service from '../../balancer-subgraph.service';
 import queryBuilder from './query';
 
-export default class WeeklySwaps {
+export default class UserSwaps {
   service: Service;
   query: QueryBuilder;
 

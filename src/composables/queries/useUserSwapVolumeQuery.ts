@@ -58,8 +58,9 @@ export default function useUserSwapVolumeQuery(options: QueryOptions = {}) {
   }
 
   const queryFn = async ({ pageParam = 0 }) => {
-    const weeklySwaps = await balancerSubgraphService.weekly.get({
+    const weeklySwaps = await balancerSubgraphService.userSwaps.get({
       skip: pageParam,
+      first: 1000,
       where: {
         userAddress: account.value.toLocaleLowerCase(),
         timestamp_gte,
