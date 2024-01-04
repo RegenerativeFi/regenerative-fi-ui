@@ -1,4 +1,3 @@
-// import { userAddress } from '@/services/web3/__mocks__/web3.service';
 import { merge } from 'lodash';
 
 const defaultArgs = {
