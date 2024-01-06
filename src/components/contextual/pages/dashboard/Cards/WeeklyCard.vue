@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import useBreakpoints from '@/composables/useBreakpoints';
+import useNumbers from '@/composables/useNumbers';
+
+type Props = {
+  isLoading: boolean;
+  weeklyVolume: number;
+};
+
+const props = defineProps<Props>();
+const { toFiatLabel } = useNumbers();
 
 const { isMobile, upToSmallBreakpoint } = useBreakpoints();
 </script>
@@ -27,7 +36,10 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
               <h4 class="text-complementary text-[10px]">
                 Your Volume this week
               </h4>
-              <p class="text-xl">-</p>
+              <p v-if="!props.isLoading" class="text-xl">
+                {{ toFiatLabel(props.weeklyVolume) }}
+              </p>
+              <p v-else class="text-xl">-</p>
             </div>
 
             <div class="w-full h-10 border-complementary-b border-t-[1px]" />
@@ -75,7 +87,10 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
               <h4 class="text-complementary text-[10px]">
                 Your Volume this week
               </h4>
-              <p class="text-xl">-</p>
+              <p v-if="!props.isLoading" class="text-xl">
+                {{ toFiatLabel(props.weeklyVolume) }}
+              </p>
+              <p v-else class="text-xl">-</p>
             </div>
 
             <div class="w-full h-10 border-complementary-b border-t-[1px]" />
@@ -123,7 +138,10 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
               <h4 class="text-complementary text-[10px]">
                 Your Volume this week
               </h4>
-              <p class="text-xl">-</p>
+              <p v-if="!props.isLoading" class="text-xl">
+                {{ toFiatLabel(props.weeklyVolume) }}
+              </p>
+              <p v-else class="text-xl">-</p>
             </div>
 
             <div class="w-full h-10 border-complementary-b border-t-[1px]" />

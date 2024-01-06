@@ -4,7 +4,27 @@ import WeeklyCard from '@/components/contextual/pages/dashboard/Cards/WeeklyCard
 import ClaimTable from '@/components/contextual/pages/dashboard/DashboardTable/ClaimsTable.vue';
 import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTable/LiquidityTable.vue';
 import useBreakpoints from '@/composables/useBreakpoints';
+import useUserSwapVolumeQuery from '@/composables/queries/useUserSwapVolumeQuery';
+import { flatten } from 'lodash';
 const { isMobile } = useBreakpoints();
+
+const poolSwapsQuery = useUserSwapVolumeQuery();
+
+// COMPUTED
+
+const swaps = computed(() =>
+  poolSwapsQuery.data.value
+    ? flatten(poolSwapsQuery.data.value.pages.map(page => page.weeklySwaps))
+    : []
+);
+
+const weeklyVolume = computed(() =>
+  swaps.value.length > 0
+    ? swaps.value.reduce((acc, cur) => acc + parseFloat(cur.valueUSD), 0)
+    : 0
+);
+
+const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
 </script>
 <template>
   <div class="xl:container px-4 xl:px-4 xl:mx-auto pt-[30px]">
@@ -26,7 +46,10 @@ const { isMobile } = useBreakpoints();
               />
             </div>
           </div>
-          <WeeklyCard />
+          <WeeklyCard
+            :weeklyVolume="weeklyVolume"
+            :isLoading="isLoadingPoolSwaps"
+          />
         </BalStack>
         <BalStack vertical class="w-full" spacing="sm">
           <div class="flex flex-row gap-2 justify-start items-center h-[22px]">
@@ -56,7 +79,10 @@ const { isMobile } = useBreakpoints();
               />
             </div>
           </div>
-          <WeeklyCard />
+          <WeeklyCard
+            :weeklyVolume="weeklyVolume"
+            :isLoading="isLoadingPoolSwaps"
+          />
         </div>
         <div class="flex flex-col gap-4 w-full !mb-0">
           <div class="h-[22px]">

@@ -142,6 +142,21 @@ export interface PoolSwap {
   ensAvatar?: string | null;
 }
 
+export interface WeeklyBalance {
+  valueUSD: string;
+  tokenIn: string;
+  tokenOut: string;
+  tokenAmountIn: string;
+  tokenAmountOut: string;
+  timestamp: number;
+  tx: string;
+  userAddress: {
+    id: string;
+  };
+  ensName?: string | null;
+  ensAvatar?: string | null;
+}
+
 export interface PoolSnapshot {
   pool: {
     id: string;
