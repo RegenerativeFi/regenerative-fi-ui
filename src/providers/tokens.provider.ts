@@ -180,12 +180,9 @@ export const tokensProvider = (
     isEnabled: queriesEnabled,
   });
 
-  const prices = computed((): TokenPrices => {
-    return {
-      ...priceData.value,
-      ...state.injectedPrices,
-    };
-  });
+  const prices = computed(
+    (): TokenPrices => (priceData.value ? priceData.value : {})
+  );
 
   const balances = computed(
     (): BalanceMap => (balanceData.value ? balanceData.value : {})
