@@ -45,17 +45,6 @@ export default function useUserSwapVolumeQuery(options: QueryOptions = {}) {
       timestamp_lte: Math.floor(endOfWeek.getTime() / 1000),
     };
   }
-  function filterFirstSubSwaps(swaps: WeeklyBalance[]): WeeklyBalance[] {
-    const seenTxHashes = new Map();
-
-    return swaps.filter(swap => {
-      if (!seenTxHashes.has(swap.tx)) {
-        seenTxHashes.set(swap.tx, true);
-        return true;
-      }
-      return false;
-    });
-  }
 
   const queryFn = async ({ pageParam = 0 }) => {
     const weeklySwaps = await balancerSubgraphService.userSwaps.get({
@@ -67,9 +56,9 @@ export default function useUserSwapVolumeQuery(options: QueryOptions = {}) {
         timestamp_lte,
       },
     });
-    const filteredWeeklySwaps = filterFirstSubSwaps(weeklySwaps);
+    console.debug(weeklySwaps);
     return {
-      weeklySwaps: filteredWeeklySwaps,
+      weeklySwaps: weeklySwaps,
     };
   };
   const queryOptions = reactive({
