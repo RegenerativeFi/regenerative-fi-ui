@@ -58,7 +58,7 @@ export default defineComponent({
         case 'sm':
           return 'w-3 h-3';
         case 'lg':
-          return 'w-6 h-6';
+          return 'w-5 h-5';
         default:
           return 'w-4 h-4';
       }
@@ -112,7 +112,7 @@ export default defineComponent({
 <style>
 .bal-radio-input {
   @apply bg-white dark:bg-gray-900 rounded-full m-0 shadow-inner transition-all;
-  @apply border border-gray-400 dark:border-gray-500;
+  @apply border border-disabled dark:border-gray-500;
 
   transition: all ease 0.25s;
   appearance: none;

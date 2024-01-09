@@ -19,7 +19,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
         <h3 class="self-start text-lg">Weekly progress</h3>
         <p class="text-base text-complementary">
           Participate in the
-          <a class="font-medium text-blue-700" href="#">
+          <a class="hover:text-accent-refi font-mediumtext-[#4654D2]" href="#">
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
@@ -70,7 +70,7 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
         </h3>
         <p class="text-base text-complementary">
           Participate in the
-          <a class="font-medium text-[#4654D2]" href="#">
+          <a class="font-medium hover:text-accent-refi text-[#4654D2]" href="#">
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
@@ -114,14 +114,16 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
     </BalCard>
   </template>
   <template v-else>
-    <div class="p-4 h-full bg-white dark:bg-gray-850 rounded-lg shadow-lg">
+    <div class="p-8 h-full bg-white dark:bg-gray-850 rounded-lg shadow-lg">
       <div
-        class="flex flex-col gap-4 justify-center items-center px-4 min-h-[265px]"
+        class="flex flex-col gap-4 justify-center items-center h-full min-h-[265px]"
       >
-        <h3 class="self-start text-lg leading-[1.125rem]">Weekly progress</h3>
+        <h3 class="self-start h-full text-lg leading-[1.125rem]">
+          Weekly progress
+        </h3>
         <p class="text-base text-complementary">
           Participate in the
-          <a class="font-medium text-[#4654D2]" href="#">
+          <a class="font-medium hover:text-accent-refi text-[#4654D2]" href="#">
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more

@@ -40,7 +40,7 @@ const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
             <div
               class="flex flex-row gap-2 justify-between items-center px-3 text-sm font-bold text-white rounded-full h-[22px] bg-[#0468BE]"
             >
-              <p>Early Growth Campaign</p>
+              <p class="text-xs !font-semibold">Early Growth Campaign</p>
               <div
                 class="w-2 h-2 bg-gradient-to-tr rounded-full to-[#05DBF3] from-[#0468BE]"
               />
@@ -73,9 +73,9 @@ const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
             <div
               class="flex flex-row gap-2 justify-between items-center px-3 text-sm font-bold text-white rounded-full h-[22px] bg-[#0468BE]"
             >
-              <p>Early Growth Campaign</p>
+              <p class="text-xs !font-semibold">Early Growth Campaign</p>
               <div
-                class="w-2 h-2 bg-gradient-to-tr rounded-full to-[#05DBF3] from-[#0468BE]"
+                class="w-2 h-2 bg-gradient-to-tr from-refi-text to-light-blue rounded-full"
               />
             </div>
           </div>
@@ -95,16 +95,14 @@ const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
           <RefiProfileCard />
         </div>
       </div>
-      <BalStack vertical spacing="2xl">
-        <div>
-          <h2 class="text-xl font-medium leading-5 !mb-4">Claim Rewards</h2>
-          <ClaimTable :isLoading="false" />
-        </div>
-        <div>
-          <h2 class="text-xl font-medium leading-5 !mb-4">My liquidity</h2>
-          <LiquidityTable />
-        </div>
-      </BalStack>
+      <div>
+        <h2 class="text-xl font-medium leading-5 !mb-4">Claim Rewards</h2>
+        <ClaimTable :isLoading="false" />
+      </div>
+      <div>
+        <h2 class="text-xl font-medium leading-5 !mb-4">My liquidity</h2>
+        <LiquidityTable />
+      </div>
     </BalStack>
   </div>
 </template>

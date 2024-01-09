@@ -77,9 +77,9 @@ const { isMobile, bp } = useBreakpoints();
     </BalCard>
   </template>
   <template v-else>
-    <div class="p-4 h-full bg-white dark:bg-gray-850 rounded-lg shadow-lg">
+    <div class="p-8 h-full bg-white dark:bg-gray-850 rounded-lg shadow-lg">
       <div
-        class="flex flex-row gap-5 justify-center items-center px-4 h-[265px]"
+        class="flex flex-row gap-8 justify-center items-center h-full h-[265px]"
       >
         <img
           :src="NFTImage"
@@ -102,12 +102,12 @@ const { isMobile, bp } = useBreakpoints();
             <div
               class="flex justify-between items-center text-base text-disabled"
             >
-              <p>Next level</p>
-              <p>- RFP</p>
+              <p class="text-sm">Next level</p>
+              <p class="text-sm">- RFP</p>
             </div>
           </div>
           <BalBtn
-            color="gradient"
+            color="gradient-blue-light"
             class="self-end w-fit"
             size="sm"
             @click="startConnectWithInjectedProvider"
