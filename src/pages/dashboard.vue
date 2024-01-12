@@ -6,6 +6,7 @@ import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTab
 import useBreakpoints from '@/composables/useBreakpoints';
 import useUserSwapVolumeQuery from '@/composables/queries/useUserSwapVolumeQuery';
 import { flatten } from 'lodash';
+import { campaignsService } from '@/services/campaigns/campaigns.service';
 const { isMobile } = useBreakpoints();
 
 const poolSwapsQuery = useUserSwapVolumeQuery();
@@ -23,6 +24,8 @@ const weeklyVolume = computed(() =>
     ? swaps.value.reduce((acc, cur) => acc + parseFloat(cur.valueUSD), 0)
     : 0
 );
+
+console.debug(campaignsService.getCurrentAllocation());
 
 const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
 </script>
@@ -97,7 +100,7 @@ const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
       </div>
       <div>
         <h2 class="text-xl font-medium leading-5 !mb-4">Claim Rewards</h2>
-        <ClaimTable :isLoading="false" />
+        <ClaimTable />
       </div>
       <div>
         <h2 class="text-xl font-medium leading-5 !mb-4">My liquidity</h2>

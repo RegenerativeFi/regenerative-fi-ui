@@ -1,7 +1,7 @@
 import { Contracts } from '../types';
 import * as alfajores from '@/assets/data/contracts/alfajores.json';
 
-const contracts: Contracts = {
+const contracts: Contracts & { simpleMinter: string } = {
   merkleRedeem: '',
   merkleOrchard: '',
   merkleOrchardV2: '',
@@ -26,6 +26,7 @@ const contracts: Contracts = {
   gaugeRewardsHelper: '',
   gaugeWorkingBalanceHelper: '',
   gaugeCheckpointer: '',
+  simpleMinter: alfajores.SimpleMinter,
 };
 
 export default contracts;
