@@ -23,11 +23,6 @@ const levels = ref([
   { nextLevel: '2000', votes: 150 },
   { nextLevel: 'MAX', votes: 250 },
 ]);
-
-console.debug(isWalletReady.value);
-watch(NFTData, () => {
-  console.debug(NFTData.value);
-});
 </script>
 <template>
   <template v-if="isMobile">
@@ -44,28 +39,50 @@ watch(NFTData, () => {
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p>- Votes</p>
+              <p v-if="NFTData">{{ levels[NFTData?.id - 1].votes }} Votes</p>
+              <p v-else>- Votes</p>
             </div>
           </div>
           <div class="w-full border-t-2" />
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-base">
-              <p>My Points</p>
-              <p>- RFP</p>
+              <p class="text-sm">My Points</p>
+              <p v-if="isLoading" class="text-sm">- RFP</p>
+              <p class="text-sm">{{ NFTData?.points }} RFP</p>
             </div>
             <div
               class="flex justify-between items-center text-base text-disabled"
             >
-              <p>Next level</p>
-              <p>- RFP</p>
+              <p class="text-sm">Next level</p>
+              <p v-if="NFTData" class="text-sm">
+                {{ levels[NFTData?.id - 1].nextLevel }} RFP
+              </p>
+              <p v-else class="text-sm">- RFP</p>
             </div>
           </div>
           <BalBtn
-            color="gradient"
+            v-if="!isWalletReady"
+            color="gradient-blue-light"
             class="self-end w-fit"
             size="sm"
             @click="startConnectWithInjectedProvider"
             >Connect wallet</BalBtn
+          >
+          <BalBtn
+            v-else-if="!NFTData"
+            color="gradient-blue-light"
+            class="self-end w-fit"
+            size="sm"
+            @click="handleMintNFT"
+            >Mint NFT</BalBtn
+          >
+          <BalBtn
+            v-else
+            color="gray"
+            class="self-end w-fit"
+            size="sm"
+            @click="handleMintNFT"
+            >Level Up</BalBtn
           >
         </div>
       </div>
@@ -83,28 +100,50 @@ watch(NFTData, () => {
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p>- Votes</p>
+              <p v-if="NFTData">{{ levels[NFTData?.id - 1].votes }} Votes</p>
+              <p v-else>- Votes</p>
             </div>
           </div>
           <div class="w-full border-t-2" />
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-base">
-              <p>My Points</p>
-              <p>- RFP</p>
+              <p class="text-sm">My Points</p>
+              <p v-if="isLoading" class="text-sm">- RFP</p>
+              <p class="text-sm">{{ NFTData?.points }} RFP</p>
             </div>
             <div
               class="flex justify-between items-center text-base text-disabled"
             >
-              <p>Next level</p>
-              <p>- RFP</p>
+              <p class="text-sm">Next level</p>
+              <p v-if="NFTData" class="text-sm">
+                {{ levels[NFTData?.id - 1].nextLevel }} RFP
+              </p>
+              <p v-else class="text-sm">- RFP</p>
             </div>
           </div>
           <BalBtn
-            color="gradient"
+            v-if="!isWalletReady"
+            color="gradient-blue-light"
             class="self-end w-fit"
             size="sm"
             @click="startConnectWithInjectedProvider"
             >Connect wallet</BalBtn
+          >
+          <BalBtn
+            v-else-if="!NFTData"
+            color="gradient-blue-light"
+            class="self-end w-fit"
+            size="sm"
+            @click="handleMintNFT"
+            >Mint NFT</BalBtn
+          >
+          <BalBtn
+            v-else
+            color="gray"
+            class="self-end w-fit"
+            size="sm"
+            @click="handleMintNFT"
+            >Level Up</BalBtn
           >
         </div>
       </div>

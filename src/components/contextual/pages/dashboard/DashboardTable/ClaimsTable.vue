@@ -38,7 +38,7 @@ const columns = ref<ColumnDefinition<ClaimRow>[]>([
     id: 'icon',
     accessor: 'uri',
     Cell: 'iconsColumnCell',
-    width: 50,
+    width: 100,
     noGrow: true,
   },
   {
@@ -93,13 +93,14 @@ const { upToLargeBreakpoint } = useBreakpoints();
   >
     <BalTable
       :columns="columns"
+      sticky="both"
       :data="rewardsData"
       :isLoading="isLoading"
       skeletonClass="h-24"
       :square="upToLargeBreakpoint"
     >
       <template #iconsColumnCell>
-        <div class="flex gap-4 justify-center items-center">
+        <div class="flex gap-4 justify-center items-center w-full">
           <img :src="RFP" class="w-6 h-6" />
           <p class="text-base font-normal">RFPs</p>
         </div>
