@@ -8,6 +8,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { formatUnits } from '@ethersproject/units';
 import { networkId } from '@/composables/useNetwork';
 import { ipfsService } from '../ipfs/ipfs.service';
+import { configService } from '../config/config.service';
 
 type Attributes = {
   trait_type: string;
@@ -22,14 +23,17 @@ export type RFNFTData = {
 };
 
 export default class CampaignsService {
-  constructor(private readonly walletService = walletServiceInstance) {}
+  private addresses;
+  constructor(private readonly walletService = walletServiceInstance) {
+    this.addresses = configService.network.addresses;
+  }
 
   public async getCurrentAllocation() {
     const provider = getRpcProviderService().getJsonProvider(Network.ALFAJORES);
     const currentUserAddress = await this.walletService.getUserAddress();
     if (networkId.value === Network.ALFAJORES) {
       const currentAllocation = await call(provider, SimpleMinterAbi, [
-        '0xEc9EC0e51DBfA5aB969d91313C64f7eEF0348272',
+        this.addresses.simpleMinter,
         'allocations',
         [currentUserAddress],
       ]);
@@ -42,18 +46,18 @@ export default class CampaignsService {
     const currentUserAddress = await this.walletService.getUserAddress();
     if (networkId.value === Network.ALFAJORES) {
       const currentNFTId = await call(provider, RFNFTAbi, [
-        '0x1D2540EFe05f5b53abABb7Be1780B370Bd3407aE',
+        this.addresses.RFNFT,
         'ownerTokenId',
         [currentUserAddress],
       ]);
       const currentNFTTier = await call(provider, RFNFTAbi, [
-        '0x1D2540EFe05f5b53abABb7Be1780B370Bd3407aE',
+        this.addresses.RFNFT,
         'tokenIdTier',
         [currentNFTId],
       ]);
       const currentNFTPoints = await this.getCurrentPoints(currentNFTId);
       const currentNFT = await call(provider, RFNFTAbi, [
-        '0x1D2540EFe05f5b53abABb7Be1780B370Bd3407aE',
+        this.addresses.RFNFT,
         'tokenURI',
         [BigNumber.from(currentNFTId).toNumber()],
       ]);
@@ -72,7 +76,7 @@ export default class CampaignsService {
   public async mintNFT() {
     const currentUserAddress = await this.walletService.getUserAddress();
     return this.walletService.txBuilder.contract.sendTransaction({
-      contractAddress: '0x1D2540EFe05f5b53abABb7Be1780B370Bd3407aE',
+      contractAddress: this.addresses.RFNFT,
       abi: RFNFTAbi,
       action: 'mint',
       params: [currentUserAddress],
@@ -82,7 +86,7 @@ export default class CampaignsService {
   public async claimAllocantions() {
     const currentUserAddress = await this.walletService.getUserAddress();
     return this.walletService.txBuilder.contract.sendTransaction({
-      contractAddress: '0xEc9EC0e51DBfA5aB969d91313C64f7eEF0348272',
+      contractAddress: this.addresses.simpleMinter,
       abi: SimpleMinterAbi,
       action: 'claim',
       params: [currentUserAddress],
@@ -92,7 +96,7 @@ export default class CampaignsService {
   public async getCurrentPoints(id: number) {
     const currentRFP =
       await this.walletService.txBuilder.contract.sendTransaction({
-        contractAddress: '0x1D2540EFe05f5b53abABb7Be1780B370Bd3407aE',
+        contractAddress: this.addresses.RFNFT,
         abi: RFNFTAbi,
         action: 'tokenIdPoints',
         params: [id],

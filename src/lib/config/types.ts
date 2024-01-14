@@ -55,6 +55,9 @@ export interface Contracts {
   gaugeRewardsHelper?: string;
   omniVotingEscrow?: string;
   claimSubmission?: string;
+  simpleMinter?: string;
+  RFNFT?: string;
+  RFP?: string;
 }
 
 export interface RateProviders {

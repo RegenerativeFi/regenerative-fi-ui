@@ -27,6 +27,8 @@ const contracts: Contracts & { simpleMinter: string } = {
   gaugeWorkingBalanceHelper: '',
   gaugeCheckpointer: '',
   simpleMinter: alfajores.SimpleMinter,
+  RFNFT: alfajores.RFNFT,
+  RFP: alfajores.RFP,
 };
 
 export default contracts;

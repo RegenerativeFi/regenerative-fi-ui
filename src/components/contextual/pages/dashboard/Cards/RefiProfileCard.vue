@@ -48,7 +48,7 @@ const levels = ref([
             <div class="flex justify-between items-center text-base">
               <p class="text-sm">My Points</p>
               <p v-if="isLoading" class="text-sm">- RFP</p>
-              <p class="text-sm">{{ NFTData?.points }} RFP</p>
+              <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
             </div>
             <div
               class="flex justify-between items-center text-base text-disabled"
@@ -109,7 +109,7 @@ const levels = ref([
             <div class="flex justify-between items-center text-base">
               <p class="text-sm">My Points</p>
               <p v-if="isLoading" class="text-sm">- RFP</p>
-              <p class="text-sm">{{ NFTData?.points }} RFP</p>
+              <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
             </div>
             <div
               class="flex justify-between items-center text-base text-disabled"
@@ -178,7 +178,7 @@ const levels = ref([
             <div class="flex justify-between items-center text-base">
               <p class="text-sm">My Points</p>
               <p v-if="isLoading" class="text-sm">- RFP</p>
-              <p class="text-sm">{{ NFTData?.points }} RFP</p>
+              <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
             </div>
             <div
               class="flex justify-between items-center text-base text-disabled"
