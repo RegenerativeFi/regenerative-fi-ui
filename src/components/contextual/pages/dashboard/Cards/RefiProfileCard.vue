@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import NFTImage from '@/assets/images/mocks/NFT.png';
+import { useRFNFT } from '@/composables/campaigns/useRFNFT';
 import useBreakpoints from '@/composables/useBreakpoints';
 import useWeb3 from '@/services/web3/useWeb3';
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
-import { useRefiProfileCard } from '@/composables/campaigns/useRefiProfileCard';
 
-const { NFTData, isLoading, MintNFT } = useRefiProfileCard();
+const { NFTData, isLoading, MintNFT } = useRFNFT();
 const { isWalletReady } = useWeb3();
 
 function handleMintNFT() {
   MintNFT();
+}
+function handleLevelUp() {
+  console.debug('Level up');
 }
 
 const nftImageSrc = computed(() => NFTData.value?.imageData || NFTImage);
@@ -81,7 +84,7 @@ const levels = ref([
             color="gray"
             class="self-end w-fit"
             size="sm"
-            @click="handleMintNFT"
+            @click="handleLevelUp"
             >Level Up</BalBtn
           >
         </div>
@@ -142,7 +145,7 @@ const levels = ref([
             color="gray"
             class="self-end w-fit"
             size="sm"
-            @click="handleMintNFT"
+            @click="handleLevelUp"
             >Level Up</BalBtn
           >
         </div>
@@ -211,7 +214,7 @@ const levels = ref([
             color="gray"
             class="self-end w-fit"
             size="sm"
-            @click="handleMintNFT"
+            @click="handleLevelUp"
             >Level Up</BalBtn
           >
         </div>

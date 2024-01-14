@@ -17,7 +17,6 @@ export function useRFNFT() {
     }
   };
   const queryKey: QueryKey = ['currentNFT'];
-  const mutationKey: QueryKey = reactive(['mintNFT']);
 
   const queryFn = async () => {
     try {
@@ -49,10 +48,15 @@ export function useRFNFT() {
     enabled: true,
   });
 
-  const mutationFn = async () => {
+  const mintNFTMutationKey: QueryKey = reactive(['mintNFT']);
+  const mintNFTMutationFn = async () => {
     return await campaignsService.mintNFT();
   };
 
-  const { mutate } = useMutation(mutationKey, mutationFn);
-  return { NFTData: data, isLoading, MintNFT: mutate };
+  const { mutate: MintNFT } = useMutation(
+    mintNFTMutationKey,
+    mintNFTMutationFn
+  );
+
+  return { NFTData: data, isLoading, MintNFT };
 }
