@@ -4,7 +4,7 @@ import useBreakpoints from '@/composables/useBreakpoints';
 import { ColumnDefinition } from '@/components/_global/BalTable/types';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import RFP from '@/assets/images/icons/coins/RFP.svg';
-import useAllocance from '@/composables/campaigns/useAllocance';
+import { useAllocations } from '@/composables/campaigns/useAllocations';
 
 /**
  * TYPES
@@ -24,9 +24,9 @@ export type ClaimRow = {
  */
 const { t } = useI18n();
 const { fNum } = useNumbers();
-const { currentAllocation, isLoading } = useAllocance();
+const { currentAllocation, isLoading, claimReward } = useAllocations();
 watch(currentAllocation, () => {
-  console.debug(currentAllocation);
+  console.debug(currentAllocation.value);
 });
 /**
  * STATE
@@ -70,7 +70,7 @@ const columns = ref<ColumnDefinition<ClaimRow>[]>([
 const selectedRows = ref([]);
 
 const handleButtonClick = () => {
-  console.log(selectedRows.value);
+  claimReward();
 };
 
 const rewardsData = [
