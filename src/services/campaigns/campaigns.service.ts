@@ -1,7 +1,7 @@
 import { call } from '@/lib/utils/balancer/contract';
 import { walletService as walletServiceInstance } from '@/services/web3/wallet.service';
-import { default as SimpleMinterAbi } from '@/lib/abi/KolectivoSimpleMinter.json';
-import { default as RFNFTAbi } from '@/lib/abi/KolectivoRNFT.json';
+import { default as SimpleMinterAbi } from '@/lib/abi/KolektivoSimpleMinter.json';
+import { default as RFNFTAbi } from '@/lib/abi/KolektivoRNFT.json';
 import { getRpcProviderService } from '@/dependencies/rpc-provider.service';
 import { Network } from '@/lib/config/types';
 import { BigNumber } from '@ethersproject/bignumber';
