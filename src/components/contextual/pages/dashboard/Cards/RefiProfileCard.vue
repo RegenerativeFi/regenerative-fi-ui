@@ -3,21 +3,16 @@ import NFTImage from '@/assets/images/mocks/NFT.png';
 import { useRFNFT } from '@/composables/campaigns/useRFNFT';
 import useBreakpoints from '@/composables/useBreakpoints';
 import useWeb3 from '@/services/web3/useWeb3';
+
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
 
 const { NFTData, isLoading, MintNFT } = useRFNFT();
 const { isWalletReady } = useWeb3();
 
-function handleMintNFT() {
-  MintNFT();
-}
-function handleLevelUp() {
-  console.debug('Level up');
-}
-
 const nftImageSrc = computed(() => NFTData.value?.imageData || NFTImage);
 
+//TODO: Remove this ugly method and use a better one like all the info in the NFTData :)
 const levels = ref([
   { nextLevel: '100', votes: 1 },
   { nextLevel: '250', votes: 10 },
@@ -42,7 +37,7 @@ const levels = ref([
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ levels[NFTData?.id - 1].votes }} Votes</p>
+              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
               <p v-else>- Votes</p>
             </div>
           </div>
@@ -73,19 +68,12 @@ const levels = ref([
           >
           <BalBtn
             v-else-if="!NFTData"
+            :disabled="MintingNFT"
             color="gradient-blue-light"
             class="self-end w-fit"
             size="sm"
-            @click="handleMintNFT"
+            @click="() => MintNFT()"
             >Mint NFT</BalBtn
-          >
-          <BalBtn
-            v-else
-            color="gray"
-            class="self-end w-fit"
-            size="sm"
-            @click="handleLevelUp"
-            >Level Up</BalBtn
           >
         </div>
       </div>
@@ -103,7 +91,7 @@ const levels = ref([
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ levels[NFTData?.id - 1].votes }} Votes</p>
+              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
               <p v-else>- Votes</p>
             </div>
           </div>
@@ -135,18 +123,11 @@ const levels = ref([
           <BalBtn
             v-else-if="!NFTData"
             color="gradient-blue-light"
+            :disabled="MintingNFT"
             class="self-end w-fit"
             size="sm"
-            @click="handleMintNFT"
+            @click="() => MintNFT()"
             >Mint NFT</BalBtn
-          >
-          <BalBtn
-            v-else
-            color="gray"
-            class="self-end w-fit"
-            size="sm"
-            @click="handleLevelUp"
-            >Level Up</BalBtn
           >
         </div>
       </div>
@@ -172,7 +153,7 @@ const levels = ref([
             <h3 v-else class="self-start text-lg">Mint NFT</h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ levels[NFTData?.id - 1].votes }} Votes</p>
+              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
               <p v-else>- Votes</p>
             </div>
           </div>
@@ -202,20 +183,13 @@ const levels = ref([
             >Connect wallet</BalBtn
           >
           <BalBtn
-            v-else-if="!NFTData"
-            color="gradient-blue-light"
-            class="self-end w-fit"
-            size="sm"
-            @click="handleMintNFT"
-            >Mint NFT</BalBtn
-          >
-          <BalBtn
             v-else
-            color="gray"
+            color="gradient-blue-light"
+            :disabled="MintingNFT"
             class="self-end w-fit"
             size="sm"
-            @click="handleLevelUp"
-            >Level Up</BalBtn
+            @click="() => MintNFT()"
+            >Mint NFT</BalBtn
           >
         </div>
       </div>

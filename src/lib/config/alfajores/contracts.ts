@@ -1,7 +1,7 @@
 import { Contracts } from '../types';
 import * as alfajores from '@/assets/data/contracts/alfajores.json';
 
-const contracts: Contracts & { simpleMinter: string } = {
+const contracts: Contracts = {
   merkleRedeem: '',
   merkleOrchard: '',
   merkleOrchardV2: '',

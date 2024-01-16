@@ -1,10 +1,16 @@
-import { useQuery, QueryKey, useMutation } from '@tanstack/vue-query';
+import { useQuery, QueryKey } from '@tanstack/vue-query';
 import {
   RFNFTData,
   campaignsService,
 } from '@/services/campaigns/campaigns.service';
+import useWeb3 from '@/services/web3/useWeb3';
+import useNotifications from '../useNotifications';
+import useTransactions from '../useTransactions';
 
 export function useRFNFT() {
+  const { addNotification } = useNotifications();
+  const { addTransaction } = useTransactions();
+  const { account } = useWeb3();
   const fetchNFTImage = async (ipfsHash: string) => {
     try {
       const imageUrl = `https://${
@@ -20,7 +26,7 @@ export function useRFNFT() {
 
   const queryFn = async () => {
     try {
-      const data = await campaignsService.getCurrentNFT();
+      const data = await campaignsService.getCurrentNFT(account.value);
       if (data?.image) {
         const ipfsHash = data.image.split('ipfs://')[1];
         const imageData = await fetchNFTImage(ipfsHash);
@@ -48,15 +54,28 @@ export function useRFNFT() {
     enabled: true,
   });
 
-  const mintNFTMutationKey: QueryKey = reactive(['mintNFT']);
-  const mintNFTMutationFn = async () => {
-    return await campaignsService.mintNFT();
+  const MintNFT = async () => {
+    try {
+      const txResponse = await campaignsService.mintNFT();
+      addTransaction({
+        id: txResponse.hash,
+        type: 'tx',
+        action: 'mintNFT',
+        summary: 'Regenerative Finance NFT',
+      });
+    } catch (error) {
+      console.error('Error minting NFT:', error);
+      addNotification({
+        title: 'Error',
+        message: 'The NFT could not be minted',
+        type: 'error',
+      });
+    }
   };
 
-  const { mutate: MintNFT } = useMutation(
-    mintNFTMutationKey,
-    mintNFTMutationFn
-  );
-
-  return { NFTData: data, isLoading, MintNFT };
+  return {
+    NFTData: data,
+    isLoading,
+    MintNFT,
+  };
 }

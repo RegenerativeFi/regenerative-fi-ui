@@ -6,9 +6,9 @@ import { getRpcProviderService } from '@/dependencies/rpc-provider.service';
 import { Network } from '@/lib/config/types';
 import { BigNumber } from '@ethersproject/bignumber';
 import { formatUnits } from '@ethersproject/units';
-import { networkId } from '@/composables/useNetwork';
 import { ipfsService } from '../ipfs/ipfs.service';
 import { configService } from '../config/config.service';
+import { Address } from '@kolektivo-labs/sdk';
 
 type Attributes = {
   trait_type: string;
@@ -28,27 +28,31 @@ export default class CampaignsService {
     this.addresses = configService.network.addresses;
   }
 
-  public async getCurrentAllocation() {
+  public async getCurrentAllocation(userAddress?: Address) {
     const provider = getRpcProviderService().getJsonProvider(Network.ALFAJORES);
+    if (!userAddress) return 0;
     const currentUserAddress = await this.walletService.getUserAddress();
-    if (networkId.value === Network.ALFAJORES) {
+    if (!currentUserAddress) return 0;
+    if (this.addresses.simpleMinter) {
       const currentAllocation = await call(provider, SimpleMinterAbi, [
         this.addresses.simpleMinter,
         'allocations',
-        [currentUserAddress],
+        [userAddress],
       ]);
-      return formatUnits(BigNumber.from(currentAllocation), 18);
+      if (currentAllocation) {
+        return formatUnits(BigNumber.from(currentAllocation), 18);
+      }
+      return 0;
     }
   }
 
-  public async getCurrentNFT() {
+  public async getCurrentNFT(userAddress?: Address) {
     const provider = getRpcProviderService().getJsonProvider(Network.ALFAJORES);
-    const currentUserAddress = await this.walletService.getUserAddress();
-    if (networkId.value === Network.ALFAJORES) {
+    if (this.addresses.RFNFT) {
       const currentNFTId = await call(provider, RFNFTAbi, [
         this.addresses.RFNFT,
         'ownerTokenId',
-        [currentUserAddress],
+        [userAddress],
       ]);
       const currentNFTTier = await call(provider, RFNFTAbi, [
         this.addresses.RFNFT,
@@ -75,7 +79,7 @@ export default class CampaignsService {
 
   public async mintNFT() {
     const currentUserAddress = await this.walletService.getUserAddress();
-    return this.walletService.txBuilder.contract.sendTransaction({
+    return await this.walletService.txBuilder.contract.sendTransaction({
       contractAddress: this.addresses.RFNFT,
       abi: RFNFTAbi,
       action: 'mint',
