@@ -11,6 +11,8 @@ export function useRFNFT() {
   const { addNotification } = useNotifications();
   const { addTransaction } = useTransactions();
   const { account } = useWeb3();
+  const isMintingNFT = ref(false);
+
   const fetchNFTImage = async (ipfsHash: string) => {
     try {
       const imageUrl = `https://${
@@ -55,6 +57,7 @@ export function useRFNFT() {
   });
 
   const MintNFT = async () => {
+    isMintingNFT.value = true;
     try {
       const txResponse = await campaignsService.mintNFT();
       addTransaction({
@@ -70,6 +73,8 @@ export function useRFNFT() {
         message: 'The NFT could not be minted',
         type: 'error',
       });
+    } finally {
+      isMintingNFT.value = false;
     }
   };
 
@@ -77,5 +82,6 @@ export function useRFNFT() {
     NFTData: data,
     isLoading,
     MintNFT,
+    isMintingNFT,
   };
 }

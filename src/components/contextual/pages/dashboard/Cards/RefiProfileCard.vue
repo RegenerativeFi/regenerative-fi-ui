@@ -7,7 +7,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
 
-const { NFTData, isLoading, MintNFT } = useRFNFT();
+const { NFTData, isLoading, MintNFT, isMintingNFT } = useRFNFT();
 const { isWalletReady } = useWeb3();
 
 const nftImageSrc = computed(() => NFTData.value?.imageData || NFTImage);
@@ -67,9 +67,9 @@ const levels = ref([
             >Connect wallet</BalBtn
           >
           <BalBtn
-            v-else-if="!NFTData"
-            :disabled="MintingNFT"
-            color="gradient-blue-light"
+            v-else
+            :color="isMintingNFT ? 'gray' : 'gradient-blue-light'"
+            :disabled="isMintingNFT"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"
@@ -121,9 +121,9 @@ const levels = ref([
             >Connect wallet</BalBtn
           >
           <BalBtn
-            v-else-if="!NFTData"
-            color="gradient-blue-light"
-            :disabled="MintingNFT"
+            v-else
+            :color="isMintingNFT ? 'gray' : 'gradient-blue-light'"
+            :disabled="isMintingNFT"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"
@@ -184,8 +184,8 @@ const levels = ref([
           >
           <BalBtn
             v-else
-            color="gradient-blue-light"
-            :disabled="MintingNFT"
+            :color="isMintingNFT ? 'gray' : 'gradient-blue-light'"
+            :disabled="isMintingNFT"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"
