@@ -281,6 +281,12 @@ function lockedUntil(lockEndDate?: number) {
 }
 
 function iconAddresses(pool: Pool) {
+  console.debug({ pool });
+  console.debug(
+    poolMetadata(pool.id)?.hasIcon
+      ? [pool.address]
+      : orderedTokenAddresses(pool)
+  );
   return poolMetadata(pool.id)?.hasIcon
     ? [pool.address]
     : orderedTokenAddresses(pool);
@@ -312,6 +318,13 @@ function goToPoolPage(id: string) {
     },
   });
 }
+
+watch(
+  () => props.data,
+  () => {
+    console.debug(props.data[0].name);
+  }
+);
 </script>
 
 <template>

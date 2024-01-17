@@ -97,7 +97,7 @@ const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
       </div>
       <div>
         <h2 class="text-xl font-medium leading-5 !mb-4">Claim Rewards</h2>
-        <ClaimTable :isLoading="false" />
+        <ClaimTable />
       </div>
       <div>
         <h2 class="text-xl font-medium leading-5 !mb-4">My liquidity</h2>

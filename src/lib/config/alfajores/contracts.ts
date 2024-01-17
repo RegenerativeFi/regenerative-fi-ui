@@ -26,6 +26,9 @@ const contracts: Contracts = {
   gaugeRewardsHelper: '',
   gaugeWorkingBalanceHelper: '',
   gaugeCheckpointer: '',
+  simpleMinter: alfajores.SimpleMinter,
+  RFNFT: alfajores.RFNFT,
+  RFP: alfajores.RFP,
 };
 
 export default contracts;

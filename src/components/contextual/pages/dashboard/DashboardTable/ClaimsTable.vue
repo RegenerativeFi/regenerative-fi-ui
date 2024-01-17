@@ -3,6 +3,9 @@ import { useI18n } from 'vue-i18n';
 import useBreakpoints from '@/composables/useBreakpoints';
 import { ColumnDefinition } from '@/components/_global/BalTable/types';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
+import RFP from '@/assets/images/icons/coins/RFP.svg';
+import { useAllocations } from '@/composables/campaigns/useAllocations';
+
 /**
  * TYPES
  */
@@ -21,7 +24,10 @@ export type ClaimRow = {
  */
 const { t } = useI18n();
 const { fNum } = useNumbers();
-
+const { currentAllocation, isLoading, claimReward } = useAllocations();
+watch(currentAllocation, () => {
+  console.debug(currentAllocation.value);
+});
 /**
  * STATE
  */
@@ -29,10 +35,10 @@ const { fNum } = useNumbers();
 const columns = ref<ColumnDefinition<ClaimRow>[]>([
   {
     name: t('token'),
-    id: 'icons',
-    accessor: 'icons',
+    id: 'icon',
+    accessor: 'uri',
     Cell: 'iconsColumnCell',
-    width: 50,
+    width: 100,
     noGrow: true,
   },
   {
@@ -41,7 +47,7 @@ const columns = ref<ColumnDefinition<ClaimRow>[]>([
     align: 'right',
     width: 150,
     totalsCell: 'totalAmountCell',
-    accessor: ({ amount }) => `${fNum(amount, FNumFormats.token)} BAL`,
+    accessor: ({ amount }) => `${fNum(amount, FNumFormats.token)}`,
   },
   {
     name: t('value'),
@@ -49,7 +55,7 @@ const columns = ref<ColumnDefinition<ClaimRow>[]>([
     align: 'right',
     width: 150,
     totalsCell: 'totalValueCell',
-    accessor: ({ value }) => fNum(value, FNumFormats.fiat),
+    accessor: ({ value }) => value,
   },
   {
     name: '',
@@ -61,7 +67,19 @@ const columns = ref<ColumnDefinition<ClaimRow>[]>([
   },
 ]);
 
-const rewardsData = [];
+const selectedRows = ref([]);
+
+const handleButtonClick = () => {
+  claimReward();
+};
+
+const rewardsData = [
+  {
+    icon: RFP,
+    amount: currentAllocation,
+    value: 'NFT XP',
+  },
+];
 
 const { upToLargeBreakpoint } = useBreakpoints();
 </script>
@@ -75,33 +93,37 @@ const { upToLargeBreakpoint } = useBreakpoints();
   >
     <BalTable
       :columns="columns"
+      sticky="both"
       :data="rewardsData"
-      :isLoading="true"
+      :isLoading="isLoading"
       skeletonClass="h-24"
       :square="upToLargeBreakpoint"
     >
-      <template #claimColumnCell="{ amount }">
+      <template #iconsColumnCell>
+        <div class="flex gap-4 justify-center items-center w-full">
+          <img :src="RFP" class="w-6 h-6" />
+          <p class="text-base font-normal">RFPs</p>
+        </div>
+      </template>
+      <template #claimColumnCell="{ row }">
         <div class="py-4 px-6">
-          <ClaimBalBtn :label="$t('claim')" :amount="amount" />
-        </div>
-      </template>
-      <!-- <template #totalAmountCell>
-        <div class="flex justify-end">
-          {{ fNum(totalClaimAmount, FNumFormats.token) }} BAL
-        </div>
-      </template>
-      <template #totalValueCell>
-        <div class="flex justify-end">
-          {{ fNum(totalClaimValue, FNumFormats.fiat) }}
+          <input
+            v-model="selectedRows"
+            :value="row"
+            type="checkbox"
+            class="w-5 h-5 bg-transparent border-2 border-disabled cursor-pointer"
+          />
         </div>
       </template>
       <template #claimTotalCell>
-        <ClaimBalBtn
-          :label="$t('claimAll')"
-          :gauges="allGauges"
-          :amount="totalClaimAmount"
-        />
-      </template> -->
+        <BalBtn
+          :color="selectedRows.length ? 'blue' : 'gray'"
+          class="w-fit"
+          size="sm"
+          @click="handleButtonClick"
+          >Claim</BalBtn
+        >
+      </template>
     </BalTable>
   </BalCard>
 </template>

@@ -68,5 +68,8 @@
   "WeightedPool2TokensFactory": "",
   "WeightedPoolFactory": "0x997252b17F61fFc6Ca2fDDd7fa1Cb0cdb98f202D",
   "YearnLinearPoolFactory": "",
-  "Multicall": "0xca11bde05977b3631167028862be2a173976ca11"
+  "Multicall": "0xca11bde05977b3631167028862be2a173976ca11",
+  "SimpleMinter": "0xEc9EC0e51DBfA5aB969d91313C64f7eEF0348272",
+  "RFNFT": "0x1D2540EFe05f5b53abABb7Be1780B370Bd3407aE",
+  "RFP": "0x1b5a1fDdd235d9a4c73F061318E017Bb52aCD444"
 }
