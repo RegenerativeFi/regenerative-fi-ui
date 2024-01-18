@@ -100,7 +100,7 @@ const { upToLargeBreakpoint } = useBreakpoints();
       :square="upToLargeBreakpoint"
     >
       <template #iconsColumnCell>
-        <div class="flex gap-4 justify-center items-center w-full">
+        <div class="flex gap-4 justify-start items-center px-6 w-full">
           <img :src="RFP" class="w-6 h-6" />
           <p class="text-base font-normal">RFPs</p>
         </div>

@@ -6,9 +6,14 @@ import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTab
 import useBreakpoints from '@/composables/useBreakpoints';
 import useUserSwapVolumeQuery from '@/composables/queries/useUserSwapVolumeQuery';
 import { flatten } from 'lodash';
+import { provideUserStaking } from '@/providers/local/user-staking.provider';
+import { providerUserPools } from '@/providers/local/user-pools.provider';
 const { isMobile } = useBreakpoints();
 
 const poolSwapsQuery = useUserSwapVolumeQuery();
+
+const userStaking = provideUserStaking();
+providerUserPools(userStaking);
 
 // COMPUTED
 
@@ -23,7 +28,6 @@ const weeklyVolume = computed(() =>
     ? swaps.value.reduce((acc, cur) => acc + parseFloat(cur.valueUSD), 0)
     : 0
 );
-
 const isLoadingPoolSwaps = computed(() => poolSwapsQuery.isLoading.value);
 </script>
 <template>
