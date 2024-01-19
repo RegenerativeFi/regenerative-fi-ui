@@ -84,6 +84,7 @@ module.exports = {
         'primary-refi': '#001C52',
         'accent-refi': '#FA7369',
         'refi-text': '#0468be',
+        'refi-text-dark': '#1490FA',
         'light-blue': '#05DBF3',
         container: '#F3FAFF',
         primary: {
@@ -187,6 +188,7 @@ module.exports = {
         disabled: '#9F9F9F',
         complementary: '#7B7B7B',
         'complementary-b': '#B6C7D6',
+        'pill-ligth': '#E7F4FF',
       },
     },
   },
