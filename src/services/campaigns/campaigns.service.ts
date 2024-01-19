@@ -44,6 +44,8 @@ export default class CampaignsService {
       }
       return 0;
     }
+    // If the runtime reaches this point, it means that the user don't exist, or the chain is not supported
+    return 0;
   }
 
   public async getCurrentNFT(userAddress?: Address) {

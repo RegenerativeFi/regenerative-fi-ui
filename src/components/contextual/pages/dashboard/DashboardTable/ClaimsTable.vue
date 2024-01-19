@@ -82,6 +82,10 @@ const rewardsData = [
 ];
 
 const { upToLargeBreakpoint } = useBreakpoints();
+
+const hasCurrentAllocation = computed(() => {
+  return parseInt(currentAllocation.value as string) > 0;
+});
 </script>
 
 <template>
@@ -94,13 +98,13 @@ const { upToLargeBreakpoint } = useBreakpoints();
     <BalTable
       :columns="columns"
       sticky="both"
-      :data="rewardsData"
+      :data="hasCurrentAllocation ? rewardsData : []"
       :isLoading="isLoading"
       skeletonClass="h-24"
       :square="upToLargeBreakpoint"
     >
       <template #iconsColumnCell>
-        <div class="flex gap-4 justify-center items-center w-full">
+        <div class="flex gap-4 justify-start items-center px-6 w-full">
           <img :src="RFP" class="w-6 h-6" />
           <p class="text-base font-normal">RFPs</p>
         </div>
