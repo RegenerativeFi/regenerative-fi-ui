@@ -249,10 +249,10 @@ watch([() => props.data, () => props.isLoading], ([newData]) => {
                 ? 'cursor-pointer'
                 : '',
               column.sortKey && currentSortColumn !== column.id
-                ? 'text-gray-800 hover:text-purple-600 focus:text-blue-500 dark:text-gray-100 dark:hover:text-yellow-500 dark:focus:text-yellow-500 transition-colors'
+                ? 'text-gray-800 hover:text-purple-600 focus:text-refi-text dark:text-gray-100 dark:hover:text-yellow-500 dark:focus:text-yellow-500 transition-colors'
                 : '',
               currentSortColumn === column.id && currentSortDirection
-                ? 'text-blue-600 hover:text-blue-500 focus:text-purple-600 dark:text-blue-400 dark:hover:text-blue-600 dark:focus:text-blue-600 transition-colors'
+                ? 'text-refi-text hover:text-blue-500 focus:text-purple-600 dark:text-blue-400 dark:hover:text-blue-600 dark:focus:text-refi-text transition-colors'
                 : '',
               !square ? 'rounded-t-lg' : '',
             ]"

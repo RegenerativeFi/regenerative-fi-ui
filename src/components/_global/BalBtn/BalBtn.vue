@@ -112,7 +112,7 @@ const bgGradientClasses = computed(() => {
     fromColor = 'pink';
     toColor = 'yellow';
   } else if (props.color === 'gradient-blue-light') {
-    return 'bg-gradient-to-tr from-refi-text to-light-blue hover:from-blue-600 hover:to-blue-400';
+    return 'transition-colors bg-gradient-to-tr from-refi-text to-light-blue hover:from-refi-text  hover:to-light-blue ';
   }
   if (props.disabled) {
     return `bg-gray-300 dark:bg-gray-700 text-white dark:text-gray-500`;
@@ -120,6 +120,9 @@ const bgGradientClasses = computed(() => {
   if (props.loading) {
     return `bg-gradient-to-tr ${loadingFrom(fromColor)} ${loadingTo(toColor)}`;
   }
+  if (props.color === 'gradient')
+    return 'transition-colors bg-gradient-to-tr from-refi-text to-light-blue hover:from-refi-text  hover:via-light-blue  hover:to-light-blue';
+
   return ` bg-gradient-to-tr ${gradientFrom(fromColor)} ${gradientTo(
     toColor
   )} ${hoverFrom(fromColor)} ${hoverTo(toColor)} transition-colors`;
