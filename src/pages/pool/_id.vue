@@ -6,7 +6,6 @@ import {
   PoolTransactionsCard,
   MyPoolBalancesCard,
   PoolCompositionCard,
-  PoolContractDetails,
 } from '@/components/contextual/pages/pool';
 import StakingIncentivesCard from '@/components/contextual/pages/pool/staking/StakingIncentivesCard.vue';
 import PoolLockingCard from '@/components/contextual/pages/pool/PoolLockingCard/PoolLockingCard.vue';
@@ -32,7 +31,6 @@ import BrandedRedirectCard from '@/components/pool/branded-redirect/BrandedRedir
 import metaService from '@/services/meta/meta.service';
 import PoolMigrationCard from '@/components/contextual/pages/pool/PoolMigrationCard/PoolMigrationCard.vue';
 import StakePreviewModal from '@/components/contextual/pages/pool/staking/StakePreviewModal.vue';
-import PoolRisks from '@/components/contextual/pages/pool/risks/PoolRisks.vue';
 import { usePool } from '@/providers/local/pool.provider';
 import { provideUserStaking } from '@/providers/local/user-staking.provider';
 import { providerUserPools } from '@/providers/local/user-pools.provider';
@@ -240,10 +238,6 @@ watch(
             />
           </div>
           <div class="mb-4">
-            <h3
-              class="px-4 lg:px-0 mb-3"
-              v-text="$t('poolComposition.title')"
-            />
             <BalLoadingBlock v-if="loadingPool" class="h-64" />
             <PoolCompositionCard v-else-if="pool" :pool="pool" />
           </div>
@@ -251,8 +245,6 @@ watch(
           <div ref="intersectionSentinel" />
           <template v-if="isSentinelIntersected && pool">
             <PoolTransactionsCard :pool="pool" :loading="loadingPool" />
-            <PoolContractDetails :pool="pool" />
-            <PoolRisks :pool="pool" />
           </template>
         </div>
       </div>
