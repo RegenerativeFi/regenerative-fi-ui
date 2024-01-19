@@ -115,7 +115,7 @@ const bgGradientClasses = computed(() => {
     return 'transition-colors bg-gradient-to-tr from-refi-text to-light-blue hover:from-refi-text  hover:to-light-blue ';
   }
   if (props.disabled) {
-    return `bg-gray-300 dark:bg-gray-700 text-white dark:text-gray-500`;
+    return `bg-complementary-b dark:complementary-b text-white `;
   }
   if (props.loading) {
     return `bg-gradient-to-tr ${loadingFrom(fromColor)} ${loadingTo(toColor)}`;
