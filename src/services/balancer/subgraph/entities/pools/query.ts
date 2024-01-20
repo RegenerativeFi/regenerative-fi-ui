@@ -12,7 +12,7 @@ const defaultArgs: GraphQLArgs = {
       gt: 0.00001,
     },
     id: {
-      not_in: POOLS.BlockList,
+      not_in: POOLS.BlockList.length === 0 ? [''] : POOLS.BlockList,
     },
   },
 };
