@@ -1,5 +1,5 @@
 import { Contracts } from '../types';
-import * as celo from '@/assets/data/contracts/alfajores.json';
+import * as celo from '@/assets/data/contracts/celo.json';
 
 const contracts: Contracts = {
   merkleRedeem: '',
