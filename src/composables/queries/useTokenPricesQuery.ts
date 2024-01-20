@@ -6,16 +6,18 @@ import { getApi } from '@/dependencies/balancer-api';
 import { GqlTokenPrice } from '@/services/api/graphql/generated/api-types';
 import { oneMinInMs } from '../useTime';
 import { getAddress } from '@ethersproject/address';
-import axios from 'axios';
-import {
-  geckoTerminalNetworks,
-  MockedTestnetTokens,
-} from '@/constants/geckoterminal';
+import axios, { AxiosResponse } from 'axios';
+import { Tokens } from '@/constants/coingecko';
 
 /**
  * TYPES
  */
 export type TokenPrices = { [address: string]: number };
+type CGResponse = {
+  [address: string]: {
+    usd: number;
+  };
+};
 type QueryResponse = TokenPrices;
 type QueryOptions = UseQueryOptions<QueryResponse>;
 
@@ -27,7 +29,6 @@ export default function useTokenPricesQuery(
   options: QueryOptions = {}
 ) {
   const { networkId } = useNetwork();
-  const currentGTNetwork = geckoTerminalNetworks[networkId.value];
 
   const queryKey = reactive(
     QUERY_KEYS.Tokens.Prices(networkId, pricesToInject)
@@ -51,42 +52,60 @@ export default function useTokenPricesQuery(
   }
 
   const api = getApi();
+
+  const idToAddressMap = Tokens.celo.mocks.reduce((map, item) => {
+    const key = Object.keys(item)[0];
+    map[item[key]] = key;
+    return map;
+  }, {});
+
   const queryFn = async () => {
-    if (
-      Object.keys(geckoTerminalNetworks).includes(networkId.value.toString())
-    ) {
-      const reverseMockedAddress = Object.fromEntries(
-        Object.entries(MockedTestnetTokens[currentGTNetwork]).map(
-          ([original, mock]) => [(mock as string).toLowerCase(), original]
-        )
-      );
-      const response = await axios.get(
-        `https://api.geckoterminal.com/api/v2/simple/networks/${
-          geckoTerminalNetworks[networkId.value]
-        }/token_price/${Object.values(
-          MockedTestnetTokens[currentGTNetwork]
-        ).join(',')}`
-      );
-      const unformatedPrices = response.data.data.attributes.token_prices;
+    if (networkId.value === 42220) {
+      const tokenAddresses = Tokens.celo.addreses.map(token => token).join(',');
+      const tokenIds = Tokens.celo.mocks
+        .map(token => Object.values(token)[0])
+        .join(',');
+      const celoTokensURL = `https://pro-api.coingecko.com/api/v3/simple/token_price/celo?contract_addresses=${tokenAddresses}&vs_currencies=usd&x_cg_pro_api_key=${
+        import.meta.env.VITE_COINGECKO_API_KEY
+      }`;
+      const otherTokensURL = `https://pro-api.coingecko.com/api/v3/simple/price/?ids=${tokenIds}&vs_currencies=usd&x_cg_pro_api_key=${
+        import.meta.env.VITE_COINGECKO_API_KEY
+      }`;
+      const { data: celoTokensValues } = await axios.get<
+        AxiosResponse<CGResponse>
+      >(celoTokensURL);
+      const { data: otherTokensValues } = await axios.get<
+        AxiosResponse<CGResponse>
+      >(otherTokensURL);
+      console.debug({ otherTokensValues });
 
-      const formattedPrices = Object.keys(unformatedPrices).reduce(
-        (acc, mockAddress) => {
-          const originalAddress =
-            reverseMockedAddress[mockAddress.toLowerCase()] || mockAddress;
-          acc[originalAddress] = Number(unformatedPrices[mockAddress]);
-          return acc;
-        },
-        {}
+      const otherChainsPrices = Object.entries(otherTokensValues).map(
+        ([id, priceData]) => {
+          return {
+            address: idToAddressMap[id],
+            price: priceData.usd,
+          };
+        }
       );
-      console.log('Fetching', Object.values(formattedPrices).length, 'prices');
+      const celoPrices: GqlTokenPrice[] = [];
+      for (const key in celoTokensValues) {
+        celoPrices.push({
+          address: key,
+          price: celoTokensValues[key].usd as number,
+        });
+      }
 
-      return formattedPrices;
+      let pricesMap = priceArrayToMap([...celoPrices, ...otherChainsPrices]);
+      pricesMap = injectCustomTokens(pricesMap, pricesToInject.value);
+      console.debug({ pricesMap });
+      console.log('Fetching', Object.values(celoPrices).length, 'prices');
+      return pricesMap;
     }
 
     if (!api) return {};
 
     const { prices } = await api.GetCurrentTokenPrices();
-
+    console.debug({ prices });
     let pricesMap = priceArrayToMap(prices);
     pricesMap = injectCustomTokens(pricesMap, pricesToInject.value);
     console.log('Fetching', Object.values(prices).length, 'prices');
