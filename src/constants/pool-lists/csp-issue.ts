@@ -27,6 +27,7 @@ export const NO_RECOVERY_EXIT_POOL_IDS: Record<Network, string[]> = {
   [Network.GOERLI]: [],
   [Network.OPTIMISM]: [],
   [Network.ALFAJORES]: [],
+  [Network.CELO]: [],
 };
 
 export const CSP_ISSUE_POOL_IDS: Record<Network, string[]> = {
@@ -377,6 +378,7 @@ export const CSP_ISSUE_POOL_IDS: Record<Network, string[]> = {
   ],
   [Network.BASE]: [],
   [Network.ALFAJORES]: [],
+  [Network.CELO]: [],
   [Network.SEPOLIA]: [
     '0x027a946ac5a861b66a50cca0e8fb8766718b485100000000000000000000002c',
   ],

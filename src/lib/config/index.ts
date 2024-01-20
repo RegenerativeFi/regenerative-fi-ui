@@ -11,6 +11,7 @@ import polygon from './polygon';
 import sepolia from './sepolia';
 import zkevm from './zkevm';
 import alfajores from './alfajores';
+import celo from './celo';
 
 const config: Record<Network | number, Config> = {
   [Network.MAINNET]: mainnet,
@@ -24,6 +25,7 @@ const config: Record<Network | number, Config> = {
   [Network.SEPOLIA]: sepolia,
   [Network.BASE]: base,
   [Network.ALFAJORES]: alfajores,
+  [Network.CELO]: celo,
 };
 
 export default config;

@@ -88,6 +88,7 @@ export enum Network {
   AVALANCHE = 43114,
   SEPOLIA = 11155111,
   ALFAJORES = 44787,
+  CELO = 42220,
 }
 
 export interface Config {
