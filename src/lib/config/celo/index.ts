@@ -17,7 +17,7 @@ const config: Config = {
   unknown: false,
   visibleInUI: true,
   testNetwork: false,
-  rpc: `https://celo.infura.io/v3/${keys.infura}`,
+  rpc: `https://celo-mainnet.infura.io/v3/${keys.infura}`,
   ws: ``,
   publicRpc: 'https://forno.celo.org',
   explorer: 'https://celoscan.io/',
