@@ -112,7 +112,7 @@ const bgGradientClasses = computed(() => {
     fromColor = 'pink';
     toColor = 'yellow';
   } else if (props.color === 'gradient-blue-light') {
-    return 'transition-colors bg-gradient-to-tr from-refi-text to-light-blue hover:from-refi-text  hover:to-light-blue ';
+    return 'transition-colors button-gradient ';
   }
   if (props.disabled) {
     return `bg-complementary-b dark:complementary-b text-white `;
@@ -120,8 +120,7 @@ const bgGradientClasses = computed(() => {
   if (props.loading) {
     return `bg-gradient-to-tr ${loadingFrom(fromColor)} ${loadingTo(toColor)}`;
   }
-  if (props.color === 'gradient')
-    return 'transition-colors bg-gradient-to-tr from-refi-text to-light-blue hover:from-refi-text  hover:via-light-blue  hover:to-light-blue';
+  if (props.color === 'gradient') return 'transition-colors button-gradient ';
 
   return ` bg-gradient-to-tr ${gradientFrom(fromColor)} ${gradientTo(
     toColor
@@ -260,6 +259,7 @@ const iconColor = computed(() => {
 .bal-btn {
   @apply overflow-hidden tracking-tight;
 
+  padding: 8px !important;
   font-variation-settings: 'wght' 500;
   transition: all 0.2s ease;
   text-decoration: none !important;

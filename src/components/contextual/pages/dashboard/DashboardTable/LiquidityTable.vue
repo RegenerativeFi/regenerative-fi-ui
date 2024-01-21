@@ -45,7 +45,7 @@ const defaultPoolActions = [
  */
 const noPoolsLabel = computed(() => {
   return isWalletReady.value || isWalletConnecting.value
-    ? t('noUnstakedInvestments', [networkName])
+    ? t('noInvestments', [networkName])
     : t('connectYourWallet');
 });
 

@@ -5,6 +5,8 @@ import { ColumnDefinition } from '@/components/_global/BalTable/types';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import RFP from '@/assets/images/icons/coins/RFP.svg';
 import { useAllocations } from '@/composables/campaigns/useAllocations';
+import useWeb3 from '@/services/web3/useWeb3';
+import { configService } from '@/services/config/config.service';
 
 /**
  * TYPES
@@ -28,6 +30,7 @@ const { currentAllocation, isLoading, claimReward } = useAllocations();
 watch(currentAllocation, () => {
   console.debug(currentAllocation.value);
 });
+
 /**
  * STATE
  */
@@ -80,8 +83,16 @@ const rewardsData = [
     value: 'NFT XP',
   },
 ];
+const { isWalletReady, isWalletConnecting } = useWeb3();
 
 const { upToLargeBreakpoint } = useBreakpoints();
+const networkName = configService.network.shortName;
+
+const noPoolsLabel = computed(() => {
+  return isWalletReady.value || isWalletConnecting.value
+    ? t('noRewardsToClaim', [networkName])
+    : t('connectYourWallet');
+});
 
 const hasCurrentAllocation = computed(() => {
   return parseInt(currentAllocation.value as string) > 0;
@@ -98,6 +109,7 @@ const hasCurrentAllocation = computed(() => {
     <BalTable
       :columns="columns"
       sticky="both"
+      :noResultsLabel="noPoolsLabel"
       :data="hasCurrentAllocation ? rewardsData : []"
       :isLoading="isLoading"
       skeletonClass="h-24"

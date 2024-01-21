@@ -58,6 +58,9 @@ module.exports = {
       ...defaultTheme.screens,
     },
     extend: {
+      letterSpacing: {
+        wide: '0.02em',
+      },
       flex: {
         0: '0 0 auto',
       },

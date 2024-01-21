@@ -10,9 +10,10 @@ const { isMobile, bp } = useBreakpoints();
 const { NFTData, isLoading, MintNFT, isMintingNFT } = useRFNFT();
 const { isWalletReady } = useWeb3();
 
-const nftImageSrc = computed(() => NFTData.value?.imageData || NFTImage);
-
-//TODO: Remove this ugly method and use a better one like all the info in the NFTData :)
+const nftImageSrc = computed(() => NFTData.value?.imageData);
+const hasNFT = computed(
+  () => !!NFTData.value?.imageData && isWalletReady.value
+);
 const levels = ref([
   { nextLevel: '100', votes: 1 },
   { nextLevel: '250', votes: 10 },
@@ -26,7 +27,12 @@ const levels = ref([
   <template v-if="isMobile">
     <BalCard v-if="bp === 'xs'">
       <div class="flex flex-col gap-5 justify-center items-start px-4 h-fit">
-        <img :src="nftImageSrc" class="w-full h-full rounded-md bg-slate-500" />
+        <img
+          :src="hasNFT ? nftImageSrc : NFTImage"
+          :class="`w-full h-full rounded-md bg-slate-500 ${
+            !hasNFT && 'filter grayscale'
+          }`"
+        />
         <div class="flex flex-col gap-10 w-full">
           <div class="flex flex-col gap-4">
             <h3 v-if="!isWalletReady" class="self-start text-lg">
@@ -80,7 +86,12 @@ const levels = ref([
     </BalCard>
     <BalCard v-else>
       <div class="flex flex-row gap-5 justify-center items-start px-4 h-80">
-        <img :src="nftImageSrc" class="w-48 h-full rounded-md bg-slate-500" />
+        <img
+          :src="hasNFT ? nftImageSrc : NFTImage"
+          :class="`w-48 h-full rounded-md bg-slate-500 ${
+            !hasNFT && 'filter grayscale'
+          }`"
+        />
         <div class="flex flex-col gap-10 w-full">
           <div class="flex flex-col gap-4">
             <h3 v-if="!isWalletReady" class="self-start text-lg">
@@ -139,8 +150,10 @@ const levels = ref([
         class="flex flex-row gap-8 justify-center items-center h-full h-[265px]"
       >
         <img
-          :src="nftImageSrc"
-          class="rounded-md h-[224px] w-[168px] bg-slate-500"
+          :src="hasNFT ? nftImageSrc : NFTImage"
+          :class="`rounded-md h-[224px] w-[168px] bg-slate-500 ${
+            !hasNFT && 'filter grayscale'
+          }`"
         />
         <div class="flex flex-col gap-6 w-full">
           <div class="flex flex-col gap-4">
