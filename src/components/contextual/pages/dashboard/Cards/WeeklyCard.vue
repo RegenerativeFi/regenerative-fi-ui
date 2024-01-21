@@ -66,7 +66,14 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
               <p v-else class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
+            <div
+              class="flex justify-center items-center w-full h-10 border-complementary-b border-t-[1px]"
+            >
+              <p class="w-full text-xs text-center text-complementary">
+                Tier {{ currentWeeklyTier.level }}: +
+                {{ currentWeeklyTier.points }} Points
+              </p>
+            </div>
           </div>
           <div
             class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-complementary-b border-[1px]"
@@ -77,10 +84,20 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
               <h4 class="text-complementary text-[10px]">
                 Volume for next tier
               </h4>
-              <p class="text-xl">-</p>
+              <p v-if="!props.isLoading" class="text-xl">
+                {{ toFiatLabel(nextWeeklyTier.volume) }}
+              </p>
+              <p v-else class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
+            <div
+              class="flex justify-center items-center w-full h-10 border-complementary-b border-t-[1px]"
+            >
+              <p class="w-full text-xs text-center text-complementary">
+                Tier {{ nextWeeklyTier.level }}: +{{ nextWeeklyTier.points }}
+                Points
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -117,7 +134,14 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
               <p v-else class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
+            <div
+              class="flex justify-center items-center w-full h-10 border-complementary-b border-t-[1px]"
+            >
+              <p class="w-full text-xs text-center text-complementary">
+                Tier {{ currentWeeklyTier.level }}: +
+                {{ currentWeeklyTier.points }} Points
+              </p>
+            </div>
           </div>
           <div
             class="flex flex-col justify-center items-center pt-5 w-full rounded-md border-complementary-b border-[1px]"
@@ -128,10 +152,20 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
               <h4 class="text-complementary text-[10px]">
                 Volume for next tier
               </h4>
-              <p class="text-xl">-</p>
+              <p v-if="!props.isLoading" class="text-xl">
+                {{ toFiatLabel(nextWeeklyTier.volume) }}
+              </p>
+              <p v-else class="text-xl">-</p>
             </div>
 
-            <div class="w-full h-10 border-complementary-b border-t-[1px]" />
+            <div
+              class="flex justify-center items-center w-full h-10 border-complementary-b border-t-[1px]"
+            >
+              <p class="w-full text-xs text-center text-complementary">
+                Tier {{ nextWeeklyTier.level }}: +{{ nextWeeklyTier.points }}
+                Points
+              </p>
+            </div>
           </div>
         </div>
       </div>
