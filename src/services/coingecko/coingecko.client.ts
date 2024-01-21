@@ -4,7 +4,7 @@ export class CoingeckoClient {
   baseUrl: string;
 
   constructor() {
-    this.baseUrl = 'https://api.coingecko.com/api/v3';
+    this.baseUrl = 'https://pro-api.coingecko.com/api/v3/';
   }
 
   async get<T>(endpoint: string): Promise<T> {

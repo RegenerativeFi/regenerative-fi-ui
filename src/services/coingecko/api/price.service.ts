@@ -62,7 +62,9 @@ export class PriceService {
           this.platformId
         }/contract/${address.toLowerCase()}/market_chart/range?vs_currency=${
           this.fiatParam
-        }&from=${start}&to=${end}`;
+        }&from=${start}&to=${end}&x_cg_pro_api_key=${
+          import.meta.env.VITE_COINGECKO_API_KEY
+        }`;
         const request = retryPromiseWithDelay(
           this.client.get<HistoricalPriceResponse>(endpoint),
           2, // retryCount
