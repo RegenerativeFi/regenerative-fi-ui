@@ -105,6 +105,6 @@ withDefaults(defineProps<Props>(), {
 
 .pill-hoverable:hover::before,
 .pill-hoverable:focus::before {
-  @apply bg-pill-ligth dark:bg-gray-900;
+  @apply bg-pill-light dark:bg-gray-900;
 }
 </style>
