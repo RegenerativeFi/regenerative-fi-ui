@@ -28,8 +28,8 @@ export default class CampaignsService {
     this.addresses = configService.network.addresses;
   }
 
-  public async getCurrentAllocation(userAddress?: Address) {
-    const provider = getRpcProviderService().getJsonProvider(Network.ALFAJORES);
+  public async getCurrentAllocation(chainId: Network, userAddress?: Address) {
+    const provider = getRpcProviderService().getJsonProvider(chainId);
     if (!userAddress) return 0;
     const currentUserAddress = await this.walletService.getUserAddress();
     if (!currentUserAddress) return 0;
@@ -48,8 +48,8 @@ export default class CampaignsService {
     return 0;
   }
 
-  public async getCurrentNFT(userAddress?: Address) {
-    const provider = getRpcProviderService().getJsonProvider(Network.ALFAJORES);
+  public async getCurrentNFT(chainId: Network, userAddress?: Address) {
+    const provider = getRpcProviderService().getJsonProvider(chainId);
     if (this.addresses.RFNFT) {
       const currentNFTId = await call(provider, RFNFTAbi, [
         this.addresses.RFNFT,

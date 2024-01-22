@@ -26,6 +26,9 @@ const contracts: Contracts = {
   gaugeRewardsHelper: '',
   gaugeWorkingBalanceHelper: '',
   gaugeCheckpointer: '',
+  simpleMinter: celo.SimpleMinter,
+  RFNFT: celo.RFNFT,
+  RFP: celo.RFP,
 };
 
 export default contracts;

@@ -3,10 +3,13 @@ import { campaignsService } from '@/services/campaigns/campaigns.service';
 import useWeb3 from '@/services/web3/useWeb3';
 
 export function useAllocations() {
-  const { account } = useWeb3();
+  const { account, chainId } = useWeb3();
   const queryKey = reactive(['currentAllocation']);
   const queryFn = async () => {
-    return await campaignsService.getCurrentAllocation(account.value);
+    return await campaignsService.getCurrentAllocation(
+      chainId.value,
+      account.value
+    );
   };
 
   const { data: currentAllocation, isLoading } = useQuery(

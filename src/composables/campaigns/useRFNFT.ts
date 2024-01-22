@@ -10,7 +10,7 @@ import useTransactions from '../useTransactions';
 export function useRFNFT() {
   const { addNotification } = useNotifications();
   const { addTransaction } = useTransactions();
-  const { account } = useWeb3();
+  const { account, chainId } = useWeb3();
   const isMintingNFT = ref(false);
 
   const fetchNFTImage = async (ipfsHash: string) => {
@@ -28,7 +28,10 @@ export function useRFNFT() {
 
   const queryFn = async () => {
     try {
-      const data = await campaignsService.getCurrentNFT(account.value);
+      const data = await campaignsService.getCurrentNFT(
+        chainId.value,
+        account.value
+      );
       if (data?.image) {
         const ipfsHash = data.image.split('ipfs://')[1];
         const imageData = await fetchNFTImage(ipfsHash);
