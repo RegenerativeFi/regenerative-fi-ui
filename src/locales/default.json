@@ -727,6 +727,7 @@
   "here": "here",
   "noInvestments": "No liquidity",
   "noUnstakedInvestments": "You have no unstaked liquidity on {0}",
+  "noRewardsToClaim": "No rewards to claim",
   "noStakedInvestments": "You have no staked liquidity on {0}",
   "noNativeCurrency": "You’ll need some {0} for gas fees in order to transact on {1}.",
   "noNativeCurrencyEthereum": "You’ll need some {0} for gas fees in order to do most basic transactions on {1}. However, you may continue to swap any tokens you’ve previously approved for use on Balancer with this wallet, by using the ‘swap gasless’ option.",
@@ -825,7 +826,8 @@
       "myTransactions": "My transactions",
       "allInvestments": "All liquidity provision",
       "myInvestments": "My liquidity",
-      "swaps": "Swaps"
+      "swaps": "Swaps",
+      "details": "About this pool"
     },
     "noResults": {
       "allTransactions": "No transactions in this pool",

@@ -75,6 +75,14 @@
     font-variant-ligatures: no-contextual;
   }
 
+  .button-gradient {
+    background: linear-gradient(258.76deg, #05dbf3 6.02%, #0468be 94.84%);
+  }
+
+  .button-gradient:hover {
+    background: linear-gradient(258.76deg, #05dbf3 30.02%, #0468be 94.84%);
+  }
+
   .text-gradient {
     @apply bg-blue-500;
 

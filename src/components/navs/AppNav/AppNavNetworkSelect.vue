@@ -165,7 +165,7 @@ function isActive(network: NetworkOption): boolean {
             :alt="network.name"
             class="mr-2 w-6 h-6 rounded-full"
           />
-          <span class="ml-1 font-medium">
+          <span class="overflow-x-hidden ml-1 max-w-full font-medium">
             {{ network.name }}
           </span>
 

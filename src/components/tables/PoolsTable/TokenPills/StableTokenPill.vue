@@ -63,7 +63,7 @@ withDefaults(defineProps<Props>(), {
 .pill::before {
   @apply w-full h-full;
   @apply absolute;
-  @apply bg-gray-100 dark:bg-gray-700;
+  @apply bg-pill-light dark:bg-gray-700;
 
   content: '';
   transform: skew(-16deg);
@@ -105,6 +105,6 @@ withDefaults(defineProps<Props>(), {
 
 .pill-hoverable:hover::before,
 .pill-hoverable:focus::before {
-  @apply bg-gray-200 dark:bg-gray-900;
+  @apply bg-pill-light dark:bg-gray-900;
 }
 </style>

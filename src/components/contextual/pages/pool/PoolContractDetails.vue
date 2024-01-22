@@ -131,34 +131,8 @@ const poolOwnerTooltip = computed(() => {
 
   return '';
 });
-
-const poolManagementText = computed(() => {
-  if (props.pool.poolType === PoolType.Managed) {
-    return t('');
-  }
-
-  if (props.pool.owner === POOLS.ZeroAddress) {
-    return t('poolAttrs.immutable');
-  }
-
-  if (props.pool.owner === POOLS.DelegateOwner) {
-    return t('poolAttrs.immutableFeesEditableByGovernance');
-  }
-
-  return t('poolAttrs.immutableFeesEditableByOwner');
-});
 </script>
 
 <template>
-  <div class="mb-5">
-    <h3 class="px-4 lg:px-0 mb-5" v-text="$t('poolDetails')" />
-
-    <BalDetailsTable class="mb-12" :tableData="data" />
-    <template v-if="poolManagementText">
-      <h4 class="px-4 lg:px-0 mb-2" v-text="$t('poolManagement')" />
-      <div class="px-4 lg:px-0">
-        {{ poolManagementText }}
-      </div>
-    </template>
-  </div>
+  <BalDetailsTable :tableData="data" />
 </template>

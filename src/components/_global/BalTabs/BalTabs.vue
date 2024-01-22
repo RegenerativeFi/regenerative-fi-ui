@@ -22,6 +22,7 @@ function isActiveTab(tab: Tab): boolean {
 }
 
 function onClick(tab: Tab) {
+  console.debug(tab.value);
   emit('selected', tab.value);
   emit('update:modelValue', tab.value);
 }
@@ -34,9 +35,9 @@ const containerClasses = computed(() => {
 
 function stateClasses(tab: Tab): Record<string, boolean> {
   return {
-    'border-b-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:border-blue-500 font-semibold':
+    'border-b-2 border-blue-600 dark:border-blue-400 text-refi-text dark:text-refi-text hover:text-blue-500 dark:border-blue-500 font-semibold':
       isActiveTab(tab),
-    'hover:text-purple-600 dark:hover:text-yellow-500 dark:border-gray-700 transition-colors':
+    'hover:text-accent-refi dark:hover:text-accent-refi dark:border-gray-700 transition-colors':
       !isActiveTab(tab),
   };
 }

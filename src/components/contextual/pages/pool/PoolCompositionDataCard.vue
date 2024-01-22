@@ -7,10 +7,8 @@ import { Pool } from '@/services/pool/types';
 
 import BoostedActivities from '../BoostedPoolActivities/Activities.vue';
 import Activities from '../PoolActivities/Activities.vue';
-import { PoolTransactionsTab } from '../types';
 import useWeb3 from '@/services/web3/useWeb3';
-import { PoolContractDetails } from '../..';
-import SwapTransactions from '../SwapTransactions/SwapTransactions.vue';
+import { PoolTransactionsTab } from './PoolTransactionsCard/types';
 
 /**
  * TYPES
@@ -18,8 +16,6 @@ import SwapTransactions from '../SwapTransactions/SwapTransactions.vue';
 type Props = {
   pool: Pool;
   loading: boolean;
-  isStablePhantomPool: boolean;
-  isDeepPool: boolean;
 };
 
 /**
@@ -37,32 +33,37 @@ const { isWalletReady } = useWeb3();
 /**
  * COMPUTED
  */
-const tabs = computed(() => [
-  {
-    value: PoolTransactionsTab.ALL_ACTIVITY,
-    label: t('poolTransactions.tabs.myTransactions'),
-  },
-  ...(isWalletReady.value
+const tabs = computed(() =>
+  isDeepPool.value || isStablePhantomPool.value
     ? [
         {
-          value: PoolTransactionsTab.USER_ACTIVITY,
-          label: t('poolTransactions.tabs.myInvestments'),
+          value: PoolTransactionsTab.ALL_ACTIVITY,
+          label: t('poolTransactions.tabs.allTransactions'),
         },
+        ...(isWalletReady.value
+          ? [
+              {
+                value: PoolTransactionsTab.USER_ACTIVITY,
+                label: t('poolTransactions.tabs.myTransactions'),
+              },
+            ]
+          : []),
       ]
-    : []),
-  ...(isWalletReady.value
-    ? [
+    : [
         {
-          value: PoolTransactionsTab.SWAPS,
-          label: t('poolTransactions.tabs.swaps'),
+          value: PoolTransactionsTab.ALL_ACTIVITY,
+          label: t('poolTransactions.tabs.allInvestments'),
         },
+        ...(isWalletReady.value
+          ? [
+              {
+                value: PoolTransactionsTab.USER_ACTIVITY,
+                label: t('poolTransactions.tabs.myInvestments'),
+              },
+            ]
+          : []),
       ]
-    : []),
-  {
-    value: PoolTransactionsTab.POOL_DETAILS,
-    label: t('poolTransactions.tabs.details'),
-  },
-]);
+);
 
 /**
  * COMPOSABLES
@@ -80,11 +81,17 @@ const activeTab = ref(tabs.value[0].value);
 /**
  * COMPUTED
  */
+const title = computed((): string => {
+  if (isDeepPool.value || isStablePhantomPool.value) return t('poolActivity');
+
+  return t('liquidityProvision');
+});
 </script>
 
 <template>
   <div class="mb-5">
     <div>
+      <h3 class="px-4 lg:px-0 mb-3" v-text="title" />
       <div
         class="flex justify-between items-end mx-4 lg:mx-0 mb-6 border-b dark:border-gray-900"
       >
@@ -119,19 +126,6 @@ const activeTab = ref(tabs.value[0].value);
           :poolActivityType="PoolTransactionsTab.USER_ACTIVITY"
           :pool="pool"
           :loading="loading"
-        />
-        <SwapTransactions
-          v-else-if="
-            activeTab === PoolTransactionsTab.SWAPS &&
-            !isStablePhantomPool &&
-            !isDeepPool
-          "
-          :pool="pool"
-          :loading="loading"
-        />
-        <PoolContractDetails
-          v-else-if="activeTab === PoolTransactionsTab.POOL_DETAILS"
-          :pool="pool"
         />
       </div>
     </template>

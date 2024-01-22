@@ -58,6 +58,9 @@ module.exports = {
       ...defaultTheme.screens,
     },
     extend: {
+      letterSpacing: {
+        wide: '0.02em',
+      },
       flex: {
         0: '0 0 auto',
       },
@@ -84,6 +87,7 @@ module.exports = {
         'primary-refi': '#001C52',
         'accent-refi': '#FA7369',
         'refi-text': '#0468be',
+        'refi-text-dark': '#1490FA',
         'light-blue': '#05DBF3',
         container: '#F3FAFF',
         primary: {
@@ -187,6 +191,7 @@ module.exports = {
         disabled: '#9F9F9F',
         complementary: '#7B7B7B',
         'complementary-b': '#B6C7D6',
+        'pill-light': '#E7F4FF',
       },
     },
   },
