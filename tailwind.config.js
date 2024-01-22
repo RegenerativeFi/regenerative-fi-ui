@@ -191,7 +191,7 @@ module.exports = {
         disabled: '#9F9F9F',
         complementary: '#7B7B7B',
         'complementary-b': '#B6C7D6',
-        'pill-ligth': '#E7F4FF',
+        'pill-light': '#E7F4FF',
       },
     },
   },
