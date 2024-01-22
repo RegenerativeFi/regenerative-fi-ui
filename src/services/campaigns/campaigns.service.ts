@@ -89,6 +89,22 @@ export default class CampaignsService {
     });
   }
 
+  public async upgradeNFT(chainId: Network) {
+    const provider = getRpcProviderService().getJsonProvider(chainId);
+    const currentUserAddress = await this.walletService.getUserAddress();
+    const currentNFTId = await call(provider, RFNFTAbi, [
+      this.addresses.RFNFT,
+      'ownerTokenId',
+      [currentUserAddress],
+    ]);
+    return await this.walletService.txBuilder.contract.sendTransaction({
+      contractAddress: this.addresses.RFNFT,
+      abi: RFNFTAbi,
+      action: 'levelUp',
+      params: [currentNFTId],
+    });
+  }
+
   public async claimAllocantions() {
     const currentUserAddress = await this.walletService.getUserAddress();
     return this.walletService.txBuilder.contract.sendTransaction({

@@ -7,12 +7,26 @@ import useWeb3 from '@/services/web3/useWeb3';
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
 
-const { NFTData, isLoading, MintNFT, isMintingNFT } = useRFNFT();
+const {
+  NFTData,
+  isLoading,
+  MintNFT,
+  UpgradeNFT,
+  isMintingNFT,
+  isUpgradingNFT,
+} = useRFNFT();
 const { isWalletReady } = useWeb3();
 
 const nftImageSrc = computed(() => NFTData.value?.imageData);
 const hasNFT = computed(
   () => !!NFTData.value?.imageData && isWalletReady.value
+);
+
+const isAbleToUpgradeNFT = computed(() =>
+  NFTData?.value?.points
+    ? NFTData?.value?.points >= levels.value[NFTData?.value?.id - 1].votes &&
+      !isUpgradingNFT.value
+    : false
 );
 const levels = ref([
   { nextLevel: '100', votes: 1 },
@@ -73,6 +87,15 @@ const levels = ref([
             >Connect wallet</BalBtn
           >
           <BalBtn
+            v-else-if="hasNFT"
+            :disabled="!isAbleToUpgradeNFT"
+            :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
+            class="self-end w-fit"
+            size="sm"
+            @click="() => UpgradeNFT()"
+            >Upgrade</BalBtn
+          >
+          <BalBtn
             v-else
             :color="isMintingNFT ? 'gray' : 'gradient-blue-light'"
             :disabled="isMintingNFT"
@@ -130,6 +153,15 @@ const levels = ref([
             size="sm"
             @click="startConnectWithInjectedProvider"
             >Connect wallet</BalBtn
+          >
+          <BalBtn
+            v-else-if="hasNFT"
+            :disabled="!isAbleToUpgradeNFT"
+            :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
+            class="self-end w-fit"
+            size="sm"
+            @click="() => UpgradeNFT()"
+            >Upgrade</BalBtn
           >
           <BalBtn
             v-else
@@ -194,6 +226,15 @@ const levels = ref([
             size="sm"
             @click="startConnectWithInjectedProvider"
             >Connect wallet</BalBtn
+          >
+          <BalBtn
+            v-else-if="hasNFT"
+            :disabled="!isAbleToUpgradeNFT"
+            :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
+            class="self-end w-fit"
+            size="sm"
+            @click="() => UpgradeNFT()"
+            >Upgrade</BalBtn
           >
           <BalBtn
             v-else

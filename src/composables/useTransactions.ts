@@ -57,7 +57,9 @@ export type TransactionAction =
   | 'sync'
   | 'userGaugeCheckpoint'
   | 'claimSubmission'
-  | 'mintNFT';
+  | 'mintNFT'
+  | 'upgradeNFT'
+  | 'claimRewards';
 
 export type TransactionType = 'order' | 'tx';
 

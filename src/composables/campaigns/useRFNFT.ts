@@ -12,6 +12,7 @@ export function useRFNFT() {
   const { addTransaction } = useTransactions();
   const { account, chainId } = useWeb3();
   const isMintingNFT = ref(false);
+  const isUpgradingNFT = ref(false);
 
   const fetchNFTImage = async (ipfsHash: string) => {
     try {
@@ -81,10 +82,33 @@ export function useRFNFT() {
     }
   };
 
+  const UpgradeNFT = async () => {
+    isUpgradingNFT.value = true;
+    try {
+      const txResponse = await campaignsService.upgradeNFT(chainId.value);
+      addTransaction({
+        id: txResponse.hash,
+        type: 'tx',
+        action: 'upgradeNFT',
+        summary: 'Regenerative Finance NFT',
+      });
+    } catch (error) {
+      console.error('Error upgrading NFT:', error);
+      addNotification({
+        title: 'Error',
+        message: 'The NFT could not be upgraded',
+        type: 'error',
+      });
+    } finally {
+      isUpgradingNFT.value = false;
+    }
+  };
   return {
     NFTData: data,
     isLoading,
     MintNFT,
+    UpgradeNFT,
     isMintingNFT,
+    isUpgradingNFT,
   };
 }
