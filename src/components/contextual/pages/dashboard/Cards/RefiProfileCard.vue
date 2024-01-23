@@ -25,12 +25,7 @@ const hasNFT = computed(
   () => !!NFTData.value?.imageData && isWalletReady.value
 );
 
-const isAbleToUpgradeNFT = computed(() =>
-  NFTData?.value?.points
-    ? NFTData?.value?.points >= levels.value[NFTData?.value?.id - 1].votes &&
-      !isUpgradingNFTStatus.value.loading
-    : false
-);
+const isAbleToUpgradeNFT = computed(() => NFTData?.value?.isAbleToUpgrade[0]);
 
 const levels = ref([
   { nextLevel: '50', votes: 1 },
@@ -56,6 +51,9 @@ watch([isRefetchingNFTData, isMintingNFTStatus.value], () => {
     isOpenMintNFTModal.value = true;
     isMintingNFTStatus.value = { loading: false, success: false };
   }
+});
+watch(NFTData, () => {
+  console.debug(NFTData.value);
 });
 
 onMounted(() => {
@@ -124,7 +122,7 @@ function handleMintNFTClose() {
             :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
             class="self-end w-fit"
             size="sm"
-            @click="() => UpgradeNFT()"
+            @click="() => UpgradeNFT(NFTData?.id as number)"
             >Upgrade</BalBtn
           >
           <BalBtn
@@ -192,7 +190,7 @@ function handleMintNFTClose() {
             :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
             class="self-end w-fit"
             size="sm"
-            @click="() => UpgradeNFT()"
+            @click="() => UpgradeNFT(NFTData?.id as number) "
             >Upgrade</BalBtn
           >
           <BalBtn
@@ -263,7 +261,7 @@ function handleMintNFTClose() {
             :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
             class="self-end w-fit"
             size="sm"
-            @click="() => UpgradeNFT()"
+            @click="() => UpgradeNFT(NFTData?.id as number)"
             >Upgrade</BalBtn
           >
           <BalBtn

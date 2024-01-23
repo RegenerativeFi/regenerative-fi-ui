@@ -102,13 +102,13 @@ export function useRFNFT() {
     }
   };
 
-  const UpgradeNFT = async () => {
+  const UpgradeNFT = async (currentNFTId: number) => {
     isUpgradingNFTStatus.value = {
       loading: true,
       success: false,
     };
     try {
-      const txResponse = await campaignsService.upgradeNFT(chainId.value);
+      const txResponse = await campaignsService.upgradeNFT(currentNFTId);
       addTransaction({
         id: txResponse.hash,
         type: 'tx',

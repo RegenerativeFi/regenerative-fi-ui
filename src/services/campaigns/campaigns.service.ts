@@ -26,6 +26,7 @@ export type NFTData = RFNFTData & {
   imageData: string;
   id: number;
   points: number;
+  isAbleToUpgrade: [boolean, bigint];
 };
 
 export default class CampaignsService {
@@ -73,11 +74,17 @@ export default class CampaignsService {
         'tokenURI',
         [BigNumber.from(currentNFTId).toNumber()],
       ]);
+      const isAbleToUpgrade = await call(provider, RFNFTAbi, [
+        this.addresses.RFNFT,
+        'canLevelUp',
+        [currentNFTId],
+      ]);
       const NFTData: RFNFTData = await ipfsService.get(
         currentNFT.split('ipfs://')[1]
       );
       return {
         ...NFTData,
+        isAbleToUpgrade,
         id: Number(currentNFTTier),
         points: currentNFTPoints,
       };
@@ -95,14 +102,7 @@ export default class CampaignsService {
     });
   }
 
-  public async upgradeNFT(chainId: Network) {
-    const provider = getRpcProviderService().getJsonProvider(chainId);
-    const currentUserAddress = await this.walletService.getUserAddress();
-    const currentNFTId = await call(provider, RFNFTAbi, [
-      this.addresses.RFNFT,
-      'ownerTokenId',
-      [currentUserAddress],
-    ]);
+  public async upgradeNFT(currentNFTId: number) {
     return await this.walletService.txBuilder.contract.sendTransaction({
       contractAddress: this.addresses.RFNFT,
       abi: RFNFTAbi,
