@@ -26,27 +26,29 @@ export default function useUserSwapVolumeQuery(options: QueryOptions = {}) {
   );
 
   // METHODS
-
   function getWeekRange() {
     const now = new Date();
-    const getStartOfWeek = d => {
-      const result = new Date(d);
-      result.setUTCHours(0, 0, 0, 0);
-      result.setUTCDate(result.getUTCDate() - result.getUTCDay() + 1);
-      return result;
-    };
 
-    const startOfWeek = getStartOfWeek(now);
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setUTCDate(startOfWeek.getUTCDate() + 7);
+    // Find the previous Wednesday
+    const lastWednesday = new Date(now);
+    lastWednesday.setUTCHours(23, 59, 59, 999);
+    lastWednesday.setUTCDate(
+      lastWednesday.getUTCDate() - ((lastWednesday.getUTCDay() + 4) % 7)
+    );
+
+    // Find the next Thursday
+    const nextThursday = new Date(lastWednesday);
+    nextThursday.setUTCDate(lastWednesday.getUTCDate() + 7);
+    nextThursday.setUTCHours(0, 0, 0, 0);
 
     return {
-      timestamp_gte: Math.floor(startOfWeek.getTime() / 1000),
-      timestamp_lte: Math.floor(endOfWeek.getTime() / 1000),
+      timestamp_gte: Math.floor(lastWednesday.getTime() / 1000),
+      timestamp_lte: Math.floor(nextThursday.getTime() / 1000),
     };
   }
 
   const queryFn = async ({ pageParam = 0 }) => {
+    console.debug(timestamp_gte, timestamp_lte);
     const weeklySwaps = await balancerSubgraphService.userSwaps.get({
       skip: pageParam,
       first: 1000,
