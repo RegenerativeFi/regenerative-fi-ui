@@ -3,7 +3,8 @@ import NFTImage from '@/assets/images/mocks/NFT.png';
 import { useRFNFT } from '@/composables/campaigns/useRFNFT';
 import useBreakpoints from '@/composables/useBreakpoints';
 import useWeb3 from '@/services/web3/useWeb3';
-
+import UpgradeNFTModal from '../Modals/UpgradeNFTModal.vue';
+import MintNFTModal from '../Modals/MintNFTModal.vue';
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
 
@@ -12,8 +13,9 @@ const {
   isLoading,
   MintNFT,
   UpgradeNFT,
-  isMintingNFT,
-  isUpgradingNFT,
+  isMintingNFTStatus,
+  isUpgradingNFTStatus,
+  isRefetchingNFTData,
 } = useRFNFT();
 const { isWalletReady } = useWeb3();
 
@@ -25,7 +27,7 @@ const hasNFT = computed(
 const isAbleToUpgradeNFT = computed(() =>
   NFTData?.value?.points
     ? NFTData?.value?.points >= levels.value[NFTData?.value?.id - 1].votes &&
-      !isUpgradingNFT.value
+      !isUpgradingNFTStatus.value.loading
     : false
 );
 const levels = ref([
@@ -36,6 +38,34 @@ const levels = ref([
   { nextLevel: '2000', votes: 150 },
   { nextLevel: 'MAX', votes: 250 },
 ]);
+const isOpenUpgradeNFTModal = ref(false);
+const isOpenMintNFTModal = ref(false);
+
+watch([isRefetchingNFTData, isUpgradingNFTStatus.value], () => {
+  if (!isRefetchingNFTData.value && isUpgradingNFTStatus.value.success) {
+    isOpenUpgradeNFTModal.value = true;
+    isUpgradingNFTStatus.value = { loading: false, success: false };
+  }
+});
+
+watch([isRefetchingNFTData, isMintingNFTStatus.value], () => {
+  console.debug(isRefetchingNFTData, isMintingNFTStatus.value.success);
+  if (!isRefetchingNFTData.value && isMintingNFTStatus.value.success) {
+    isOpenMintNFTModal.value = true;
+    isMintingNFTStatus.value = { loading: false, success: false };
+  }
+});
+
+onMounted(() => {
+  isUpgradingNFTStatus.value = { loading: false, success: false };
+});
+
+function handleUpgradeNFTClose() {
+  isOpenUpgradeNFTModal.value = false;
+}
+function handleMintNFTClose() {
+  isOpenMintNFTModal.value = false;
+}
 </script>
 <template>
   <template v-if="isMobile">
@@ -97,8 +127,8 @@ const levels = ref([
           >
           <BalBtn
             v-else
-            :color="isMintingNFT ? 'gray' : 'gradient-blue-light'"
-            :disabled="isMintingNFT"
+            :color="isMintingNFTStatus.loading ? 'gray' : 'gradient-blue-light'"
+            :disabled="isMintingNFTStatus.loading"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"
@@ -165,8 +195,8 @@ const levels = ref([
           >
           <BalBtn
             v-else
-            :color="isMintingNFT ? 'gray' : 'gradient-blue-light'"
-            :disabled="isMintingNFT"
+            :color="isMintingNFTStatus.loading ? 'gray' : 'gradient-blue-light'"
+            :disabled="isMintingNFTStatus.loading"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"
@@ -178,9 +208,7 @@ const levels = ref([
   </template>
   <template v-else>
     <div class="p-8 h-full bg-white dark:bg-gray-850 rounded-lg shadow-lg">
-      <div
-        class="flex flex-row gap-8 justify-center items-center h-full h-[265px]"
-      >
+      <div class="flex flex-row gap-8 justify-center items-center h-full">
         <img
           :src="hasNFT ? nftImageSrc : NFTImage"
           :class="`rounded-md h-[224px] w-[168px] bg-slate-500 ${
@@ -249,4 +277,18 @@ const levels = ref([
       </div>
     </div>
   </template>
+  <teleport to="#modal">
+    <UpgradeNFTModal
+      :NFTData="NFTData"
+      :isOpenModal="isOpenUpgradeNFTModal"
+      :NFTImage="(nftImageSrc as string)"
+      @close="handleUpgradeNFTClose"
+    />
+    <MintNFTModal
+      :NFTData="NFTData"
+      :isOpenModal="isOpenMintNFTModal"
+      :NFTImage="(nftImageSrc as string)"
+      @close="handleMintNFTClose"
+    />
+  </teleport>
 </template>

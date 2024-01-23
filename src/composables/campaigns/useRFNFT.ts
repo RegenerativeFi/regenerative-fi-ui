@@ -11,18 +11,26 @@ export function useRFNFT() {
   const { addNotification } = useNotifications();
   const { addTransaction } = useTransactions();
   const { account, chainId } = useWeb3();
-  const isMintingNFT = ref(false);
-  const isUpgradingNFT = ref(false);
-
+  const isMintingNFTStatus = ref({
+    loading: false,
+    success: false,
+  });
+  const isUpgradingNFTStatus = ref({
+    loading: false,
+    success: false,
+  });
   const fetchNFTImage = async (ipfsHash: string) => {
+    const imageUrl = `https://${
+      import.meta.env.VITE_IPFS_NODE
+    }/ipfs/${ipfsHash}`;
     try {
-      const imageUrl = `https://${
-        import.meta.env.VITE_IPFS_NODE
-      }/ipfs/${ipfsHash}`;
-      return imageUrl;
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.blob();
     } catch (error) {
-      console.error('Failed to fetch NFT image:', error);
-      // Consider how you want to handle image fetch errors - ignore or throw.
+      console.error('Error fetching NFT image:', error);
     }
   };
   const queryKey: QueryKey = ['currentNFT'];
@@ -36,13 +44,14 @@ export function useRFNFT() {
       if (data?.image) {
         const ipfsHash = data.image.split('ipfs://')[1];
         const imageData = await fetchNFTImage(ipfsHash);
+        const imageDataUrl = URL.createObjectURL(imageData as Blob);
         const RNFTData: RFNFTData & {
           imageData: string;
           id: number;
           points: number;
         } = {
           ...data,
-          imageData: imageData as string,
+          imageData: imageDataUrl,
         };
         return RNFTData;
       }
@@ -56,12 +65,18 @@ export function useRFNFT() {
     }
   };
 
-  const { data, isLoading } = useQuery(queryKey, queryFn, {
-    enabled: true,
-  });
+  const { data, isLoading, refetch, isRefetching } = useQuery(
+    queryKey,
+    queryFn,
+    {
+      refetchIntervalInBackground: false,
+      refetchInterval: 50000,
+      enabled: true,
+    }
+  );
 
   const MintNFT = async () => {
-    isMintingNFT.value = true;
+    isMintingNFTStatus.value.loading = true;
     try {
       const txResponse = await campaignsService.mintNFT();
       addTransaction({
@@ -70,6 +85,12 @@ export function useRFNFT() {
         action: 'mintNFT',
         summary: 'Regenerative Finance NFT',
       });
+      await txResponse.wait();
+      refetch();
+      isMintingNFTStatus.value = {
+        success: true,
+        loading: false,
+      };
     } catch (error) {
       console.error('Error minting NFT:', error);
       addNotification({
@@ -78,12 +99,18 @@ export function useRFNFT() {
         type: 'error',
       });
     } finally {
-      isMintingNFT.value = false;
+      isMintingNFTStatus.value = {
+        ...isMintingNFTStatus.value,
+        loading: false,
+      };
     }
   };
 
   const UpgradeNFT = async () => {
-    isUpgradingNFT.value = true;
+    isUpgradingNFTStatus.value = {
+      loading: true,
+      success: false,
+    };
     try {
       const txResponse = await campaignsService.upgradeNFT(chainId.value);
       addTransaction({
@@ -92,6 +119,12 @@ export function useRFNFT() {
         action: 'upgradeNFT',
         summary: 'Regenerative Finance NFT',
       });
+      await txResponse.wait();
+      refetch();
+      isUpgradingNFTStatus.value = {
+        loading: false,
+        success: true,
+      };
     } catch (error) {
       console.error('Error upgrading NFT:', error);
       addNotification({
@@ -100,7 +133,10 @@ export function useRFNFT() {
         type: 'error',
       });
     } finally {
-      isUpgradingNFT.value = false;
+      isUpgradingNFTStatus.value = {
+        ...isUpgradingNFTStatus.value,
+        loading: false,
+      };
     }
   };
   return {
@@ -108,7 +144,9 @@ export function useRFNFT() {
     isLoading,
     MintNFT,
     UpgradeNFT,
-    isMintingNFT,
-    isUpgradingNFT,
+    isMintingNFTStatus,
+    isUpgradingNFTStatus,
+    refetchNFTData: refetch,
+    isRefetchingNFTData: isRefetching,
   };
 }
