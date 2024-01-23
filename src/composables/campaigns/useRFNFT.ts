@@ -1,6 +1,6 @@
 import { useQuery, QueryKey } from '@tanstack/vue-query';
 import {
-  RFNFTData,
+  NFTData,
   campaignsService,
 } from '@/services/campaigns/campaigns.service';
 import useWeb3 from '@/services/web3/useWeb3';
@@ -45,11 +45,7 @@ export function useRFNFT() {
         const ipfsHash = data.image.split('ipfs://')[1];
         const imageData = await fetchNFTImage(ipfsHash);
         const imageDataUrl = URL.createObjectURL(imageData as Blob);
-        const RNFTData: RFNFTData & {
-          imageData: string;
-          id: number;
-          points: number;
-        } = {
+        const RNFTData: NFTData = {
           ...data,
           imageData: imageDataUrl,
         };

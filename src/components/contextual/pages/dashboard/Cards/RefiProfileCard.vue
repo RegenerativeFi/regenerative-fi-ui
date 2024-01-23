@@ -5,6 +5,7 @@ import useBreakpoints from '@/composables/useBreakpoints';
 import useWeb3 from '@/services/web3/useWeb3';
 import UpgradeNFTModal from '../Modals/UpgradeNFTModal.vue';
 import MintNFTModal from '../Modals/MintNFTModal.vue';
+import { NFTData as TNFTData } from '@/services/campaigns/campaigns.service';
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
 
@@ -267,8 +268,8 @@ function handleMintNFTClose() {
           >
           <BalBtn
             v-else
-            :color="isMintingNFT ? 'gray' : 'gradient-blue-light'"
-            :disabled="isMintingNFT"
+            :color="isMintingNFTStatus.loading ? 'gray' : 'gradient-blue-light'"
+            :disabled="isMintingNFTStatus.loading"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"
@@ -280,15 +281,15 @@ function handleMintNFTClose() {
   </template>
   <teleport to="#modal">
     <UpgradeNFTModal
-      :NFTData="NFTData"
+      :nftData="(NFTData as TNFTData)"
       :isOpenModal="isOpenUpgradeNFTModal"
-      :NFTImage="(nftImageSrc as string)"
+      :nftImage="(nftImageSrc as string)"
       @close="handleUpgradeNFTClose"
     />
     <MintNFTModal
-      :NFTData="NFTData"
+      :nftData="(NFTData as TNFTData)"
       :isOpenModal="isOpenMintNFTModal"
-      :NFTImage="(nftImageSrc as string)"
+      :nftImage="(nftImageSrc as string)"
       @close="handleMintNFTClose"
     />
   </teleport>

@@ -22,6 +22,12 @@ export type RFNFTData = {
   name: string;
 };
 
+export type NFTData = RFNFTData & {
+  imageData: string;
+  id: number;
+  points: number;
+};
+
 export default class CampaignsService {
   private addresses;
   constructor(private readonly walletService = walletServiceInstance) {

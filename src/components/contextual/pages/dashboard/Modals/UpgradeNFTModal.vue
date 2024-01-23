@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { NFTData } from '@/services/campaigns/campaigns.service';
 type Props = {
-  nftData: any;
+  nftData: NFTData;
   isOpenModal: boolean;
   nftImage: string;
 };
