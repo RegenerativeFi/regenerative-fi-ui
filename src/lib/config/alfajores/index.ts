@@ -15,7 +15,7 @@ const config: Config = {
   slug: 'alfajores',
   network: 'celo-alfajores',
   unknown: false,
-  visibleInUI: true,
+  visibleInUI: false,
   testNetwork: true,
   rpc: `https://celo-alfajores.infura.io/v3/${keys.infura}`,
   ws: ``,
