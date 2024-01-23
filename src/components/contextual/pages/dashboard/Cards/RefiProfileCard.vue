@@ -30,12 +30,13 @@ const isAbleToUpgradeNFT = computed(() =>
       !isUpgradingNFTStatus.value.loading
     : false
 );
+
 const levels = ref([
-  { nextLevel: '100', votes: 1 },
+  { nextLevel: '50', votes: 1 },
   { nextLevel: '250', votes: 10 },
-  { nextLevel: '500', votes: 30 },
-  { nextLevel: '1000', votes: 75 },
-  { nextLevel: '2000', votes: 150 },
+  { nextLevel: '1000', votes: 30 },
+  { nextLevel: '2500', votes: 75 },
+  { nextLevel: '5000', votes: 150 },
   { nextLevel: 'MAX', votes: 250 },
 ]);
 const isOpenUpgradeNFTModal = ref(false);
