@@ -1,6 +1,6 @@
 import { useQuery, QueryKey } from '@tanstack/vue-query';
 import {
-  RFNFTData,
+  NFTData,
   campaignsService,
 } from '@/services/campaigns/campaigns.service';
 import useWeb3 from '@/services/web3/useWeb3';
@@ -10,35 +10,44 @@ import useTransactions from '../useTransactions';
 export function useRFNFT() {
   const { addNotification } = useNotifications();
   const { addTransaction } = useTransactions();
-  const { account } = useWeb3();
-  const isMintingNFT = ref(false);
-
+  const { account, chainId } = useWeb3();
+  const isMintingNFTStatus = ref({
+    loading: false,
+    success: false,
+  });
+  const isUpgradingNFTStatus = ref({
+    loading: false,
+    success: false,
+  });
   const fetchNFTImage = async (ipfsHash: string) => {
+    const imageUrl = `https://${
+      import.meta.env.VITE_IPFS_NODE
+    }/ipfs/${ipfsHash}`;
     try {
-      const imageUrl = `https://${
-        import.meta.env.VITE_IPFS_NODE
-      }/ipfs/${ipfsHash}`;
-      return imageUrl;
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.blob();
     } catch (error) {
-      console.error('Failed to fetch NFT image:', error);
-      // Consider how you want to handle image fetch errors - ignore or throw.
+      console.error('Error fetching NFT image:', error);
     }
   };
   const queryKey: QueryKey = ['currentNFT'];
 
   const queryFn = async () => {
     try {
-      const data = await campaignsService.getCurrentNFT(account.value);
+      const data = await campaignsService.getCurrentNFT(
+        chainId.value,
+        account.value
+      );
       if (data?.image) {
         const ipfsHash = data.image.split('ipfs://')[1];
         const imageData = await fetchNFTImage(ipfsHash);
-        const RNFTData: RFNFTData & {
-          imageData: string;
-          id: number;
-          points: number;
-        } = {
+        const imageDataUrl = URL.createObjectURL(imageData as Blob);
+        const RNFTData: NFTData = {
           ...data,
-          imageData: imageData as string,
+          imageData: imageDataUrl,
         };
         return RNFTData;
       }
@@ -52,12 +61,18 @@ export function useRFNFT() {
     }
   };
 
-  const { data, isLoading } = useQuery(queryKey, queryFn, {
-    enabled: true,
-  });
+  const { data, isLoading, refetch, isRefetching } = useQuery(
+    queryKey,
+    queryFn,
+    {
+      refetchIntervalInBackground: false,
+      refetchInterval: 50000,
+      enabled: true,
+    }
+  );
 
   const MintNFT = async () => {
-    isMintingNFT.value = true;
+    isMintingNFTStatus.value.loading = true;
     try {
       const txResponse = await campaignsService.mintNFT();
       addTransaction({
@@ -66,6 +81,12 @@ export function useRFNFT() {
         action: 'mintNFT',
         summary: 'Regenerative Finance NFT',
       });
+      await txResponse.wait();
+      refetch();
+      isMintingNFTStatus.value = {
+        success: true,
+        loading: false,
+      };
     } catch (error) {
       console.error('Error minting NFT:', error);
       addNotification({
@@ -74,14 +95,54 @@ export function useRFNFT() {
         type: 'error',
       });
     } finally {
-      isMintingNFT.value = false;
+      isMintingNFTStatus.value = {
+        ...isMintingNFTStatus.value,
+        loading: false,
+      };
     }
   };
 
+  const UpgradeNFT = async (currentNFTId: number) => {
+    isUpgradingNFTStatus.value = {
+      loading: true,
+      success: false,
+    };
+    try {
+      const txResponse = await campaignsService.upgradeNFT(currentNFTId);
+      addTransaction({
+        id: txResponse.hash,
+        type: 'tx',
+        action: 'upgradeNFT',
+        summary: 'Regenerative Finance NFT',
+      });
+      await txResponse.wait();
+      refetch();
+      isUpgradingNFTStatus.value = {
+        loading: false,
+        success: true,
+      };
+    } catch (error) {
+      console.error('Error upgrading NFT:', error);
+      addNotification({
+        title: 'Error',
+        message: 'The NFT could not be upgraded',
+        type: 'error',
+      });
+    } finally {
+      isUpgradingNFTStatus.value = {
+        ...isUpgradingNFTStatus.value,
+        loading: false,
+      };
+    }
+  };
   return {
     NFTData: data,
     isLoading,
     MintNFT,
-    isMintingNFT,
+    UpgradeNFT,
+    isMintingNFTStatus,
+    isUpgradingNFTStatus,
+    refetchNFTData: refetch,
+    isRefetchingNFTData: isRefetching,
   };
 }

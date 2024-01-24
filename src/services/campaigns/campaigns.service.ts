@@ -22,14 +22,21 @@ export type RFNFTData = {
   name: string;
 };
 
+export type NFTData = RFNFTData & {
+  imageData: string;
+  id: number;
+  points: number;
+  isAbleToUpgrade: [boolean, bigint];
+};
+
 export default class CampaignsService {
   private addresses;
   constructor(private readonly walletService = walletServiceInstance) {
     this.addresses = configService.network.addresses;
   }
 
-  public async getCurrentAllocation(userAddress?: Address) {
-    const provider = getRpcProviderService().getJsonProvider(Network.ALFAJORES);
+  public async getCurrentAllocation(chainId: Network, userAddress?: Address) {
+    const provider = getRpcProviderService().getJsonProvider(chainId);
     if (!userAddress) return 0;
     const currentUserAddress = await this.walletService.getUserAddress();
     if (!currentUserAddress) return 0;
@@ -48,8 +55,8 @@ export default class CampaignsService {
     return 0;
   }
 
-  public async getCurrentNFT(userAddress?: Address) {
-    const provider = getRpcProviderService().getJsonProvider(Network.ALFAJORES);
+  public async getCurrentNFT(chainId: Network, userAddress?: Address) {
+    const provider = getRpcProviderService().getJsonProvider(chainId);
     if (this.addresses.RFNFT) {
       const currentNFTId = await call(provider, RFNFTAbi, [
         this.addresses.RFNFT,
@@ -67,11 +74,17 @@ export default class CampaignsService {
         'tokenURI',
         [BigNumber.from(currentNFTId).toNumber()],
       ]);
+      const isAbleToUpgrade = await call(provider, RFNFTAbi, [
+        this.addresses.RFNFT,
+        'canLevelUp',
+        [currentNFTId],
+      ]);
       const NFTData: RFNFTData = await ipfsService.get(
         currentNFT.split('ipfs://')[1]
       );
       return {
         ...NFTData,
+        isAbleToUpgrade,
         id: Number(currentNFTTier),
         points: currentNFTPoints,
       };
@@ -86,6 +99,15 @@ export default class CampaignsService {
       abi: RFNFTAbi,
       action: 'mint',
       params: [currentUserAddress],
+    });
+  }
+
+  public async upgradeNFT(currentNFTId: number) {
+    return await this.walletService.txBuilder.contract.sendTransaction({
+      contractAddress: this.addresses.RFNFT,
+      abi: RFNFTAbi,
+      action: 'levelUp',
+      params: [currentNFTId],
     });
   }
 

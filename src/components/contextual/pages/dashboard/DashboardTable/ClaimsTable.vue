@@ -26,7 +26,8 @@ export type ClaimRow = {
  */
 const { t } = useI18n();
 const { fNum } = useNumbers();
-const { currentAllocation, isLoading, claimReward } = useAllocations();
+const { currentAllocation, isLoading, claimReward, isClaimingReward } =
+  useAllocations();
 watch(currentAllocation, () => {
   console.debug(currentAllocation.value);
 });
@@ -133,7 +134,8 @@ const hasCurrentAllocation = computed(() => {
       </template>
       <template #claimTotalCell>
         <BalBtn
-          :color="selectedRows.length ? 'blue' : 'gray'"
+          :color="selectedRows.length || isClaimingReward ? 'blue' : 'gray'"
+          :disabled="isClaimingReward || !selectedRows.length"
           class="w-fit"
           size="sm"
           @click="handleButtonClick"
