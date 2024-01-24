@@ -1,4 +1,4 @@
-import { call } from '@/lib/utils/balancer/contract';
+import { call, multicall } from '@/lib/utils/balancer/contract';
 import { walletService as walletServiceInstance } from '@/services/web3/wallet.service';
 import { default as SimpleMinterAbi } from '@/lib/abi/KolektivoSimpleMinter.json';
 import { default as RFNFTAbi } from '@/lib/abi/KolektivoRNFT.json';
@@ -26,6 +26,7 @@ export type NFTData = RFNFTData & {
   imageData: string;
   id: number;
   points: number;
+  tier: number;
   isAbleToUpgrade: [boolean, bigint];
 };
 
@@ -63,30 +64,34 @@ export default class CampaignsService {
         'ownerTokenId',
         [userAddress],
       ]);
-      const currentNFTTier = await call(provider, RFNFTAbi, [
-        this.addresses.RFNFT,
-        'tokenIdTier',
-        [currentNFTId],
-      ]);
-      const currentNFTPoints = await this.getCurrentPoints(currentNFTId);
-      const currentNFT = await call(provider, RFNFTAbi, [
-        this.addresses.RFNFT,
-        'tokenURI',
-        [BigNumber.from(currentNFTId).toNumber()],
-      ]);
-      const isAbleToUpgrade = await call(provider, RFNFTAbi, [
-        this.addresses.RFNFT,
-        'canLevelUp',
-        [currentNFTId],
-      ]);
+
+      const currentNFTDataCalls = [
+        [this.addresses.RFNFT, 'tokenIdPoints', [currentNFTId]],
+        [this.addresses.RFNFT, 'tokenIdTier', [currentNFTId]],
+        [
+          this.addresses.RFNFT,
+          'tokenURI',
+          [BigNumber.from(currentNFTId).toNumber()],
+        ],
+        [this.addresses.RFNFT, 'canLevelUp', [currentNFTId]],
+      ];
+      const currentNFTDataResponses = (await multicall(
+        String(chainId),
+        provider,
+        RFNFTAbi,
+        [...currentNFTDataCalls]
+      )) as (boolean | bigint | string | number | [boolean, bigint])[];
       const NFTData: RFNFTData = await ipfsService.get(
-        currentNFT.split('ipfs://')[1]
+        (currentNFTDataResponses[2] as string).split('ipfs://')[1]
       );
       return {
         ...NFTData,
-        isAbleToUpgrade,
-        id: Number(currentNFTTier),
-        points: currentNFTPoints,
+        isAbleToUpgrade: currentNFTDataResponses[3] as [boolean, bigint],
+        id: Number(currentNFTId),
+        tier: Number(currentNFTDataResponses[1]),
+        points: parseInt(
+          formatUnits(BigNumber.from(currentNFTDataResponses[0]), 18)
+        ),
       };
     }
     return null;

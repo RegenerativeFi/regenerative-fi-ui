@@ -103,7 +103,7 @@ function handleMintNFTClose() {
             >
               <p class="text-sm">Next level</p>
               <p v-if="NFTData" class="text-sm">
-                {{ levels[NFTData?.id - 1].nextLevel }} RFP
+                {{ levels[NFTData?.tier - 1].nextLevel }} RFP
               </p>
               <p v-else class="text-sm">- RFP</p>
             </div>
@@ -171,7 +171,7 @@ function handleMintNFTClose() {
             >
               <p class="text-sm">Next level</p>
               <p v-if="NFTData" class="text-sm">
-                {{ levels[NFTData?.id - 1].nextLevel }} RFP
+                {{ levels[NFTData?.tier - 1].nextLevel }} RFP
               </p>
               <p v-else class="text-sm">- RFP</p>
             </div>
@@ -190,7 +190,7 @@ function handleMintNFTClose() {
             :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
             class="self-end w-fit"
             size="sm"
-            @click="() => UpgradeNFT(NFTData?.id as number) "
+            @click="() => UpgradeNFT(NFTData?.id as number)"
             >Upgrade</BalBtn
           >
           <BalBtn
@@ -242,7 +242,7 @@ function handleMintNFTClose() {
             >
               <p class="text-sm">Next level</p>
               <p v-if="NFTData" class="text-sm">
-                {{ levels[NFTData?.id - 1].nextLevel }} RFP
+                {{ levels[NFTData?.tier - 1].nextLevel }} RFP
               </p>
               <p v-else class="text-sm">- RFP</p>
             </div>
