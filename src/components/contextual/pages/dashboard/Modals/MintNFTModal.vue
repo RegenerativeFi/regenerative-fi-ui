@@ -43,7 +43,7 @@ function onImageLoad() {
         <h2>{{ nftData?.name }}</h2>
         <p>
           <span class="font-semibold">{{ nftData?.attributes[1].value }}</span>
-          Votes
+          Vote
         </p>
       </div>
     </div>
