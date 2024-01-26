@@ -10,6 +10,8 @@ type Props = {
   noPad?: boolean;
   noContentPad?: boolean;
   fireworks?: boolean;
+  fitContent?: boolean;
+  blockHideOnClick?: boolean;
 };
 
 /**
@@ -58,7 +60,7 @@ defineExpose({ hide });
 <template>
   <div v-if="show" class="bal-modal" role="dialog" @keyup.esc="hide">
     <transition name="overlay" appear @after-enter="showContent = true">
-      <div class="modal-bg" @click="hide">
+      <div class="modal-bg" @click="!blockHideOnClick && hide()">
         <div v-if="fireworks" class="fireworks">
           <div class="before" />
           <div class="after" />
@@ -67,7 +69,11 @@ defineExpose({ hide });
     </transition>
     <div class="content-container">
       <Transition name="modal" @after-leave="$emit('close')">
-        <div v-if="showContent" class="content">
+        <div
+          v-if="showContent"
+          :style="{ 'max-width': fitContent ? 'fit-content' : '450px' }"
+          class="content"
+        >
           <BalCard
             :title="title"
             shadow="lg"
@@ -103,7 +109,6 @@ defineExpose({ hide });
 .content {
   @apply relative w-full h-3/4 sm:h-auto max-h-screen;
 
-  max-width: 450px;
   transform-style: preserve-3d;
 }
 

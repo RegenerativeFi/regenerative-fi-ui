@@ -6,6 +6,9 @@ import useWeb3 from '@/services/web3/useWeb3';
 import UpgradeNFTModal from '../Modals/UpgradeNFTModal.vue';
 import MintNFTModal from '../Modals/MintNFTModal.vue';
 import { NFTData as TNFTData } from '@/services/campaigns/campaigns.service';
+import IsMintingNFTModal from '../Modals/IsMintingNFTModal.vue';
+import IsUpgradingNFTModal from '../Modals/IsUpgradingNFTModal.vue';
+
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
 
@@ -27,6 +30,8 @@ const hasNFT = computed(
 
 const isAbleToUpgradeNFT = computed(() => NFTData?.value?.isAbleToUpgrade[0]);
 
+const isImageLoaded = ref(false);
+
 const levels = ref([
   { nextLevel: '50', votes: 1 },
   { nextLevel: '250', votes: 10 },
@@ -41,7 +46,11 @@ const isOpenMintNFTModal = ref(false);
 watch([isRefetchingNFTData, isUpgradingNFTStatus.value], () => {
   if (!isRefetchingNFTData.value && isUpgradingNFTStatus.value.success) {
     isOpenUpgradeNFTModal.value = true;
-    isUpgradingNFTStatus.value = { loading: false, success: false };
+    isUpgradingNFTStatus.value = {
+      loading: false,
+      success: false,
+      loadingTxn: false,
+    };
   }
 });
 
@@ -49,7 +58,11 @@ watch([isRefetchingNFTData, isMintingNFTStatus.value], () => {
   console.debug(isRefetchingNFTData, isMintingNFTStatus.value.success);
   if (!isRefetchingNFTData.value && isMintingNFTStatus.value.success) {
     isOpenMintNFTModal.value = true;
-    isMintingNFTStatus.value = { loading: false, success: false };
+    isMintingNFTStatus.value = {
+      loading: false,
+      success: false,
+      loadingTxn: false,
+    };
   }
 });
 watch(NFTData, () => {
@@ -57,13 +70,19 @@ watch(NFTData, () => {
 });
 
 onMounted(() => {
-  isUpgradingNFTStatus.value = { loading: false, success: false };
+  isUpgradingNFTStatus.value = {
+    loading: false,
+    success: false,
+    loadingTxn: false,
+  };
 });
 
 function handleUpgradeNFTClose() {
+  isImageLoaded.value = false;
   isOpenUpgradeNFTModal.value = false;
 }
 function handleMintNFTClose() {
+  isImageLoaded.value = false;
   isOpenMintNFTModal.value = false;
 }
 </script>
@@ -282,6 +301,7 @@ function handleMintNFTClose() {
       :nftData="(NFTData as TNFTData)"
       :isOpenModal="isOpenUpgradeNFTModal"
       :nftImage="(nftImageSrc as string)"
+      @load="isImageLoaded = true"
       @close="handleUpgradeNFTClose"
     />
     <MintNFTModal
@@ -289,6 +309,11 @@ function handleMintNFTClose() {
       :isOpenModal="isOpenMintNFTModal"
       :nftImage="(nftImageSrc as string)"
       @close="handleMintNFTClose"
+      @load="isImageLoaded = true"
+    />
+    <IsMintingNFTModal v-if="isMintingNFTStatus.loadingTxn && !isImageLoaded" />
+    <IsUpgradingNFTModal
+      v-if="isUpgradingNFTStatus.loadingTxn && !isImageLoaded"
     />
   </teleport>
 </template>
