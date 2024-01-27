@@ -432,6 +432,7 @@ function addLaggingTimestamps() {
     ])
   );
 }
+console.debug({ tailwind });
 </script>
 
 <template>

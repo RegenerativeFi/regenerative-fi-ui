@@ -1,5 +1,5 @@
 <template>
-  <div :class="['bal-card', cardClasses]">
+  <div :class="['bal-card', cardClasses, customBgColor]">
     <div
       :class="[
         'card-container',
@@ -45,6 +45,7 @@ export default defineComponent({
     rightAlignHeader: { type: Boolean, default: false },
     exposeOverflow: { type: Boolean, default: false },
     overflowYScroll: { type: Boolean, default: false },
+    customBgColor: { type: String, default: null },
     shadow: {
       type: String,
       default: '',
@@ -73,7 +74,7 @@ export default defineComponent({
       return {
         'rounded-lg': !props.square,
         'overflow-hidden': !props.exposeOverflow,
-        ['bg-white dark:bg-[#232833]']: true,
+        [`bg-white dark:bg-gray-${props.darkBgColor}`]: !props.customBgColor,
         [`shadow${props.shadow ? '-' : ''}${props.shadow}`]: true,
         [borderClasses.value]: !props.noBorder,
         'h-full': props.hFull,

@@ -12,6 +12,7 @@ type Props = {
   fireworks?: boolean;
   fitContent?: boolean;
   blockHideOnClick?: boolean;
+  customBgColor?: string;
 };
 
 /**
@@ -75,11 +76,12 @@ defineExpose({ hide });
           class="content"
         >
           <BalCard
+            :customBgColor="customBgColor"
             :title="title"
             shadow="lg"
             :noPad="noPad"
             :noContentPad="noContentPad"
-            class="modal-card"
+            class="bg-refi-gray modal-card"
             noBorder
             overflowYScroll
           >

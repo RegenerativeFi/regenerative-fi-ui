@@ -192,6 +192,7 @@ module.exports = {
         complementary: '#7B7B7B',
         'complementary-b': '#B6C7D6',
         'pill-light': '#E7F4FF',
+        'refi-gray': '#232833',
       },
     },
   },
