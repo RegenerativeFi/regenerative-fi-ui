@@ -18,7 +18,7 @@ const config: Config = {
   network: 'polygon',
   trustWalletNetwork: 'polygon',
   unknown: false,
-  visibleInUI: true,
+  visibleInUI: false,
   testNetwork: false,
   rpc: `https://celo-alfajores.infura.io/v3/${keys.infura}`,
   ws: ``,

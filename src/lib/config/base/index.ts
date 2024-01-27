@@ -18,7 +18,7 @@ const config: Config = {
   network: 'base',
   trustWalletNetwork: 'base',
   unknown: false,
-  visibleInUI: true,
+  visibleInUI: false,
   testNetwork: false,
   rpc: `https://base-mainnet.g.alchemy.com/v2/${keys.alchemy}`,
   ws: ``,

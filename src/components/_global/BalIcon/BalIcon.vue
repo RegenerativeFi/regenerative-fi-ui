@@ -8,6 +8,7 @@ type Props = {
   name: string;
   size?: IconSize;
   filled?: boolean;
+  strokeColor?: string;
 };
 
 /**
@@ -39,6 +40,9 @@ const iconSize = computed(() => {
 });
 
 const fill = computed(() => (props.filled ? 'currentColor' : 'none'));
+const stroke = computed(() =>
+  props.strokeColor ? props.strokeColor : 'currentColor'
+);
 
 /**
  * LIFECYCLE
@@ -51,6 +55,12 @@ onMounted(async () => {
 
 <template>
   <div class="inline-block bal-icon">
-    <i :data-feather="name" :width="iconSize" :height="iconSize" :fill="fill" />
+    <i
+      :data-feather="name"
+      :stroke="stroke"
+      :width="iconSize"
+      :height="iconSize"
+      :fill="fill"
+    />
   </div>
 </template>
