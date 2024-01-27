@@ -27,14 +27,6 @@ const hasNFT = computed(
 
 const isAbleToUpgradeNFT = computed(() => NFTData?.value?.isAbleToUpgrade[0]);
 
-const levels = ref([
-  { nextLevel: '50', votes: 1 },
-  { nextLevel: '250', votes: 10 },
-  { nextLevel: '1000', votes: 30 },
-  { nextLevel: '2500', votes: 75 },
-  { nextLevel: '5000', votes: 150 },
-  { nextLevel: 'MAX', votes: 250 },
-]);
 const isOpenUpgradeNFTModal = ref(false);
 const isOpenMintNFTModal = ref(false);
 
@@ -103,7 +95,7 @@ function handleMintNFTClose() {
             >
               <p class="text-sm">Next level</p>
               <p v-if="NFTData" class="text-sm">
-                {{ levels[NFTData?.tier - 1].nextLevel }} RFP
+                {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
               </p>
               <p v-else class="text-sm">- RFP</p>
             </div>
@@ -171,7 +163,7 @@ function handleMintNFTClose() {
             >
               <p class="text-sm">Next level</p>
               <p v-if="NFTData" class="text-sm">
-                {{ levels[NFTData?.tier - 1].nextLevel }} RFP
+                {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
               </p>
               <p v-else class="text-sm">- RFP</p>
             </div>
@@ -242,7 +234,7 @@ function handleMintNFTClose() {
             >
               <p class="text-sm">Next level</p>
               <p v-if="NFTData" class="text-sm">
-                {{ levels[NFTData?.tier - 1].nextLevel }} RFP
+                {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
               </p>
               <p v-else class="text-sm">- RFP</p>
             </div>
