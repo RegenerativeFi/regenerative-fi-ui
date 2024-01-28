@@ -47,8 +47,8 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
-          Voting Power. Each Monday at 12:00 CET weekly snapshots are taken and
-          rewards are allocated.
+          Voting Power. Each Wednesday at 29:59 UTC weekly snapshots are taken
+          and rewards are allocated.
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
@@ -115,8 +115,8 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
-          Voting Power. Each Monday at 12:00 CET weekly snapshots are taken and
-          rewards are allocated.
+          Voting Power. Each Wednesday at 29:59 UTC weekly snapshots are taken
+          and rewards are allocated.
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
@@ -185,8 +185,8 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
-          Voting Power. Each Monday at 12:00 CET weekly snapshots are taken and
-          rewards are allocated.
+          Voting Power. Each Wednesday at 29:59 UTC weekly snapshots are taken
+          and rewards are allocated.
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
