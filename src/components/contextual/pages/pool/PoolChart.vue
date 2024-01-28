@@ -205,7 +205,7 @@ function getTVLData(periodSnapshots: PoolSnapshot[]) {
   }
 
   return {
-    color: ['#0468BE'],
+    color: tailwind.theme.colors['pool-tvl'],
     hoverBorderColor: tailwind.theme.colors.blue['700'],
     hoverColor: darkMode.value
       ? tailwind.theme.colors.gray['900']
@@ -276,9 +276,9 @@ function getFeesData(
       : Number(periodSnapshots[pariodLastSnapshotIdx].swapFees));
 
   return {
-    color: ['#AADA22'],
+    color: tailwind.theme.colors['pool-fees'],
     chartType: 'bar',
-    hoverColor: '#94be1d',
+    hoverColor: tailwind.theme.colors.green['600'],
     data: [
       {
         name: 'Fees',
@@ -326,9 +326,9 @@ function getVolumeData(
       : Number(periodSnapshots[pariodLastSnapshotIdx].swapVolume));
 
   return {
-    color: ['#FF877E'],
+    color: tailwind.theme.colors['pool-volume'],
     chartType: 'bar',
-    hoverColor: '#fe5a4e',
+    hoverColor: tailwind.theme.colors.red['600'],
     data: [
       {
         name: 'Volume',
@@ -432,7 +432,7 @@ function addLaggingTimestamps() {
     ])
   );
 }
-console.debug({ tailwind });
+console.debug('tailwind', tailwind.theme.colors);
 </script>
 
 <template>
