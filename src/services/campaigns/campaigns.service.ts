@@ -28,6 +28,7 @@ export type NFTData = RFNFTData & {
   points: number;
   tier: number;
   isAbleToUpgrade: [boolean, bigint];
+  tresholds: number[];
 };
 
 export default class CampaignsService {
@@ -74,6 +75,7 @@ export default class CampaignsService {
           [BigNumber.from(currentNFTId).toNumber()],
         ],
         [this.addresses.RFNFT, 'canLevelUp', [currentNFTId]],
+        [this.addresses.RFNFT, 'getTierThresholds'],
       ];
       const currentNFTDataResponses = (await multicall(
         String(chainId),
@@ -91,6 +93,9 @@ export default class CampaignsService {
         tier: Number(currentNFTDataResponses[1]),
         points: parseInt(
           formatUnits(BigNumber.from(currentNFTDataResponses[0]), 18)
+        ),
+        tresholds: (currentNFTDataResponses[4] as bigint[]).map(treshold =>
+          parseInt(formatUnits(BigNumber.from(treshold), 18))
         ),
       };
     }
