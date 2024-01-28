@@ -432,7 +432,6 @@ function addLaggingTimestamps() {
     ])
   );
 }
-console.debug('tailwind', tailwind.theme.colors);
 </script>
 
 <template>
