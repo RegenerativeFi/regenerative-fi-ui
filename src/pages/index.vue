@@ -15,8 +15,7 @@ import { PoolType } from '@/services/pool/types';
 import PoolFeatureSelect from '@/components/inputs/PoolFeatureSelect.vue';
 import { useTokens } from '@/providers/tokens.provider';
 import { PoolAttributeFilter, PoolTypeFilter } from '@/types/pools';
-import usePoolsVolumeQuery from '@/composables/queries/usePoolsVolumeQuery';
-import useNumbers from '@/composables/useNumbers';
+import HomePageHero from '@/components/heros/HomePageHero.vue';
 
 const featuredProtocolsSentinel = ref<HTMLDivElement | null>(null);
 const isFeaturedProtocolsVisible = ref(false);
@@ -30,8 +29,7 @@ useIntersectionObserver(featuredProtocolsSentinel, ([{ isIntersecting }]) => {
  * STATE
  */
 const route = useRoute();
-const { data: poolsVolumes, isLoading: isPoolsVolumesLoading } =
-  usePoolsVolumeQuery();
+
 const urlSortParam = route.query?.sort as string | undefined;
 const initSortCol =
   urlSortParam || lsGet(LS_KEYS.App.PoolSorting) || 'totalLiquidity';
@@ -45,8 +43,7 @@ const filterPoolAttributes = ref<PoolAttributeFilter[]>([]);
  * COMPOSABLES
  */
 const router = useRouter();
-const { toFiatLabel } = useNumbers();
-const { getToken } = useTokens();
+const { getToken, activeTokenListTokens } = useTokens();
 const { appNetworkConfig } = useNetwork();
 const isElementSupported = appNetworkConfig.supportsElementPools;
 const { selectedTokens, addSelectedToken, removeSelectedToken } =
@@ -64,6 +61,9 @@ const { upToSmallBreakpoint } = useBreakpoints();
 const { networkSlug, networkConfig } = useNetwork();
 
 const isPaginated = computed(() => pools.value.length >= 10);
+const currentTokensAmount = computed(
+  () => Object.keys(activeTokenListTokens.value).length
+);
 
 /**
  * METHODS
@@ -118,70 +118,7 @@ watch(poolTypeFilter, newPoolTypeFilter => {
 
 <template>
   <div>
-    <div class="xl:container xl:px-4 pt-10 md:pt-8 xl:mx-auto">
-      <div class="flex flex-col lg:flex-row gap-4">
-        <BalCard exposeOverflow>
-          <div class="flex flex-col gap-4">
-            <div class="flex flex-row gap-4 justify-center items-center">
-              <div
-                class="py-2 px-3 w-full rounded-md border dark:border-gray-900 shadow-xl"
-              >
-                <h4
-                  v-if="isPoolsVolumesLoading"
-                  class="w-full text-base font-medium whitespace-nowrap"
-                >
-                  TVL: ~$ --
-                </h4>
-                <h4
-                  v-else
-                  class="w-full text-base font-medium whitespace-nowrap"
-                >
-                  TVL: ~{{ toFiatLabel(poolsVolumes?.totalLiquidity) }}
-                </h4>
-              </div>
-              <div
-                class="py-2 px-3 w-full rounded-md border dark:border-gray-900 shadow-xl"
-              >
-                <h4
-                  v-if="isPoolsVolumesLoading"
-                  class="w-full text-base font-medium whitespace-nowrap"
-                >
-                  Volume: ~$ --
-                </h4>
-                <h4
-                  v-else
-                  class="w-full text-base font-medium whitespace-nowrap"
-                >
-                  Volume: ~{{ toFiatLabel(poolsVolumes?.totalVolume) }}
-                </h4>
-              </div>
-            </div>
-            <p>
-              There are currently 25 tokens listed.
-              <a class="underline underline-offset-2" href="#"
-                >View all tokens</a
-              >
-              or
-              <a class="underline underline-offset-2" href="#">
-                request a new token listing.
-              </a>
-            </p>
-          </div>
-        </BalCard>
-        <BalCard growContent>
-          <div class="flex flex-col justify-between items-start w-full h-full">
-            <h4>How pools function</h4>
-            <p>
-              Liquidity Providers add It is a long established fact that a
-              reader will be distracted by the readable content of a page when
-              looking at its layout. The point of using Lorem Ipsum is that it
-              has.
-            </p>
-            <a class="underline underline-offset-2" href="#">Learn more</a>
-          </div>
-        </BalCard>
-      </div>
-    </div>
+    <HomePageHero :tokensAmount="currentTokensAmount" />
     <div class="xl:container xl:px-4 pt-10 md:pt-8 xl:mx-auto">
       <!-- <UserInvestedInAffectedPoolAlert /> -->
       <BalStack vertical>
