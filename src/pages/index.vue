@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 
-import HomePageHero from '@/components/heros/HomePageHero.vue';
 import TokenSearchInput from '@/components/inputs/TokenSearchInput.vue';
 import FeaturedProtocols from '@/components/sections/FeaturedProtocols.vue';
 import PoolsTable from '@/components/tables/PoolsTable/PoolsTable.vue';
@@ -110,11 +109,58 @@ function removeAttributeFilter(attribute: PoolAttributeFilter) {
 watch(poolTypeFilter, newPoolTypeFilter => {
   updatePoolFilters(newPoolTypeFilter);
 });
+
+const dummy = '12,900,211';
 </script>
 
 <template>
   <div>
-    <HomePageHero />
+    <div class="xl:container xl:px-4 pt-10 md:pt-8 xl:mx-auto">
+      <div class="flex flex-col lg:flex-row gap-4">
+        <BalCard exposeOverflow>
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-row gap-4 justify-center items-center">
+              <div
+                class="py-2 px-3 rounded-md border dark:border-gray-900 shadow-xl w-fit"
+              >
+                <h4 class="w-full text-base font-medium whitespace-nowrap">
+                  TVL: ~${{ dummy }}
+                </h4>
+              </div>
+              <div
+                class="py-2 px-3 rounded-md border dark:border-gray-900 shadow-xl w-fit"
+              >
+                <h4 class="w-full text-base font-medium whitespace-nowrap">
+                  Volume: ~${{ dummy }}
+                </h4>
+              </div>
+            </div>
+            <p>
+              There are currently 25 tokens listed.
+              <a class="underline underline-offset-2" href="#"
+                >View all tokens</a
+              >
+              or
+              <a class="underline underline-offset-2" href="#">
+                request a new token listing.
+              </a>
+            </p>
+          </div>
+        </BalCard>
+        <BalCard growContent>
+          <div class="flex flex-col justify-between items-start w-full h-full">
+            <h4>How pools function</h4>
+            <p>
+              Liquidity Providers add It is a long established fact that a
+              reader will be distracted by the readable content of a page when
+              looking at its layout. The point of using Lorem Ipsum is that it
+              has.
+            </p>
+            <a class="underline underline-offset-2" href="#">Learn more</a>
+          </div>
+        </BalCard>
+      </div>
+    </div>
     <div class="xl:container xl:px-4 pt-10 md:pt-8 xl:mx-auto">
       <!-- <UserInvestedInAffectedPoolAlert /> -->
       <BalStack vertical>
