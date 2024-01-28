@@ -23,7 +23,7 @@ export interface NetworkOption {
 // COMPOSABLES
 const { upToLargeBreakpoint } = useBreakpoints();
 const { networkId, networkConfig } = useNetwork();
-const { chainId } = useWeb3();
+const { chainId, isWalletReady, connectToAppNetwork } = useWeb3();
 const router = useRouter();
 const { addNotification } = useNotifications();
 const { t } = useI18n();
@@ -128,60 +128,43 @@ function isActive(network: NetworkOption): boolean {
   if (!appNetworkSupported.value && network.id === 'ethereum') return true;
   return networkId.value.toString() === network.key;
 }
+const shouldShowButton = computed(() => {
+  return !isWalletReady.value || chainId.value === networkId.value;
+});
+
+function handleChangeIncorrectNetwork() {
+  connectToAppNetwork();
+}
 </script>
 
 <template>
-  <BalPopover noPad>
-    <template #activator>
-      <BalBtn color="white" :size="upToLargeBreakpoint ? 'md' : 'sm'">
-        <template v-if="activeNetwork">
-          <img
-            :src="buildNetworkIconURL(activeNetwork.id)"
-            :alt="activeNetwork.name"
-            class="w-6 h-6 rounded-full"
-          />
-          <span class="ml-2">
-            {{ activeNetwork.name }}
-          </span>
-          <BalIcon name="chevron-down" size="sm" class="ml-2" />
-        </template>
-      </BalBtn>
-    </template>
-    <div role="menu" class="flex overflow-hidden flex-col w-56 rounded-lg">
-      <div
-        class="py-2 px-3 text-sm font-medium text-gray-500 whitespace-nowrap bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-900"
-      >
-        {{ $t('networkSelection') }}:
-      </div>
-      <a
-        v-for="network in allNetworks"
-        :key="network.id"
-        :href="getNetworkChangeUrl(network)"
-        class="flex justify-between items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-850 cursor-pointer"
-      >
-        <div class="flex items-center">
-          <img
-            :src="buildNetworkIconURL(network.id)"
-            :alt="network.name"
-            class="mr-2 w-6 h-6 rounded-full"
-          />
-          <span class="overflow-x-hidden ml-1 max-w-full font-medium">
-            {{ network.name }}
-          </span>
-
-          <!-- Save for new networks in future -->
-          <span
-            v-if="false"
-            class="py-0.5 px-1 ml-1.5 text-xs font-medium dark:text-black uppercase bg-yellow-500 rounded"
-            >{{ $t('new') }}
-          </span>
-        </div>
-        <BalIcon
-          v-if="isActive(network)"
-          name="check"
-          class="text-blue-500 dark:text-blue-400"
+  <template v-if="shouldShowButton">
+    <BalBtn color="white" :size="upToLargeBreakpoint ? 'md' : 'sm'">
+      <template v-if="activeNetwork">
+        <img
+          :src="buildNetworkIconURL(activeNetwork.id)"
+          :alt="activeNetwork.name"
+          class="w-6 h-6 rounded-full"
         />
-      </a>
-    </div>
-  </BalPopover>
+        <span class="ml-2">
+          {{ activeNetwork.name }}
+        </span>
+      </template>
+    </BalBtn>
+  </template>
+  <template v-else>
+    <BalBtn
+      color="alert"
+      :size="upToLargeBreakpoint ? 'md' : 'sm'"
+      @click="handleChangeIncorrectNetwork"
+    >
+      <BalIcon
+        strokeColor="#EC4343"
+        class="ml-1"
+        name="alert-triangle"
+        size="sm"
+      />
+      <span class="ml-2"> Switch network </span>
+    </BalBtn>
+  </template>
 </template>

@@ -42,7 +42,8 @@ type Props = {
     | 'blue'
     | 'yellow'
     | 'black'
-    | 'transparent';
+    | 'transparent'
+    | 'alert';
   label?: string;
   block?: boolean;
   circle?: boolean;
@@ -142,6 +143,8 @@ const bgColorClasses = computed(() => {
   else if (props.flat) return bgFlatClasses.value;
   else if (props.color === 'white') {
     return 'bg-white hover:bg-transparent dark:bg-gray-800';
+  } else if (props.color === 'alert') {
+    return 'bg-red-300/10  hover:bg-red-600/10 dark:bg-red-500/10 dark:hover:bg-red-600/10 text-black dark:text-white';
   } else {
     if (props.disabled) {
       return `bg-gray-300 dark:bg-gray-700 text-white dark:text-gray-500`;

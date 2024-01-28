@@ -8,12 +8,12 @@ type Props = {
 };
 
 const WeeklyTiers = [
-  { level: 1, volume: 0, points: 0 },
-  { level: 2, volume: 5, points: 5 },
-  { level: 3, volume: 250, points: 10 },
-  { level: 4, volume: 1000, points: 20 },
-  { level: 5, volume: 2500, points: 35 },
-  { level: 6, volume: 5000, points: 50 },
+  { level: 0, volume: 0, points: 0 },
+  { level: 1, volume: 50, points: 5 },
+  { level: 2, volume: 250, points: 10 },
+  { level: 3, volume: 1000, points: 20 },
+  { level: 4, volume: 2500, points: 35 },
+  { level: 5, volume: 5000, points: 50 },
 ];
 const currentWeeklyTier = computed(() => {
   const currentTier = WeeklyTiers.find(
@@ -47,8 +47,8 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
-          Voting Power. Each Monday at 12:00 CET weekly snapshots are taken and
-          rewards are allocated.
+          Voting Power. Each Wednesday at 29:59 UTC weekly snapshots are taken
+          and rewards are allocated.
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
@@ -115,8 +115,8 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
-          Voting Power. Each Monday at 12:00 CET weekly snapshots are taken and
-          rewards are allocated.
+          Voting Power. Each Wednesday at 29:59 UTC weekly snapshots are taken
+          and rewards are allocated.
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
@@ -185,8 +185,8 @@ const { isMobile, upToSmallBreakpoint } = useBreakpoints();
             Early Growth Campaign</a
           >
           by trading each week to level up your ReFi Profile and earn more
-          Voting Power. Each Monday at 12:00 CET weekly snapshots are taken and
-          rewards are allocated.
+          Voting Power. Each Wednesday at 29:59 UTC weekly snapshots are taken
+          and rewards are allocated.
         </p>
         <div class="flex flex-row gap-5 w-full">
           <div
