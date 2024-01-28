@@ -89,6 +89,15 @@ module.exports = {
         'refi-text': '#0468be',
         'refi-text-dark': '#1490FA',
         'light-blue': '#05DBF3',
+        'pool-fees': '#AADA22',
+        'pool-tvl': '#0468BE',
+        'pool-volume': '#FF877E',
+        disabled: '#9F9F9F',
+        complementary: '#7B7B7B',
+        'complementary-b': '#B6C7D6',
+        'pill-light': '#E7F4FF',
+        'refi-gray': '#232833',
+
         container: '#F3FAFF',
         primary: {
           50: '#53555e',
@@ -187,11 +196,6 @@ module.exports = {
           800: '#92400e',
           900: '#78350f',
         },
-        // TODO: Make a proper names for these colors
-        disabled: '#9F9F9F',
-        complementary: '#7B7B7B',
-        'complementary-b': '#B6C7D6',
-        'pill-light': '#E7F4FF',
       },
     },
   },

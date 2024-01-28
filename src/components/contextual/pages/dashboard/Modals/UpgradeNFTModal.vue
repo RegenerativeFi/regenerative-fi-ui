@@ -6,7 +6,7 @@ type Props = {
   nftImage: string;
 };
 const props = defineProps<Props>();
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'load']);
 
 const { isOpenModal, nftImage, nftData } = toRefs(props);
 const showFireworks = ref(false);
@@ -18,6 +18,7 @@ const handleCloseModal = () => {
 
 const isImageLoaded = ref(false);
 function onImageLoad() {
+  emit('load');
   isImageLoaded.value = true;
 }
 </script>

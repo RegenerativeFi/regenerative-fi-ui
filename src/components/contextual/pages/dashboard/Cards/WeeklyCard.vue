@@ -8,12 +8,12 @@ type Props = {
 };
 
 const WeeklyTiers = [
-  { level: 1, volume: 0, points: 0 },
-  { level: 2, volume: 5, points: 5 },
-  { level: 3, volume: 250, points: 10 },
-  { level: 4, volume: 1000, points: 20 },
-  { level: 5, volume: 2500, points: 35 },
-  { level: 6, volume: 5000, points: 50 },
+  { level: 0, volume: 0, points: 0 },
+  { level: 1, volume: 50, points: 5 },
+  { level: 2, volume: 250, points: 10 },
+  { level: 3, volume: 1000, points: 20 },
+  { level: 4, volume: 2500, points: 35 },
+  { level: 5, volume: 5000, points: 50 },
 ];
 const currentWeeklyTier = computed(() => {
   const currentTier = WeeklyTiers.find(

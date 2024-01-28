@@ -34,7 +34,7 @@ const config: Config = {
     gauge: '',
     blocks: '',
   },
-  bridgeUrl: 'https://optics.app/',
+  bridgeUrl: 'https://portalbridge.com/',
   supportsEIP1559: false,
   supportsElementPools: false,
   blockTime: 5,

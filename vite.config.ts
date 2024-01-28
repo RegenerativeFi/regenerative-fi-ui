@@ -146,7 +146,6 @@ export default defineConfig(({ mode }) => {
         // Allows to import tailwind.config.js from useTailwind.ts
         // Check: https://github.com/tailwindlabs/tailwindcss.com/issues/765
         include: [
-          'tailwind.config.js',
           'button-options',
           'node_modules/**',
           'src/components/_global/BalBtn/button-options.js',
