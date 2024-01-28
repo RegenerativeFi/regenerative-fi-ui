@@ -15,6 +15,8 @@ import { PoolType } from '@/services/pool/types';
 import PoolFeatureSelect from '@/components/inputs/PoolFeatureSelect.vue';
 import { useTokens } from '@/providers/tokens.provider';
 import { PoolAttributeFilter, PoolTypeFilter } from '@/types/pools';
+import usePoolsVolumeQuery from '@/composables/queries/usePoolsVolumeQuery';
+import useNumbers from '@/composables/useNumbers';
 
 const featuredProtocolsSentinel = ref<HTMLDivElement | null>(null);
 const isFeaturedProtocolsVisible = ref(false);
@@ -28,6 +30,8 @@ useIntersectionObserver(featuredProtocolsSentinel, ([{ isIntersecting }]) => {
  * STATE
  */
 const route = useRoute();
+const { data: poolsVolumes, isLoading: isPoolsVolumesLoading } =
+  usePoolsVolumeQuery();
 const urlSortParam = route.query?.sort as string | undefined;
 const initSortCol =
   urlSortParam || lsGet(LS_KEYS.App.PoolSorting) || 'totalLiquidity';
@@ -41,6 +45,7 @@ const filterPoolAttributes = ref<PoolAttributeFilter[]>([]);
  * COMPOSABLES
  */
 const router = useRouter();
+const { toFiatLabel } = useNumbers();
 const { getToken } = useTokens();
 const { appNetworkConfig } = useNetwork();
 const isElementSupported = appNetworkConfig.supportsElementPools;
@@ -109,8 +114,6 @@ function removeAttributeFilter(attribute: PoolAttributeFilter) {
 watch(poolTypeFilter, newPoolTypeFilter => {
   updatePoolFilters(newPoolTypeFilter);
 });
-
-const dummy = '12,900,211';
 </script>
 
 <template>
@@ -121,17 +124,35 @@ const dummy = '12,900,211';
           <div class="flex flex-col gap-4">
             <div class="flex flex-row gap-4 justify-center items-center">
               <div
-                class="py-2 px-3 rounded-md border dark:border-gray-900 shadow-xl w-fit"
+                class="py-2 px-3 w-full rounded-md border dark:border-gray-900 shadow-xl"
               >
-                <h4 class="w-full text-base font-medium whitespace-nowrap">
-                  TVL: ~${{ dummy }}
+                <h4
+                  v-if="isPoolsVolumesLoading"
+                  class="w-full text-base font-medium whitespace-nowrap"
+                >
+                  TVL: ~$ --
+                </h4>
+                <h4
+                  v-else
+                  class="w-full text-base font-medium whitespace-nowrap"
+                >
+                  TVL: ~{{ toFiatLabel(poolsVolumes?.totalLiquidity) }}
                 </h4>
               </div>
               <div
-                class="py-2 px-3 rounded-md border dark:border-gray-900 shadow-xl w-fit"
+                class="py-2 px-3 w-full rounded-md border dark:border-gray-900 shadow-xl"
               >
-                <h4 class="w-full text-base font-medium whitespace-nowrap">
-                  Volume: ~${{ dummy }}
+                <h4
+                  v-if="isPoolsVolumesLoading"
+                  class="w-full text-base font-medium whitespace-nowrap"
+                >
+                  Volume: ~$ --
+                </h4>
+                <h4
+                  v-else
+                  class="w-full text-base font-medium whitespace-nowrap"
+                >
+                  Volume: ~{{ toFiatLabel(poolsVolumes?.totalVolume) }}
                 </h4>
               </div>
             </div>
