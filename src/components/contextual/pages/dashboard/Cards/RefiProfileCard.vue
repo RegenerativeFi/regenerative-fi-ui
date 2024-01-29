@@ -8,6 +8,7 @@ import MintNFTModal from '../Modals/MintNFTModal.vue';
 import { NFTData as TNFTData } from '@/services/campaigns/campaigns.service';
 import IsMintingNFTModal from '../Modals/IsMintingNFTModal.vue';
 import IsUpgradingNFTModal from '../Modals/IsUpgradingNFTModal.vue';
+import { ref, computed, watch } from 'vue';
 
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
