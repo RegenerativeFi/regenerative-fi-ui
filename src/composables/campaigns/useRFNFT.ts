@@ -14,10 +14,12 @@ export function useRFNFT() {
   const isMintingNFTStatus = ref({
     loading: false,
     success: false,
+    loadingTxn: false,
   });
   const isUpgradingNFTStatus = ref({
     loading: false,
     success: false,
+    loadingTxn: false,
   });
   const fetchNFTImage = async (ipfsHash: string) => {
     const imageUrl = `https://${
@@ -81,11 +83,13 @@ export function useRFNFT() {
         action: 'mintNFT',
         summary: 'Regenerative Finance NFT',
       });
+      isMintingNFTStatus.value.loadingTxn = true;
       await txResponse.wait();
       refetch();
       isMintingNFTStatus.value = {
         success: true,
         loading: false,
+        loadingTxn: false,
       };
     } catch (error) {
       console.error('Error minting NFT:', error);
@@ -98,6 +102,7 @@ export function useRFNFT() {
       isMintingNFTStatus.value = {
         ...isMintingNFTStatus.value,
         loading: false,
+        loadingTxn: false,
       };
     }
   };
@@ -106,6 +111,7 @@ export function useRFNFT() {
     isUpgradingNFTStatus.value = {
       loading: true,
       success: false,
+      loadingTxn: false,
     };
     try {
       const txResponse = await campaignsService.upgradeNFT(currentNFTId);
@@ -115,11 +121,13 @@ export function useRFNFT() {
         action: 'upgradeNFT',
         summary: 'Regenerative Finance NFT',
       });
+      isUpgradingNFTStatus.value.loadingTxn = true;
       await txResponse.wait();
       refetch();
       isUpgradingNFTStatus.value = {
         loading: false,
         success: true,
+        loadingTxn: false,
       };
     } catch (error) {
       console.error('Error upgrading NFT:', error);
@@ -132,6 +140,7 @@ export function useRFNFT() {
       isUpgradingNFTStatus.value = {
         ...isUpgradingNFTStatus.value,
         loading: false,
+        loadingTxn: false,
       };
     }
   };

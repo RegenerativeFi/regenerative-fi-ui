@@ -8,6 +8,7 @@ import PoolSnapshots from './entities/poolSnapshots';
 import PoolSwaps from './entities/poolSwaps';
 import TradePairSnapshots from './entities/swapPairs';
 import userSwaps from './entities/userSwaps';
+import balancers from './entities/balancers';
 
 export default class BalancerSubgraphService {
   pools: Pools;
@@ -17,12 +18,13 @@ export default class BalancerSubgraphService {
   poolSnapshots: PoolSnapshots;
   tradePairSnapshots: TradePairSnapshots;
   userSwaps: userSwaps;
+  balancers: balancers;
 
   constructor(
     readonly client = balancerSubgraphClient,
     readonly rpcProviderService = _rpcProviderService
   ) {
-    // Init entities
+    // Init entitiesp
     this.pools = new Pools(this);
     this.poolShares = new PoolShares(this);
     this.poolActivities = new PoolActivities(this);
@@ -30,6 +32,7 @@ export default class BalancerSubgraphService {
     this.poolSnapshots = new PoolSnapshots(this);
     this.tradePairSnapshots = new TradePairSnapshots(this);
     this.userSwaps = new userSwaps(this);
+    this.balancers = new balancers(this);
   }
 }
 

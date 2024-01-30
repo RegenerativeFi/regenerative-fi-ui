@@ -1,16 +1,73 @@
 <script lang="ts" setup>
-import AppHero from '@/components/heros/AppHero.vue';
+import usePoolsVolumeQuery from '@/composables/queries/usePoolsVolumeQuery';
+import useNumbers from '@/composables/useNumbers';
+
+const { data: poolsVolumes, isLoading: isPoolsVolumesLoading } =
+  usePoolsVolumeQuery();
+const { toFiatLabel } = useNumbers();
+type Props = {
+  tokensAmount: number;
+};
+
+defineProps<Props>();
 </script>
 
-<template>
-  <AppHero class="h-44">
-    <h1 class="headline" v-text="$t('defiLiquidityPools')" />
-    <p class="mt-2 text-xl text-white" v-text="$t('builtOnBalancer')" />
-  </AppHero>
-</template>
 
-<style>
-.headline {
-  @apply text-white text-center text-4xl md:text-5xl pb-2 font-display font-normal;
-}
-</style>
+
+<template>
+  <div class="xl:container xl:px-4 pt-10 md:pt-8 xl:mx-auto">
+    <div class="flex flex-col lg:flex-row gap-4">
+      <BalCard exposeOverflow>
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-row gap-4 justify-center items-center">
+            <div
+              class="py-2 px-3 w-full rounded-md border dark:border-gray-900 shadow-xl"
+            >
+              <h4
+                v-if="isPoolsVolumesLoading"
+                class="w-full text-base font-medium whitespace-nowrap"
+              >
+                TVL: ~$ --
+              </h4>
+              <h4 v-else class="w-full text-base font-medium whitespace-nowrap">
+                TVL: ~{{ toFiatLabel(poolsVolumes?.totalLiquidity) }}
+              </h4>
+            </div>
+            <div
+              class="py-2 px-3 w-full rounded-md border dark:border-gray-900 shadow-xl"
+            >
+              <h4
+                v-if="isPoolsVolumesLoading"
+                class="w-full text-base font-medium whitespace-nowrap"
+              >
+                Volume: ~$ --
+              </h4>
+              <h4 v-else class="w-full text-base font-medium whitespace-nowrap">
+                Volume: ~{{ toFiatLabel(poolsVolumes?.totalVolume) }}
+              </h4>
+            </div>
+          </div>
+          <p>
+            There are currently {{ tokensAmount }} tokens listed.
+            <a class="underline underline-offset-2" href="#">View all tokens</a>
+            or
+            <a class="underline underline-offset-2" href="#">
+              request a new token listing.
+            </a>
+          </p>
+        </div>
+      </BalCard>
+      <BalCard growContent>
+        <div class="flex flex-col justify-between items-start w-full h-full">
+          <h4>How pools function</h4>
+          <p>
+            Liquidity Providers add It is a long established fact that a reader
+            will be distracted by the readable content of a page when looking at
+            its layout. The point of using Lorem Ipsum is that it has.
+          </p>
+          <a class="underline underline-offset-2" href="#">Learn more</a>
+        </div>
+      </BalCard>
+    </div>
+  </div>
+</template>

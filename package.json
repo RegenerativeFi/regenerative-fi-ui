@@ -174,5 +174,8 @@
     "*.{css,vue}": "stylelint --fix"
   },
   "license": "MIT",
-  "repository": "balancer/frontend-v2"
+  "repository": "balancer/frontend-v2",
+  "dependencies": {
+    "vue3-lottie": "^3.2.0"
+  }
 }
