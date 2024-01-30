@@ -129,7 +129,7 @@ export default defineComponent({
 }
 
 .card-container {
-  @apply flex flex-col;
+  @apply flex flex-col h-full;
 }
 
 .card-container::-webkit-scrollbar {
