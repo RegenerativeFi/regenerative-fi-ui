@@ -1,21 +1,23 @@
 export const EXTERNAL_LINKS = {
-  Balancer: {
+  RegenerativeFI: {
     Home: 'https://balancer.fi',
     Analytics: 'https://dune.com/balancer',
     BalForGas:
       'https://docs.balancer.finance/core-concepts/bal-balancer-governance-token/bal-for-gas',
     BugBounty: 'https://immunefi.com/bounty/balancer/',
-    Docs: 'https://docs.balancer.fi',
-    Forum: 'https://forum.balancer.finance/',
+    Docs: 'https://docs.regenerative.fi',
+    Support: 'mailto:support@regenerative.fi',
+    Forum: 'https://forum.regenerative.fi',
     Grants: 'http://grants.balancer.community/',
     Placeholder: 'https://placeholder.vc/',
     Social: {
+      Telegram: 'https://t.me/+dXJ4yLh-ZQ1kNTU0',
       Discord: 'https://discord.balancer.fi',
-      Github: 'https://github.com/balancer-labs/',
-      Mail: 'mailto:contact@balancer.finance',
+      Github: 'https://github.com/RegenerativeFi',
+      Mail: 'mailto:hi@regenerative.fi',
       Medium: 'https://medium.com/balancer-protocol',
-      Linkedin: 'https://www.linkedin.com/company/balancer-labs/',
-      Twitter: 'https://twitter.com/BalancerLabs',
+      Linkedin: 'https://www.linkedin.com/company/regenerativefi/',
+      Twitter: 'https://twitter.com/RegenerativeFi',
       Youtube: 'https://www.youtube.com/channel/UCBRHug6Hu3nmbxwVMt8x_Ow',
     },
     Vote: 'https://vote.balancer.finance/',

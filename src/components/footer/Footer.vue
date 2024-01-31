@@ -76,16 +76,23 @@ const { openNpsModal } = useAppzi();
 
           <div class="flex flex-wrap md:order-3 gap-3 md:gap-4">
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Docs"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Docs"
               external
               noStyle
               class="group link link--external"
             >
               {{ $t('docs') }}
             </BalLink>
-
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Forum"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Docs"
+              external
+              noStyle
+              class="group link link--external"
+            >
+              {{ $t('support') }}
+            </BalLink>
+            <BalLink
+              :href="EXTERNAL_LINKS.RegenerativeFI.Forum"
               external
               noStyle
               class="group link link--external"
@@ -94,7 +101,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
               external
               noStyle
               class="group link link--external"
@@ -103,7 +110,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
               external
               noStyle
               class="group link link--external"
@@ -112,7 +119,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
               external
               noStyle
               class="group link link--external"
@@ -126,35 +133,35 @@ const { openNpsModal } = useAppzi();
             <div class="flex lg:flex-col md:justify-end">
               <div class="flex gap-3 md:justify-end">
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Twitter"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Twitter"
                   external
                   noStyle
                 >
                   <IconTwitter />
                 </BalLink>
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Medium"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Telegram"
                   external
                   noStyle
                 >
                   <IconTelegram />
                 </BalLink>
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Github"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Github"
                   external
                   noStyle
                 >
                   <IconGithub />
                 </BalLink>
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Linkedin"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Linkedin"
                   external
                   noStyle
                 >
                   <IconLinkedin />
                 </BalLink>
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Mail"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Mail"
                   external
                   noStyle
                 >
