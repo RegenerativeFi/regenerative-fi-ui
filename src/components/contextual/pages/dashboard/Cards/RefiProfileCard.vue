@@ -94,7 +94,12 @@ function handleMintNFTClose() {
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
+              <p v-if="NFTData">
+                {{ NFTData.attributes[1].value }}
+                {{
+                  parseInt(NFTData.attributes[1].value) === 1 ? 'vote' : 'votes'
+                }}
+              </p>
               <p v-else>- Votes</p>
             </div>
           </div>
@@ -162,7 +167,12 @@ function handleMintNFTClose() {
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
+              <p v-if="NFTData">
+                {{ NFTData.attributes[1].value }}
+                {{
+                  parseInt(NFTData.attributes[1].value) === 1 ? 'vote' : 'votes'
+                }}
+              </p>
               <p v-else>- Votes</p>
             </div>
           </div>
@@ -233,7 +243,12 @@ function handleMintNFTClose() {
             <h3 v-else class="self-start text-lg">Mint NFT</h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
+              <p v-if="NFTData">
+                {{ NFTData.attributes[1].value }}
+                {{
+                  parseInt(NFTData.attributes[1].value) === 1 ? 'vote' : 'votes'
+                }}
+              </p>
               <p v-else>- Votes</p>
             </div>
           </div>
