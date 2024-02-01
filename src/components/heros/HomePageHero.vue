@@ -21,7 +21,7 @@ defineProps<Props>();
         <div class="flex flex-col gap-4">
           <div class="flex flex-row gap-4 justify-center items-center">
             <div
-              class="py-2 px-3 w-full rounded-md border dark:border-gray-900 shadow-xl"
+              class="py-2 px-3 w-full rounded-md border dark:border-gray-900 card-shadow"
             >
               <h4
                 v-if="isPoolsVolumesLoading"
@@ -34,7 +34,7 @@ defineProps<Props>();
               </h4>
             </div>
             <div
-              class="py-2 px-3 w-full rounded-md border dark:border-gray-900 shadow-xl"
+              class="py-2 px-3 w-full rounded-md border dark:border-gray-900 card-shadow"
             >
               <h4
                 v-if="isPoolsVolumesLoading"
@@ -47,7 +47,7 @@ defineProps<Props>();
               </h4>
             </div>
           </div>
-          <p>
+          <p class="text-sm font-normal text-complementary">
             There are currently {{ tokensAmount }} tokens listed.
             <a class="underline underline-offset-2" href="#">View all tokens</a>
             or
@@ -59,15 +59,25 @@ defineProps<Props>();
       </BalCard>
       <BalCard growContent>
         <div class="flex flex-col justify-between items-start w-full h-full">
-          <h4>How pools function</h4>
-          <p>
+          <h4 class="text-base font-medium">How pools function</h4>
+          <p class="text-sm font-normal text-complementary">
             Liquidity Providers add It is a long established fact that a reader
             will be distracted by the readable content of a page when looking at
             its layout. The point of using Lorem Ipsum is that it has.
           </p>
-          <a class="underline underline-offset-2" href="#">Learn more</a>
+          <a
+            class="text-sm font-normal text-complementary underline underline-offset-2"
+            href="#"
+            >Learn more</a
+          >
         </div>
       </BalCard>
     </div>
   </div>
 </template>
+
+<style scoped>
+.card-shadow {
+  box-shadow: 1px 2px 6px 0 #00000024;
+}
+</style>

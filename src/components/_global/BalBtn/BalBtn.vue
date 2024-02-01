@@ -22,8 +22,6 @@ import {
   hoverTo,
   loadingBackground,
   loadingDarkBackground,
-  loadingFrom,
-  loadingTo,
   text,
 } from 'button-options';
 
@@ -119,9 +117,9 @@ const bgGradientClasses = computed(() => {
     return `bg-complementary-b dark:complementary-b text-white `;
   }
   if (props.loading) {
-    return `bg-gradient-to-tr ${loadingFrom(fromColor)} ${loadingTo(toColor)}`;
+    return 'transition-colors button-gradient';
   }
-  if (props.color === 'gradient') return 'transition-colors button-gradient ';
+  if (props.color === 'gradient') return 'transition-colors button-gradient';
 
   return ` bg-gradient-to-tr ${gradientFrom(fromColor)} ${gradientTo(
     toColor
