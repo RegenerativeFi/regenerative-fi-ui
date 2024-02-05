@@ -47,7 +47,7 @@ watch(showSidebar, () => {
 .sidebar-overlay {
   z-index: 999999999;
 
-  @apply fixed top-0 left-0 h-screen w-full bg-black/80 cursor-pointer flex;
+  @apply fixed top-0 left-0 h-screen w-full bg-primary-refi cursor-pointer flex;
 
   backdrop-filter: blur(5px);
 }
