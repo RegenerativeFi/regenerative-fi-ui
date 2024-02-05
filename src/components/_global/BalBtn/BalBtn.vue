@@ -1,6 +1,8 @@
 
 <script setup lang="ts">
+import { Vue3Lottie } from 'vue3-lottie';
 import BalLoadingIcon from '../BalLoadingIcon/BalLoadingIcon.vue';
+import loadingAnimation from '@/assets/css/animations/RegenerativeButtonLoadingAnimation.json';
 
 import {
   background,
@@ -49,6 +51,7 @@ type Props = {
   flat?: boolean;
   rounded?: boolean;
   loading?: boolean;
+  regenerativeLoading?: boolean;
   loadingLabel?: string;
   disabled?: boolean;
   justifyContent?: 'start' | 'center' | 'end' | 'between';
@@ -65,6 +68,7 @@ const props = withDefaults(defineProps<Props>(), {
   flat: false,
   rounded: false,
   loading: false,
+  regenerativeLoading: false,
   loadingLabel: 'loading...',
   disabled: false,
   justifyContent: 'center',
@@ -240,8 +244,18 @@ const iconColor = computed(() => {
     :class="['bal-btn', btnClasses]"
     :disabled="disabled || loading"
   >
-    <div v-if="loading" class="flex justify-center items-center">
-      <BalLoadingIcon :size="size" :color="iconColor" />
+    <div
+      v-if="loading || regenerativeLoading"
+      class="flex justify-center items-center"
+    >
+      <Vue3Lottie
+        v-if="regenerativeLoading"
+        :animationData="loadingAnimation"
+        :height="16"
+        :width="16"
+      />
+
+      <BalLoadingIcon v-else :size="size" :color="iconColor" />
       <span v-if="loadingLabel" class="ml-2">
         {{ loadingLabel }}
       </span>
