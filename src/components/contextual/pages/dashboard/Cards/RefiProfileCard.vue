@@ -9,6 +9,7 @@ import { NFTData as TNFTData } from '@/services/campaigns/campaigns.service';
 import IsMintingNFTModal from '../Modals/IsMintingNFTModal.vue';
 import IsUpgradingNFTModal from '../Modals/IsUpgradingNFTModal.vue';
 import { ref, computed, watch } from 'vue';
+import Snapshot from '@/assets/images/services/snapshot.png';
 import RFP from '@/assets/images/icons/coins/RFP.svg';
 
 const { startConnectWithInjectedProvider } = useWeb3();
@@ -95,13 +96,23 @@ function handleMintNFTClose() {
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">
-                {{ NFTData.attributes[1].value }}
-                {{
-                  parseInt(NFTData.attributes[1].value) === 1 ? 'vote' : 'votes'
-                }}
-              </p>
-              <p v-else>- Votes</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData">
+                  {{ NFTData.attributes[1].value }}
+                  {{
+                    parseInt(NFTData.attributes[1].value) === 1
+                      ? 'vote'
+                      : 'votes'
+                  }}
+                </p>
+                <p v-else>- Votes</p>
+                <a
+                  target="_blank"
+                  href="https://snapshot.org/#/regenerativefi.eth"
+                >
+                  <img :src="Snapshot" class="w-4 h-4" />
+                </a>
+              </div>
             </div>
           </div>
           <div class="w-full border-t-2" />
@@ -178,13 +189,23 @@ function handleMintNFTClose() {
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">
-                {{ NFTData.attributes[1].value }}
-                {{
-                  parseInt(NFTData.attributes[1].value) === 1 ? 'vote' : 'votes'
-                }}
-              </p>
-              <p v-else>- Votes</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData">
+                  {{ NFTData.attributes[1].value }}
+                  {{
+                    parseInt(NFTData.attributes[1].value) === 1
+                      ? 'vote'
+                      : 'votes'
+                  }}
+                </p>
+                <p v-else>- Votes</p>
+                <a
+                  target="_blank"
+                  href="https://snapshot.org/#/regenerativefi.eth"
+                >
+                  <img :src="Snapshot" class="w-4 h-4" />
+                </a>
+              </div>
             </div>
           </div>
           <div class="w-full border-t-2" />
@@ -264,13 +285,23 @@ function handleMintNFTClose() {
             <h3 v-else class="self-start text-lg">Mint NFT</h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">
-                {{ NFTData.attributes[1].value }}
-                {{
-                  parseInt(NFTData.attributes[1].value) === 1 ? 'vote' : 'votes'
-                }}
-              </p>
-              <p v-else>- Votes</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData">
+                  {{ NFTData.attributes[1].value }}
+                  {{
+                    parseInt(NFTData.attributes[1].value) === 1
+                      ? 'vote'
+                      : 'votes'
+                  }}
+                </p>
+                <p v-else>- Votes</p>
+                <a
+                  target="_blank"
+                  href="https://snapshot.org/#/regenerativefi.eth"
+                >
+                  <img :src="Snapshot" class="w-4 h-4" />
+                </a>
+              </div>
             </div>
           </div>
           <div class="w-full border-t-2" />
