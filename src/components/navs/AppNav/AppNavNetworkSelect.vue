@@ -67,7 +67,7 @@ const appNetworkSupported = computed((): boolean => {
 
 const activeNetwork = computed((): NetworkOption | undefined =>
   allNetworks.value.find(network => {
-    if (!appNetworkSupported.value && network.id === 'ethereum') return true;
+    if (!appNetworkSupported.value && network.id === 'celo') return true;
     return isActive(network);
   })
 );
