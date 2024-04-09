@@ -81,7 +81,7 @@ defineExpose({ hide });
             shadow="lg"
             :noPad="noPad"
             :noContentPad="noContentPad"
-            class="bg-refi-gray modal-card"
+            class="bg-white dark:bg-refi-gray modal-card"
             noBorder
             overflowYScroll
           >
