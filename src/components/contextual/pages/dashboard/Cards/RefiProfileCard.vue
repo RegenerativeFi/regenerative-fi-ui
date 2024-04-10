@@ -31,7 +31,6 @@ const hasNFT = computed(
 
 const isAbleToUpgradeNFT = computed(() => NFTData?.value?.isAbleToUpgrade[0]);
 
-
 const isImageLoaded = ref<boolean>(false);
 const isOpenUpgradeNFTModal = ref(false);
 const isOpenMintNFTModal = ref(false);
