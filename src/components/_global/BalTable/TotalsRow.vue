@@ -36,7 +36,7 @@ function getHorizontalStickyClass(index: number) {
         :class="[
           getHorizontalStickyClass(0),
           isColumnStuck ? 'isSticky' : '',
-          'text-left p-6 bg-white dark:bg-gray-850 border-t dark:border-gray-900 align-top',
+          'p-6 bg-white dark:bg-gray-850 border-t dark:border-gray-900 align-center',
         ]"
       >
         <span class="font-semibold text-left"> Total </span>

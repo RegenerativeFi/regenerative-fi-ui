@@ -46,8 +46,8 @@ function isActive(page: string): boolean {
       {{ $t('vote') }}
     </DesktopLinkItem> -->
     <DesktopLinkItem
-      :to="{ name: 'home', params: { networkSlug } }"
-      :active="isActive('home')"
+      :to="{ name: 'dashboard', params: { networkSlug } }"
+      :active="isActive('dashboard')"
       prefetch
       @click="trackGoal(Goals.ClickNavPools)"
     >

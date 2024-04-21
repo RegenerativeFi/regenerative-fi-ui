@@ -38,7 +38,7 @@ const dotStyle = computed(() => {
     backgroundColor: colors.blue['500'],
     borderColor: colors.blue['500'],
     borderWidth: 0,
-    backgroundImage: `linear-gradient(to top right, ${colors.blue['500']}, ${colors.pink['500']})`,
+    backgroundImage: `linear-gradient(to top right, #05dbf3, #0468be )`,
   };
 });
 
@@ -50,7 +50,7 @@ const railSyle = computed(() => {
 
 const proccessStyle = computed(() => {
   return {
-    backgroundImage: `linear-gradient(to top right, ${colors.blue['500']}, ${colors.pink['500']})`,
+    backgroundImage: `linear-gradient(to top right, #05dbf3, #0468be )`,
   };
 });
 </script>

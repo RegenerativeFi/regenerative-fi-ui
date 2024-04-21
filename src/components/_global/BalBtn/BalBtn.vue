@@ -35,13 +35,15 @@ type Props = {
     | 'gradient'
     | 'gradient-reverse'
     | 'gradient-pink-yellow'
+    | 'gradient-blue-light'
     | 'gray'
     | 'red'
     | 'white'
     | 'blue'
     | 'yellow'
     | 'black'
-    | 'transparent';
+    | 'transparent'
+    | 'alert';
   label?: string;
   block?: boolean;
   circle?: boolean;
@@ -110,14 +112,17 @@ const bgGradientClasses = computed(() => {
   } else if (props.color === 'gradient-pink-yellow') {
     fromColor = 'pink';
     toColor = 'yellow';
+  } else if (props.color === 'gradient-blue-light') {
+    return 'transition-colors button-gradient ';
   }
-
   if (props.disabled) {
-    return `bg-gray-300 dark:bg-gray-700 text-white dark:text-gray-500`;
+    return `bg-complementary-b dark:complementary-b text-white `;
   }
   if (props.loading) {
     return `bg-gradient-to-tr ${loadingFrom(fromColor)} ${loadingTo(toColor)}`;
   }
+  if (props.color === 'gradient') return 'transition-colors button-gradient ';
+
   return ` bg-gradient-to-tr ${gradientFrom(fromColor)} ${gradientTo(
     toColor
   )} ${hoverFrom(fromColor)} ${hoverTo(toColor)} transition-colors`;
@@ -138,6 +143,8 @@ const bgColorClasses = computed(() => {
   else if (props.flat) return bgFlatClasses.value;
   else if (props.color === 'white') {
     return 'bg-white hover:bg-transparent dark:bg-gray-800';
+  } else if (props.color === 'alert') {
+    return 'bg-red-300/10  hover:bg-red-600/10 dark:bg-red-500/10 dark:hover:bg-red-600/10 text-black dark:text-white';
   } else {
     if (props.disabled) {
       return `bg-gray-300 dark:bg-gray-700 text-white dark:text-gray-500`;
@@ -255,6 +262,7 @@ const iconColor = computed(() => {
 .bal-btn {
   @apply overflow-hidden tracking-tight;
 
+  padding: 8px !important;
   font-variation-settings: 'wght' 500;
   transition: all 0.2s ease;
   text-decoration: none !important;

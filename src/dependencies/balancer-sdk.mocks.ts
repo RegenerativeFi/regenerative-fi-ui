@@ -16,7 +16,7 @@ import {
   SubgraphPoolBase,
   SwapAttributes,
   SwapInfo,
-} from '@balancer-labs/sdk';
+} from '@kolektivo-labs/sdk';
 import { BigNumber } from '@ethersproject/bignumber';
 import { wethAddress } from '@tests/unit/builders/address';
 import { aPoolWithMethods } from '@tests/unit/builders/pool.builders';

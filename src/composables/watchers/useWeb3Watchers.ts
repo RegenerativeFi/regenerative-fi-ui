@@ -1,32 +1,18 @@
 import { EthereumTransactionData } from 'bnc-sdk/dist/types/src/interfaces';
 import { watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 import { BLOCKED_ADDRESSES } from '@/constants/blocked';
 import { includesAddress } from '@/lib/utils';
 import useWeb3 from '@/services/web3/useWeb3';
 
-import useAlerts, { AlertPriority, AlertType } from '../useAlerts';
 import useBlocknative from '../useBlocknative';
 import { useTokens } from '@/providers/tokens.provider';
 import useTransactions, { ReplacementReason } from '../useTransactions';
 
 export default function useWeb3Watchers() {
   // COMPOSABLES
-  const { t } = useI18n();
   const { blocknative, supportsBlocknative } = useBlocknative();
-  const {
-    appNetworkConfig,
-    chainId,
-    account,
-    isMismatchedNetwork,
-    isUnsupportedNetwork,
-    blockNumber,
-    connectToAppNetwork,
-    isWalletReady,
-    disconnectWallet,
-  } = useWeb3();
-  const { addAlert, removeAlert } = useAlerts();
+  const { account, blockNumber, isWalletReady, disconnectWallet } = useWeb3();
   const { refetchBalances, refetchAllowances } = useTokens();
   const { handlePendingTransactions, updateTransaction } = useTransactions();
 
@@ -42,25 +28,6 @@ export default function useWeb3Watchers() {
         id: tx.hash,
         replacementReason,
       });
-    }
-  }
-
-  function checkIsUnsupportedNetwork() {
-    if (
-      chainId.value &&
-      (isUnsupportedNetwork.value || isMismatchedNetwork.value)
-    ) {
-      addAlert({
-        id: 'network-mismatch',
-        label: t('networkMismatch', [appNetworkConfig.name]),
-        type: AlertType.ERROR,
-        persistent: true,
-        action: connectToAppNetwork,
-        actionLabel: t('switchNetwork'),
-        priority: AlertPriority.HIGH,
-      });
-    } else {
-      removeAlert('network-mismatch');
     }
   }
 
@@ -96,16 +63,6 @@ export default function useWeb3Watchers() {
       }
     }
   );
-
-  // Watch for user network switch
-  // -> Display alert message if unsupported or not the same as app network.
-  watch(chainId, () => {
-    checkIsUnsupportedNetwork();
-  });
-
-  watch(isWalletReady, () => {
-    checkIsUnsupportedNetwork();
-  });
 
   watch(blockNumber, async () => {
     if (isWalletReady.value) {

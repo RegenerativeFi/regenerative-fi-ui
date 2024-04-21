@@ -7,6 +7,8 @@ module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
 
   safelist: [
+    'from-refi-text',
+    'to-light-blue',
     ...generateButtonClassSafelist(),
     // https://tailwindcss.com/docs/content-configuration#safelisting-classes
     // https://github.com/tailwindlabs/tailwindcss/discussions/10079
@@ -56,6 +58,9 @@ module.exports = {
       ...defaultTheme.screens,
     },
     extend: {
+      letterSpacing: {
+        wide: '0.02em',
+      },
       flex: {
         0: '0 0 auto',
       },
@@ -77,11 +82,22 @@ module.exports = {
           700: '#334155',
           800: '#1E293B',
           850: '#162031',
-          900: '#0F172A',
+          900: '#222732',
         },
         'primary-refi': '#001C52',
         'accent-refi': '#FA7369',
         'refi-text': '#0468be',
+        'refi-text-dark': '#1490FA',
+        'light-blue': '#05DBF3',
+        'pool-fees': '#AADA22',
+        'pool-tvl': '#0468BE',
+        'pool-volume': '#FF877E',
+        disabled: '#9F9F9F',
+        complementary: '#7B7B7B',
+        'complementary-b': '#B6C7D6',
+        'pill-light': '#E7F4FF',
+        'refi-gray': '#232833',
+
         container: '#F3FAFF',
         primary: {
           50: '#53555e',
@@ -118,6 +134,19 @@ module.exports = {
           700: '#1d4ed8',
           800: '#1e40af',
           900: '#1e3a8a',
+        },
+        sky: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+          950: '#082f49',
         },
         pink: {
           50: '#fdf2f8',

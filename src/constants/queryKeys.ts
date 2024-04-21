@@ -196,6 +196,11 @@ const QUERY_KEYS = {
       'prices',
       { networkId, pricesToInject },
     ],
+    TestnetPrices: (networkId: Ref<Network>) => [
+      'tokens',
+      'testnetPrices',
+      { networkId },
+    ],
     AllPrices: ['tokens', 'prices'],
     VeBAL: (networkId: Ref<Network>, account: Ref<string>) => [
       'tokens',
@@ -276,6 +281,17 @@ const QUERY_KEYS = {
       'user-rank',
       { networkId, account },
     ],
+  },
+  Swaps: {
+    Week: (
+      networkId: Ref<Network>,
+      account: Ref<string>,
+      startTime: number,
+      endTime: number
+    ) => ['swaps', 'week', { networkId, account, startTime, endTime }],
+  },
+  Balancers: {
+    Pools: (networkId: Ref<Network>) => ['balancers', 'pools', { networkId }],
   },
 };
 

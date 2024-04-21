@@ -183,6 +183,7 @@ export const tokensProvider = (
   const prices = computed(
     (): TokenPrices => (priceData.value ? priceData.value : {})
   );
+
   const balances = computed(
     (): BalanceMap => (balanceData.value ? balanceData.value : {})
   );

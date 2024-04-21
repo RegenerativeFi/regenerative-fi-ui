@@ -55,6 +55,9 @@ export interface Contracts {
   gaugeRewardsHelper?: string;
   omniVotingEscrow?: string;
   claimSubmission?: string;
+  simpleMinter?: string;
+  RFNFT?: string;
+  RFP?: string;
 }
 
 export interface RateProviders {
@@ -84,6 +87,8 @@ export enum Network {
   ARBITRUM = 42161,
   AVALANCHE = 43114,
   SEPOLIA = 11155111,
+  ALFAJORES = 44787,
+  CELO = 42220,
 }
 
 export interface Config {

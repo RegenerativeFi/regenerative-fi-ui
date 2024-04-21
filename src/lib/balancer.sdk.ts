@@ -1,4 +1,4 @@
-import { BalancerSDK } from '@balancer-labs/sdk';
+import { BalancerSDK } from '@kolektivo-labs/sdk';
 import { Network } from '@/lib/config/types';
 import { configService } from '@/services/config/config.service';
 import { ref } from 'vue';
@@ -8,6 +8,9 @@ export const balancer = new BalancerSDK({
   network: configService.network.chainId as Network,
   rpcUrl: configService.rpc,
   customSubgraphUrl: configService.network.subgraph,
+  sor: {
+    tokenPriceService: 'subgraph',
+  },
 });
 
 export const hasFetchedPoolsForSor = ref(false);

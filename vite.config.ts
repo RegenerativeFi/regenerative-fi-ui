@@ -19,7 +19,6 @@ import viteImagemin from 'vite-plugin-imagemin';
 export default defineConfig(({ mode }) => {
   const envConfig = loadEnv(mode, process.cwd());
   const isBuildAnalysis = process.env.BUILD_ANALIZE;
-
   const plugins = [
     vue(),
     createHtmlPlugin({

@@ -7,7 +7,7 @@ import GithubIcon from '@/components/_global/icons/brands/GithubIcon.vue';
 import LinkedinIcon from '@/components/_global/icons/brands/LinkedinIcon.vue';
 import TelegramIcon from '@/components/_global/icons/brands/TelegramIcon.vue';
 import TwitterIcon from '@/components/_global/icons/brands/TwitterIcon.vue';
-import AppLogo from '@/components/images/AppLogo.vue';
+import AppLogo from '@/components/images/_AppLogo.vue';
 import { version } from '@/composables/useApp';
 import { useAppzi } from '@/composables/useAppzi';
 import useConfig from '@/composables/useConfig';
@@ -15,7 +15,7 @@ import { Goals, trackGoal } from '@/composables/useFathom';
 import useNetwork from '@/composables/useNetwork';
 import { sleep } from '@/lib/utils';
 import useWeb3 from '@/services/web3/useWeb3';
-
+import useDarkMode from '@/composables/useDarkMode';
 /**
  * PROPS & EMITS
  */
@@ -30,6 +30,7 @@ const { networkSlug } = useNetwork();
 const { t } = useI18n();
 const router = useRouter();
 const { openNpsModal } = useAppzi();
+const { darkMode, toggleDarkMode } = useDarkMode();
 
 /**
  * STATE
@@ -131,13 +132,13 @@ watch(blockNumber, async () => {
       }}</span>
     </div>
 
-    <!-- <div class="px-4 mt-6">
+    <div class="px-4 mt-6">
       <div class="mt-2 side-bar-btn" @click="toggleDarkMode">
         <MoonIcon v-if="!darkMode" class="mr-2" />
         <SunIcon v-else class="mr-2" />
         <span>{{ darkMode ? 'Light' : 'Dark' }} mode</span>
       </div>
-    </div> -->
+    </div>
 
     <div class="grid grid-rows-1 grid-flow-col auto-cols-min gap-2 px-4 mt-4">
       <BalLink

@@ -101,7 +101,7 @@
   "available": "Available",
   "availableToClaim": "Available to claim:",
   "balance": "Balance",
-  "balancerGovernance": "Balancer governance",
+  "balancerGovernance": "RegenerativeFi governance",
   "balances": "Balances",
   "basedOnLast24h": "based on the last 24h",
   "basedOnTokensInWallet": "Based on pool tokens in your wallet",
@@ -208,8 +208,8 @@
     "enterTokenPrice": "Enter the estimated current price of {0} in $USD",
     "existingPoolInfo": "There’s already another pool with exactly the same tokens and fee structure. It’s recommended to add your liquidity to the other pool or to go back and change your Pool Creation parameters in a material way to avoid fractured liquidity and lower profits for both pools.",
     "fixedFeeRadioLabel": "Permanently fix fees to the initial rate",
-    "governanceFees": "Allow Balancer governance to manage fees",
-    "governanceFeesTooltip": "Enable this to give Balancer governance the ability to dynamically manage the fees of this pool in order to maximize profits. But note, Balancer governance is under no obligation to actually manage the fees and will likely only do so if there is significant swap volume.",
+    "governanceFees": "Allow RegenerativeFi governance to manage fees",
+    "governanceFeesTooltip": "Enable this to give RegenerativeFi governance the ability to dynamically manage the fees of this pool in order to maximize profits. But note, RegenerativeFi governance is under no obligation to actually manage the fees and will likely only do so if there is significant swap volume.",
     "invalidInitialWeightsInfo": "One or more tokens has an initial weight less than 1% which may cause funding to fail. If the token has a missing price, enter in a price. Otherwise, adjust the initial balances in the previous step.",
     "invalidInitialWeightsTitle": "Invalid initial weight",
     "maxInitialLiquidity": "Max initial liquidity",
@@ -727,6 +727,7 @@
   "here": "here",
   "noInvestments": "No liquidity",
   "noUnstakedInvestments": "You have no unstaked liquidity on {0}",
+  "noRewardsToClaim": "No rewards to claim",
   "noStakedInvestments": "You have no staked liquidity on {0}",
   "noNativeCurrency": "You’ll need some {0} for gas fees in order to transact on {1}.",
   "noNativeCurrencyEthereum": "You’ll need some {0} for gas fees in order to do most basic transactions on {1}. However, you may continue to swap any tokens you’ve previously approved for use on Balancer with this wallet, by using the ‘swap gasless’ option.",
@@ -825,7 +826,8 @@
       "myTransactions": "My transactions",
       "allInvestments": "All liquidity provision",
       "myInvestments": "My liquidity",
-      "swaps": "Swaps"
+      "swaps": "Swaps",
+      "details": "About this pool"
     },
     "noResults": {
       "allTransactions": "No transactions in this pool",
@@ -1500,7 +1502,10 @@
     "unlock": "Unlock",
     "sync": "Sync",
     "userGaugeCheckpoint": "Pool gauge veBAL update",
-    "claimSubmission": "Claim submission"
+    "claimSubmission": "Claim submission",
+    "mintNFT": "Mint",
+    "upgradeNFT": "Upgrade",
+    "claimRewards": "Claim rewards"
   },
   "transactionDeadline": "Transaction deadline",
   "transactionDeadlineTooltip": "Your swap will expire and not execute if it is pending for more than the selected duration. Only executed transactions incur fees for swaps between ERC-20 tokens.",

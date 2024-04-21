@@ -50,16 +50,12 @@ function loadMorePoolSwaps() {
 </script>
 
 <template>
-  <div class="mb-20">
-    <h4 class="px-4 lg:px-0 mb-5" v-text="$t('poolTransactions.tabs.swaps')" />
-
-    <Table
-      :poolSwaps="poolSwaps"
-      :isLoading="loading || isLoadingPoolSwaps"
-      :isLoadingMore="poolSwapsIsFetchingNextPage"
-      :isPaginated="poolSwapsHasNextPage"
-      :noResultsLabel="$t('poolTransactions.noResults.swaps')"
-      @load-more="loadMorePoolSwaps"
-    />
-  </div>
+  <Table
+    :poolSwaps="poolSwaps"
+    :isLoading="loading || isLoadingPoolSwaps"
+    :isLoadingMore="poolSwapsIsFetchingNextPage"
+    :isPaginated="poolSwapsHasNextPage"
+    :noResultsLabel="$t('poolTransactions.noResults.swaps')"
+    @load-more="loadMorePoolSwaps"
+  />
 </template>

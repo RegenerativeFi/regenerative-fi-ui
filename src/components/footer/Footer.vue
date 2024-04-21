@@ -28,15 +28,7 @@ const { openNpsModal } = useAppzi();
             class="font-medium link"
             :to="{ name: 'home', params: { networkSlug } }"
           >
-            <AppLogo
-              class="mb-4"
-              fillColor="#ffffff"
-              hoverFillColor="#FA7369"
-              color="#ffffff"
-              hoverColor="#FA7369"
-              :text="true"
-              size="large"
-            />
+            <AppLogo class="mb-4" current="Footer" />
           </router-link>
 
           <div class="flex md:hidden flex-col gap-2">
@@ -84,16 +76,23 @@ const { openNpsModal } = useAppzi();
 
           <div class="flex flex-wrap md:order-3 gap-3 md:gap-4">
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Docs"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Docs"
               external
               noStyle
               class="group link link--external"
             >
               {{ $t('docs') }}
             </BalLink>
-
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Forum"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Docs"
+              external
+              noStyle
+              class="group link link--external"
+            >
+              {{ $t('support') }}
+            </BalLink>
+            <BalLink
+              :href="EXTERNAL_LINKS.RegenerativeFI.Forum"
               external
               noStyle
               class="group link link--external"
@@ -102,7 +101,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
               external
               noStyle
               class="group link link--external"
@@ -111,7 +110,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
               external
               noStyle
               class="group link link--external"
@@ -120,7 +119,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.Balancer.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
               external
               noStyle
               class="group link link--external"
@@ -134,35 +133,35 @@ const { openNpsModal } = useAppzi();
             <div class="flex lg:flex-col md:justify-end">
               <div class="flex gap-3 md:justify-end">
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Twitter"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Twitter"
                   external
                   noStyle
                 >
                   <IconTwitter />
                 </BalLink>
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Medium"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Telegram"
                   external
                   noStyle
                 >
                   <IconTelegram />
                 </BalLink>
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Github"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Github"
                   external
                   noStyle
                 >
                   <IconGithub />
                 </BalLink>
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Linkedin"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Linkedin"
                   external
                   noStyle
                 >
                   <IconLinkedin />
                 </BalLink>
                 <BalLink
-                  :href="EXTERNAL_LINKS.Balancer.Social.Mail"
+                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Mail"
                   external
                   noStyle
                 >
@@ -173,26 +172,18 @@ const { openNpsModal } = useAppzi();
           </div>
 
           <div
-            class="flex flex-wrap md:order-3 gap-x-3 lg:gap-x-4 gap-y-2 md:justify-end"
+            class="flex flex-wrap md:order-3 gap-x-3 lg:gap-x-4 gap-y-2 lg:gap-y-0 md:justify-start h-full"
           >
-            <p>
-              <button class="policy" @click="openNpsModal">Feedback</button>
-            </p>
-            <p>
-              <router-link class="policy" :to="{ name: 'terms-of-use' }">
-                {{ $t('policies.termsOfUse') }}
-              </router-link>
-            </p>
-            <p>
-              <router-link class="policy" :to="{ name: 'privacy-policy' }">
-                {{ $t('policies.privacyPolicy') }}
-              </router-link>
-            </p>
-            <p>
-              <router-link class="policy" :to="{ name: 'cookies-policy' }">
-                {{ $t('policies.cookiesPolicy') }}
-              </router-link>
-            </p>
+            <button class="policy" @click="openNpsModal">Feedback</button>
+            <router-link class="policy" :to="{ name: 'terms-of-use' }">
+              {{ $t('policies.termsOfUse') }}
+            </router-link>
+            <router-link class="policy" :to="{ name: 'privacy-policy' }">
+              {{ $t('policies.privacyPolicy') }}
+            </router-link>
+            <router-link class="policy" :to="{ name: 'cookies-policy' }">
+              {{ $t('policies.cookiesPolicy') }}
+            </router-link>
           </div>
         </div>
       </div>
@@ -229,7 +220,7 @@ footer :deep(.logotype) {
 }
 
 .policy {
-  @apply text-sm text-white dark:text-gray-400 hover:text-accent-refi dark:hover:text-yellow-500;
+  @apply text-sm text-white dark:text-gray-400 hover:text-accent-refi dark:hover:text-yellow-500 flex items-end;
 }
 
 .arrow {

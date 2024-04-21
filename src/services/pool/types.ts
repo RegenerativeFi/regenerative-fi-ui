@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers';
 import { Address } from '@/types';
-import { Pool as SDKPool, PoolToken, PoolType } from '@balancer-labs/sdk';
+import { Pool as SDKPool, PoolToken, PoolType } from '@kolektivo-labs/sdk';
 
-export type { SubPool, PoolToken } from '@balancer-labs/sdk';
-export { PoolType } from '@balancer-labs/sdk';
+export type { SubPool, PoolToken } from '@kolektivo-labs/sdk';
+export { PoolType } from '@kolektivo-labs/sdk';
 export interface Pool extends SDKPool {
   tokens: PoolToken[];
   onchain?: OnchainPoolData;
@@ -129,6 +129,21 @@ export interface PoolActivity {
 }
 
 export interface PoolSwap {
+  tokenIn: string;
+  tokenOut: string;
+  tokenAmountIn: string;
+  tokenAmountOut: string;
+  timestamp: number;
+  tx: string;
+  userAddress: {
+    id: string;
+  };
+  ensName?: string | null;
+  ensAvatar?: string | null;
+}
+
+export interface WeeklyBalance {
+  valueUSD: string;
   tokenIn: string;
   tokenOut: string;
   tokenAmountIn: string;

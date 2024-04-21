@@ -17,7 +17,7 @@ const PrivacyPolicyPage = () => import('@/pages/privacy-policy.vue');
 const TermsOfUsePage = () => import('@/pages/terms-of-use.vue');
 const RisksPage = () => import('@/pages/risks.vue');
 const SwapPage = () => import('@/pages/swap.vue');
-
+const Dashboard = () => import('@/pages/dashboard.vue');
 export const SwapPagePrefetchLinks = async () =>
   import('@/pages/swap.vue').toString();
 
@@ -167,6 +167,11 @@ const routes: RouteRecordRaw[] = [
     path: '/:networkSlug/claim-submission',
     name: 'claim-submission',
     component: ClaimSubmissionsPage,
+  },
+  {
+    path: '/:networkSlug/dashboard',
+    name: 'dashboard',
+    component: Dashboard,
   },
   {
     path: '/:networkSlug?',

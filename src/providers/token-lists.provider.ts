@@ -38,7 +38,7 @@ const state: TokenListsState = reactive({
 const allTokenLists = ref({});
 
 const isTestMode = import.meta.env.MODE === 'test';
-const tokensListPromise = isTestMode // Return empty promise only in tests (vitest)
+const tokensListPromise = isTestMode // Return empty promise only in tests< (vitest)
   ? Promise.resolve()
   : import(`@/assets/data/tokenlists/tokens-${networkId.value}.json`);
 

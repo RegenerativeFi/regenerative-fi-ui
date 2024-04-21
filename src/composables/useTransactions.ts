@@ -56,7 +56,10 @@ export type TransactionAction =
   | 'restake'
   | 'sync'
   | 'userGaugeCheckpoint'
-  | 'claimSubmission';
+  | 'claimSubmission'
+  | 'mintNFT'
+  | 'upgradeNFT'
+  | 'claimRewards';
 
 export type TransactionType = 'order' | 'tx';
 
@@ -165,7 +168,7 @@ function getId(id: string, type: TransactionType) {
 
 function getTransactions(): TransactionsMap {
   const transactionsMap = transactionsState.value[networkId] ?? {};
-
+  console.debug({ transactionsMap });
   return transactionsMap;
 }
 

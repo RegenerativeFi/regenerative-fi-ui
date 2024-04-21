@@ -18,7 +18,7 @@ const config: Config = {
   network: 'sepolia',
   trustWalletNetwork: 'ethereum',
   unknown: false,
-  visibleInUI: true,
+  visibleInUI: false,
   testNetwork: true,
   rpc: `https://sepolia.infura.io/v3/${keys.infura}`,
   ws: `wss://sepolia.infura.io/ws/v3/${keys.infura}`,

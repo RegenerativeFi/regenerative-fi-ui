@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 
-import HomePageHero from '@/components/heros/HomePageHero.vue';
 import TokenSearchInput from '@/components/inputs/TokenSearchInput.vue';
 import FeaturedProtocols from '@/components/sections/FeaturedProtocols.vue';
 import PoolsTable from '@/components/tables/PoolsTable/PoolsTable.vue';
@@ -16,7 +15,7 @@ import { PoolType } from '@/services/pool/types';
 import PoolFeatureSelect from '@/components/inputs/PoolFeatureSelect.vue';
 import { useTokens } from '@/providers/tokens.provider';
 import { PoolAttributeFilter, PoolTypeFilter } from '@/types/pools';
-import UserInvestedInAffectedPoolAlert from '@/pages/recovery-exit/UserInvestedInAffectedPoolAlert.vue';
+import HomePageHero from '@/components/heros/HomePageHero.vue';
 
 const featuredProtocolsSentinel = ref<HTMLDivElement | null>(null);
 const isFeaturedProtocolsVisible = ref(false);
@@ -30,6 +29,7 @@ useIntersectionObserver(featuredProtocolsSentinel, ([{ isIntersecting }]) => {
  * STATE
  */
 const route = useRoute();
+
 const urlSortParam = route.query?.sort as string | undefined;
 const initSortCol =
   urlSortParam || lsGet(LS_KEYS.App.PoolSorting) || 'totalLiquidity';
@@ -43,7 +43,7 @@ const filterPoolAttributes = ref<PoolAttributeFilter[]>([]);
  * COMPOSABLES
  */
 const router = useRouter();
-const { getToken } = useTokens();
+const { getToken, activeTokenListTokens } = useTokens();
 const { appNetworkConfig } = useNetwork();
 const isElementSupported = appNetworkConfig.supportsElementPools;
 const { selectedTokens, addSelectedToken, removeSelectedToken } =
@@ -61,6 +61,9 @@ const { upToSmallBreakpoint } = useBreakpoints();
 const { networkSlug, networkConfig } = useNetwork();
 
 const isPaginated = computed(() => pools.value.length >= 10);
+const currentTokensAmount = computed(
+  () => Object.keys(activeTokenListTokens.value).length
+);
 
 /**
  * METHODS
@@ -115,9 +118,9 @@ watch(poolTypeFilter, newPoolTypeFilter => {
 
 <template>
   <div>
-    <HomePageHero />
+    <HomePageHero :tokensAmount="currentTokensAmount" />
     <div class="xl:container xl:px-4 pt-10 md:pt-8 xl:mx-auto">
-      <UserInvestedInAffectedPoolAlert />
+      <!-- <UserInvestedInAffectedPoolAlert /> -->
       <BalStack vertical>
         <div class="px-4 xl:px-0">
           <div class="flex justify-between items-end mb-2">

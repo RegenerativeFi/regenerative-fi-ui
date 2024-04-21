@@ -21,7 +21,9 @@
   .font-bold,
   .font-extrabold,
   .font-black {
-    font-weight: unset;
+    /* What is this? */
+
+    /* font-weight: unset; */
   }
 
   th {
@@ -73,13 +75,21 @@
     font-variant-ligatures: no-contextual;
   }
 
+  .button-gradient {
+    background: linear-gradient(258.76deg, #05dbf3 6.02%, #0468be 94.84%);
+  }
+
+  .button-gradient:hover {
+    background: linear-gradient(258.76deg, #05dbf3 30.02%, #0468be 94.84%);
+  }
+
   .text-gradient {
     @apply bg-blue-500;
 
     background-image: linear-gradient(
       45deg,
-      theme('colors.blue.700'),
-      theme('colors.pink.500')
+      theme('colors.light-blue'),
+      theme('colors.refi-text')
     );
     background-size: 100%;
     background-clip: text;

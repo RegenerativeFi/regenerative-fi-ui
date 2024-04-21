@@ -157,7 +157,7 @@
 </template>
 
 <script lang="ts">
-import { SubgraphPoolBase } from '@balancer-labs/sdk';
+import { SubgraphPoolBase } from '@kolektivo-labs/sdk';
 import { getAddress, isAddress } from '@ethersproject/address';
 import { formatUnits } from '@ethersproject/units';
 import { useI18n } from 'vue-i18n';

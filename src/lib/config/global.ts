@@ -1,4 +1,4 @@
 export const keys = {
-  infura: 'daaa68ec242643719749dd1caba2fc66',
+  infura: 'd0358b4197454c98ade7e1222e6df34a',
   alchemy: 'VBeQgTCRqqPtuuEPsFzRdwKXzDyN6aFh',
 };
