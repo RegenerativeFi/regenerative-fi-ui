@@ -80,6 +80,15 @@ function applyNetworkSubdomainRedirect(router: Router): Router {
  */
 function applyNetworkPathRedirects(router: Router): Router {
   router.beforeEach((to, from, next) => {
+    const networkSlugFromUrl = to.params.networkSlug?.toString() ?? '';
+
+    if (
+      networkSlugFromUrl !== config[Network.CELO].slug &&
+      networkSlugFromUrl !== config[Network.ALFAJORES].slug
+    ) {
+      console.debug(networkSlugFromUrl, config[Network.CELO].slug);
+      router.push({ path: `/${config[Network.CELO].slug}${to.fullPath}` });
+    }
     if (redirecting.value) {
       next();
     } else {
@@ -106,6 +115,7 @@ function applyNetworkPathRedirects(router: Router): Router {
           '/risks',
         ];
         const routerHandledRedirects = ['not-found', 'trade-redirect'];
+
         if (
           to.redirectedFrom?.fullPath &&
           to.redirectedFrom?.fullPath.includes('/pool')
@@ -121,7 +131,7 @@ function applyNetworkPathRedirects(router: Router): Router {
         } else {
           const newPath = to.redirectedFrom?.fullPath ?? to.fullPath;
           const newNetwork = newPath.includes('/pool')
-            ? config[Network.MAINNET].slug
+            ? config[Network.CELO].slug
             : networkSlug;
           router.push({ path: `/${newNetwork}${newPath}` });
         }
