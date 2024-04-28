@@ -26,6 +26,7 @@ function onImageLoad() {
   <BalModal
     :class="isImageLoaded ? 'visible' : 'invisible'"
     :show="isOpenModal"
+    customBgColor="bg-refi-gray"
     :fireworks="true"
     @close="handleCloseModal"
   >

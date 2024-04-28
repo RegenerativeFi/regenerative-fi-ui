@@ -9,6 +9,8 @@ import { NFTData as TNFTData } from '@/services/campaigns/campaigns.service';
 import IsMintingNFTModal from '../Modals/IsMintingNFTModal.vue';
 import IsUpgradingNFTModal from '../Modals/IsUpgradingNFTModal.vue';
 import { ref, computed, watch } from 'vue';
+import Snapshot from '@/assets/images/services/snapshot.png';
+import RFP from '@/assets/images/icons/coins/RFP.svg';
 
 const { startConnectWithInjectedProvider } = useWeb3();
 const { isMobile, bp } = useBreakpoints();
@@ -94,25 +96,46 @@ function handleMintNFTClose() {
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
-              <p v-else>- Votes</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData">
+                  {{ NFTData.attributes[1].value }}
+                  {{
+                    parseInt(NFTData.attributes[1].value) === 1
+                      ? 'vote'
+                      : 'votes'
+                  }}
+                </p>
+                <p v-else>- Votes</p>
+                <a
+                  target="_blank"
+                  href="https://snapshot.org/#/regenerativefi.eth"
+                >
+                  <img :src="Snapshot" class="w-4 h-4" />
+                </a>
+              </div>
             </div>
           </div>
           <div class="w-full border-t-2" />
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-base">
               <p class="text-sm">My Points</p>
-              <p v-if="isLoading" class="text-sm">- RFP</p>
-              <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
+              <div class="flex flex-row gap-2">
+                <p v-if="isLoading" class="text-sm">- RFP</p>
+                <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
+                <img :src="RFP" class="w-5 h-5" />
+              </div>
             </div>
             <div
               class="flex justify-between items-center text-base text-disabled"
             >
               <p class="text-sm">Next level</p>
-              <p v-if="NFTData" class="text-sm">
-                {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
-              </p>
-              <p v-else class="text-sm">- RFP</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData" class="text-sm">
+                  {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
+                </p>
+                <p v-else class="text-sm">- RFP</p>
+                <img :src="RFP" class="w-5 h-5" />
+              </div>
             </div>
           </div>
           <BalBtn
@@ -128,6 +151,8 @@ function handleMintNFTClose() {
             :disabled="!isAbleToUpgradeNFT"
             :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
             class="self-end w-fit"
+            :regenerativeLoading="isUpgradingNFTStatus.loading"
+            loadingLabel="Upgrading NFT"
             size="sm"
             @click="() => UpgradeNFT(NFTData?.id as number)"
             >Upgrade</BalBtn
@@ -136,6 +161,8 @@ function handleMintNFTClose() {
             v-else
             :color="isMintingNFTStatus.loading ? 'gray' : 'gradient-blue-light'"
             :disabled="isMintingNFTStatus.loading"
+            :regenerativeLoading="isMintingNFTStatus.loading"
+            loadingLabel="Minting NFT"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"
@@ -162,25 +189,46 @@ function handleMintNFTClose() {
             </h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
-              <p v-else>- Votes</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData">
+                  {{ NFTData.attributes[1].value }}
+                  {{
+                    parseInt(NFTData.attributes[1].value) === 1
+                      ? 'vote'
+                      : 'votes'
+                  }}
+                </p>
+                <p v-else>- Votes</p>
+                <a
+                  target="_blank"
+                  href="https://snapshot.org/#/regenerativefi.eth"
+                >
+                  <img :src="Snapshot" class="w-4 h-4" />
+                </a>
+              </div>
             </div>
           </div>
           <div class="w-full border-t-2" />
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-base">
               <p class="text-sm">My Points</p>
-              <p v-if="isLoading" class="text-sm">- RFP</p>
-              <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
+              <div class="flex flex-row gap-2">
+                <p v-if="isLoading" class="text-sm">- RFP</p>
+                <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
+                <img :src="RFP" class="w-5 h-5" />
+              </div>
             </div>
             <div
               class="flex justify-between items-center text-base text-disabled"
             >
               <p class="text-sm">Next level</p>
-              <p v-if="NFTData" class="text-sm">
-                {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
-              </p>
-              <p v-else class="text-sm">- RFP</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData" class="text-sm">
+                  {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
+                </p>
+                <p v-else class="text-sm">- RFP</p>
+                <img :src="RFP" class="w-5 h-5" />
+              </div>
             </div>
           </div>
           <BalBtn
@@ -196,6 +244,8 @@ function handleMintNFTClose() {
             :disabled="!isAbleToUpgradeNFT"
             :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
             class="self-end w-fit"
+            :regenerativeLoading="isUpgradingNFTStatus.loading"
+            loadingLabel="Upgrading NFT"
             size="sm"
             @click="() => UpgradeNFT(NFTData?.id as number)"
             >Upgrade</BalBtn
@@ -204,6 +254,8 @@ function handleMintNFTClose() {
             v-else
             :color="isMintingNFTStatus.loading ? 'gray' : 'gradient-blue-light'"
             :disabled="isMintingNFTStatus.loading"
+            :regenerativeLoading="isMintingNFTStatus.loading"
+            loadingLabel="Minting NFT"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"
@@ -233,25 +285,46 @@ function handleMintNFTClose() {
             <h3 v-else class="self-start text-lg">Mint NFT</h3>
             <div class="flex justify-between items-center text-base">
               <p>Voting Power</p>
-              <p v-if="NFTData">{{ NFTData.attributes[1].value }} Votes</p>
-              <p v-else>- Votes</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData">
+                  {{ NFTData.attributes[1].value }}
+                  {{
+                    parseInt(NFTData.attributes[1].value) === 1
+                      ? 'vote'
+                      : 'votes'
+                  }}
+                </p>
+                <p v-else>- Votes</p>
+                <a
+                  target="_blank"
+                  href="https://snapshot.org/#/regenerativefi.eth"
+                >
+                  <img :src="Snapshot" class="w-4 h-4" />
+                </a>
+              </div>
             </div>
           </div>
           <div class="w-full border-t-2" />
           <div class="flex flex-col gap-1">
             <div class="flex justify-between items-center text-base">
               <p class="text-sm">My Points</p>
-              <p v-if="isLoading" class="text-sm">- RFP</p>
-              <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
+              <div class="flex flex-row gap-2">
+                <p v-if="isLoading" class="text-sm">- RFP</p>
+                <p v-else class="text-sm">{{ NFTData?.points }} RFP</p>
+                <img :src="RFP" class="w-5 h-5" />
+              </div>
             </div>
             <div
               class="flex justify-between items-center text-base text-disabled"
             >
               <p class="text-sm">Next level</p>
-              <p v-if="NFTData" class="text-sm">
-                {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
-              </p>
-              <p v-else class="text-sm">- RFP</p>
+              <div class="flex flex-row gap-2 items-center">
+                <p v-if="NFTData" class="text-sm">
+                  {{ NFTData.tresholds[NFTData?.tier] || 'Max' }} RFP
+                </p>
+                <p v-else class="text-sm">- RFP</p>
+                <img :src="RFP" class="w-5 h-5" />
+              </div>
             </div>
           </div>
           <BalBtn
@@ -267,6 +340,8 @@ function handleMintNFTClose() {
             :disabled="!isAbleToUpgradeNFT"
             :color="!isAbleToUpgradeNFT ? 'gray' : 'gradient-blue-light'"
             class="self-end w-fit"
+            :regenerativeLoading="isUpgradingNFTStatus.loading"
+            loadingLabel="Upgrading NFT"
             size="sm"
             @click="() => UpgradeNFT(NFTData?.id as number)"
             >Upgrade</BalBtn
@@ -275,6 +350,8 @@ function handleMintNFTClose() {
             v-else
             :color="isMintingNFTStatus.loading ? 'gray' : 'gradient-blue-light'"
             :disabled="isMintingNFTStatus.loading"
+            :regenerativeLoading="isMintingNFTStatus.loading"
+            loadingLabel="Minting NFT"
             class="self-end w-fit"
             size="sm"
             @click="() => MintNFT()"

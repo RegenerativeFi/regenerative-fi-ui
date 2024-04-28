@@ -27,10 +27,11 @@ function onImageLoad() {
   <BalModal
     :class="isImageLoaded ? 'visible' : 'invisible'"
     :show="isOpenModal"
+    customBgColor="bg-refi-gray"
     :fireworks="true"
     @close="handleCloseModal"
   >
-    <div class="flex flex-col gap-4 justify-center items-center">
+    <div class="flex flex-col gap-4 justify-center items-center text-white">
       <div class="flex flex-col gap-2 justify-center items-center w-full">
         <p>Here is your new NFT</p>
       </div>
