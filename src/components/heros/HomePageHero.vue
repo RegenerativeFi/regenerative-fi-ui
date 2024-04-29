@@ -49,7 +49,11 @@ defineProps<Props>();
           </div>
           <p class="text-sm font-normal text-complementary">
             There are currently {{ tokensAmount }} tokens listed.
-            <a class="underline underline-offset-2" href="#">View all tokens</a>
+            <a
+              class="underline underline-offset-2"
+              href="https://github.com/Kolektivo-Labs/regenerative-fi-tokenlist/blob/main/regenerative.tokenlist.json"
+              >View all tokens</a
+            >
             or
             <a class="underline underline-offset-2" href="#">
               request a new token listing.

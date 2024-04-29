@@ -24,7 +24,7 @@ const NETWORK_ID =
   urlNetworkId ||
   localStorageNetworkId ||
   (Number(import.meta.env.VITE_NETWORK) as Network) ||
-  Network.MAINNET;
+  Network.CELO;
 if (windowAvailable) localStorage.setItem('networkId', NETWORK_ID.toString());
 export const networkSlug = config[NETWORK_ID].slug;
 export const networkConfig = config[NETWORK_ID];
@@ -125,12 +125,13 @@ export function handleNetworkSlug(
 ) {
   const networkFromUrl = networkFromSlug(networkSlug);
   const localStorageNetwork = networkFor(
-    localStorage.getItem('networkId') ?? '1'
+    localStorage.getItem('networkId') ?? '42220'
   );
   if (!networkFromUrl) {
     // missing or incorrect network name -> next() withtout network change
     return noNetworkChangeCallback();
   }
+
   if (localStorageNetwork === networkFromUrl) {
     // if on the correct network -> next()
     return noNetworkChangeCallback();
