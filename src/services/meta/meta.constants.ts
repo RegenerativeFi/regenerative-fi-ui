@@ -1,18 +1,22 @@
 export const ROUTE_META_DATA = {
-  home: {
-    metaTitle: 'Balancer DeFi Liquidity Pools on [network_name]',
+  pools: {
+    metaTitle: 'Pools | Regenerative',
     metaDescription:
-      'Explore DeFi liquidity pools or create your own. Provide liquidity to accumulate yield from swap fees while retaining your token exposure as prices move',
-    metaKeywords: '',
+      'Engage with the heart of DeFi by managing and providing liquidity on Regenerative Finance, a cornerstone for building a more resilient and inclusive financial future',
   },
   pool: {
-    metaTitle: '[pool_symbol]',
-    metaDescription: '[pool_name] — a Balancer [pool_type] pool',
+    metaTitle: 'Pools | Regenerative',
+    metaDescription: '[pool_name] — a Regenerative [pool_type] pool ',
   },
   swap: {
-    metaTitle: 'Swap DeFi tokens on [network_name]',
+    metaTitle: 'Token Swap on Celo | Regenerative ',
     metaDescription:
-      'Swap ERC-20 tokens using Balancer liquidity or with CoW protocol for gas-less signature trades, MEV protection and the best prices via intelligent routing across DeFi exchanges',
+      'Effortlessly swap DeFi tokens on the Celo blockchain with Regenerative Finance. Secure, fast, and user-friendly token exchange for a seamless trading experience',
+  },
+  dashboard: {
+    metaTitle: 'Your Dashboard | Regenerative',
+    metaDescription:
+      'Access your personal Regenerative Finance dashboard to earn rewards, claim ReFi points, level up, and manage your NFTs all in one convenient place',
   },
   claim: {
     metaTitle: 'Claim liquidity mining incentives from staking',

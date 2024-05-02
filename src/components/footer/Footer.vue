@@ -84,7 +84,7 @@ const { openNpsModal } = useAppzi();
               {{ $t('docs') }}
             </BalLink>
             <BalLink
-              :href="EXTERNAL_LINKS.RegenerativeFI.Docs"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Support"
               external
               noStyle
               class="group link link--external"

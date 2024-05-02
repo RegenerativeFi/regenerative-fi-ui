@@ -16,6 +16,7 @@ import useNetwork from '@/composables/useNetwork';
 import { sleep } from '@/lib/utils';
 import useWeb3 from '@/services/web3/useWeb3';
 import useDarkMode from '@/composables/useDarkMode';
+import { EXTERNAL_LINKS } from '@/constants/links';
 /**
  * PROPS & EMITS
  */
@@ -39,18 +40,23 @@ const blockIcon = ref<HTMLDivElement>();
 
 const navLinks = [
   { label: t('swap'), path: `/${networkSlug}/swap`, goal: Goals.ClickNavSwap },
-  { label: t('pool'), path: '/', goal: Goals.ClickNavPools },
-  { label: t('vote'), path: '/', goal: Goals.ClickNavPools },
-  { label: t('dashboard'), path: '/', goal: Goals.ClickNavPools },
+  {
+    label: t('pool'),
+    path: `/pools`,
+    goal: Goals.ClickNavPools,
+  },
+  {
+    label: t('dashboard'),
+    path: `/${networkSlug}/dashboard`,
+    goal: Goals.ClickNavPools,
+  },
 ];
 
 const ecosystemLinks = [
-  { label: t('docs'), url: 'https://docs.balancer.fi/' },
-  { label: t('governance'), url: 'https://vote.balancer.fi/#/' },
-  { label: t('analytics'), url: 'https://dune.com/balancer' },
-  { label: t('forum'), url: 'https://forum.balancer.fi/' },
-  { label: t('support'), url: 'https://forum.balancer.fi/' },
-  { label: t('analytics'), url: 'https://forum.balancer.fi/' },
+  { label: t('docs'), url: EXTERNAL_LINKS.RegenerativeFI.Docs },
+  { label: t('governance'), url: EXTERNAL_LINKS.RegenerativeFI.Vote },
+  { label: t('forum'), url: EXTERNAL_LINKS.RegenerativeFI.Forum },
+  { label: t('support'), url: EXTERNAL_LINKS.RegenerativeFI.Support },
 ];
 
 const socialLinks = {
