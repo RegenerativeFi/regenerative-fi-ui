@@ -80,27 +80,16 @@ function applyNetworkSubdomainRedirect(router: Router): Router {
  */
 function applyNetworkPathRedirects(router: Router): Router {
   router.beforeEach((to, from, next) => {
-    const networkSlugFromUrl = to.params.networkSlug?.toString() ?? '';
-
-    if (
-      networkSlugFromUrl !== config[Network.CELO].slug &&
-      networkSlugFromUrl !== config[Network.ALFAJORES].slug
-    ) {
-      console.debug(networkSlugFromUrl, config[Network.CELO].slug);
-      router.push({ path: `/${config[Network.CELO].slug}${to.fullPath}` });
-    }
     if (redirecting.value) {
       next();
     } else {
       const networkSlugFromUrl = to.params.networkSlug?.toString() ?? '';
       const networkFromPath = networkFromSlug(networkSlugFromUrl);
-
       if (networkFromPath) {
         const noNetworkChangeCallback = () => next();
         const networkChangeCallback = () => {
           hardRedirectTo(`/#${to.fullPath}`);
         };
-
         handleNetworkSlug(
           networkSlugFromUrl,
           noNetworkChangeCallback,
@@ -121,7 +110,7 @@ function applyNetworkPathRedirects(router: Router): Router {
           to.redirectedFrom?.fullPath.includes('/pool')
         ) {
           const newPath = to.redirectedFrom?.fullPath ?? to.fullPath;
-          router.push({ path: `/${config[Network.MAINNET].slug}${newPath}` });
+          router.push({ path: `/${config[Network.CELO].slug}${newPath}` });
         } else if (
           !to.redirectedFrom ||
           routerHandledRedirects.includes(to.redirectedFrom?.name as string) ||
