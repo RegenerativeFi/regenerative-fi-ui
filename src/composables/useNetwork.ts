@@ -86,8 +86,13 @@ export function getNetworkName(network: Network): string {
 }
 
 export function networkFromSlug(networkSlug: string): Network | null {
-  const networkConf = Object.values(config).find((config: Config) => {
-    return config.slug === networkSlug;
+  const networkConf = Object.values(config).find((currentConfig: Config) => {
+    if (
+      networkSlug !== config[Network.CELO].slug &&
+      networkSlug !== config[Network.ALFAJORES].slug
+    )
+      return false;
+    return currentConfig.slug === networkSlug;
   });
   return networkConf ? (networkConf.chainId as Network) : null;
 }
@@ -127,13 +132,13 @@ export function handleNetworkSlug(
   const localStorageNetwork = networkFor(
     localStorage.getItem('networkId') ?? '42220'
   );
+  console.debug('networkFromUrl', networkFromUrl);
+  console.debug('localStorageNetwork', localStorageNetwork);
   if (!networkFromUrl) {
-    // missing or incorrect network name -> next() withtout network change
     return noNetworkChangeCallback();
   }
 
   if (localStorageNetwork === networkFromUrl) {
-    // if on the correct network -> next()
     return noNetworkChangeCallback();
   }
 
