@@ -83,14 +83,7 @@ const { openNpsModal } = useAppzi();
             >
               {{ $t('docs') }}
             </BalLink>
-            <BalLink
-              :href="EXTERNAL_LINKS.RegenerativeFI.Support"
-              external
-              noStyle
-              class="group link link--external"
-            >
-              {{ $t('support') }}
-            </BalLink>
+
             <BalLink
               :href="EXTERNAL_LINKS.RegenerativeFI.Forum"
               external
@@ -101,7 +94,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Forum"
               external
               noStyle
               class="group link link--external"
@@ -110,7 +103,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Support"
               external
               noStyle
               class="group link link--external"
@@ -119,7 +112,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.RegenerativeFI.Placeholder"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Analytics"
               external
               noStyle
               class="group link link--external"
