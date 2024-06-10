@@ -106,8 +106,8 @@ const { networkSlug } = useNetwork();
 const { isWalletReady } = useWeb3();
 
 const wideCompositionWidth = computed(() => {
-  if (upToSmallBreakpoint.value) return 250;
-  return 350;
+  if (upToSmallBreakpoint.value) return 150;
+  return 250;
 });
 
 /**

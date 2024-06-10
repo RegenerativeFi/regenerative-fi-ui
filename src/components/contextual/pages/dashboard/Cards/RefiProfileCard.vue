@@ -33,7 +33,7 @@ const hasNFT = computed(
 
 const isAbleToUpgradeNFT = computed(() => NFTData?.value?.isAbleToUpgrade[0]);
 
-const isImageLoaded = ref<boolean>(false);
+const isImageLoaded = ref(false);
 const isOpenUpgradeNFTModal = ref(false);
 const isOpenMintNFTModal = ref(false);
 
@@ -49,7 +49,6 @@ watch([isRefetchingNFTData, isUpgradingNFTStatus.value], () => {
 });
 
 watch([isRefetchingNFTData, isMintingNFTStatus.value], () => {
-  console.debug(isRefetchingNFTData, isMintingNFTStatus.value.success);
   if (!isRefetchingNFTData.value && isMintingNFTStatus.value.success) {
     isOpenMintNFTModal.value = true;
     isMintingNFTStatus.value = {
