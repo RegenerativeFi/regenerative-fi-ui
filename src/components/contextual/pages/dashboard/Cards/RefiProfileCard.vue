@@ -27,9 +27,7 @@ const {
 const { isWalletReady } = useWeb3();
 
 const nftImageSrc = computed(() => NFTData.value?.imageData);
-const hasNFT = computed(
-  () => !!NFTData.value?.imageData && isWalletReady.value
-);
+const hasNFT = computed(() => !!NFTData.value && isWalletReady.value);
 
 const isAbleToUpgradeNFT = computed(() => NFTData?.value?.isAbleToUpgrade[0]);
 
