@@ -52,12 +52,14 @@ defineProps<Props>();
             <a
               class="underline underline-offset-2"
               href="https://www.regenerative.fi/tokens"
+              target="_blank"
               >View all tokens</a
             >
             or
             <a
               class="underline underline-offset-2"
               href="https://tally.so/r/nGLRVz "
+              target="_blank"
             >
               request a new token listing.
             </a>
@@ -75,6 +77,7 @@ defineProps<Props>();
             <a
               class="text-sm font-normal text-complementary underline underline-offset-2"
               href="http://regenerative.fi/"
+              target="_blank"
               >Visit the Regenerative platform.</a
             >
           </div>
