@@ -51,29 +51,36 @@ defineProps<Props>();
             There are currently {{ tokensAmount }} tokens listed.
             <a
               class="underline underline-offset-2"
-              href="https://github.com/Kolektivo-Labs/regenerative-fi-tokenlist/blob/main/regenerative.tokenlist.json"
+              href="https://www.regenerative.fi/tokens"
+              target="_blank"
               >View all tokens</a
             >
             or
-            <a class="underline underline-offset-2" href="#">
+            <a
+              class="underline underline-offset-2"
+              href="https://tally.so/r/nGLRVz "
+              target="_blank"
+            >
               request a new token listing.
             </a>
           </p>
         </div>
       </BalCard>
-      <BalCard growContent>
+      <BalCard class="w-full" growContent>
         <div class="flex flex-col justify-between items-start w-full h-full">
           <h4 class="text-base font-medium">How pools function</h4>
-          <p class="text-sm font-normal text-complementary">
-            Liquidity Providers add It is a long established fact that a reader
-            will be distracted by the readable content of a page when looking at
-            its layout. The point of using Lorem Ipsum is that it has.
-          </p>
-          <a
-            class="text-sm font-normal text-complementary underline underline-offset-2"
-            href="#"
-            >Learn more</a
-          >
+          <div>
+            <p class="text-sm font-normal text-complementary">
+              Our platform provides information about the leading ReFi Tokens
+              and Organizations.
+            </p>
+            <a
+              class="text-sm font-normal text-complementary underline underline-offset-2"
+              href="http://regenerative.fi/"
+              target="_blank"
+              >Visit the Regenerative platform.</a
+            >
+          </div>
         </div>
       </BalCard>
     </div>

@@ -16,6 +16,18 @@ export default function useGlobalQueryWatchers() {
   const { addAlert, removeAlert } = useAlerts();
   const { t } = useI18n();
 
+  onMounted(() => {
+    addAlert({
+      id: 'alpha-alert',
+      label: t('alerts.alpha-alert'),
+      type: AlertType.ERROR,
+      persistent: false,
+      // action: refetchPrices,
+      // actionLabel: t('alerts.retry-label'),
+      priority: AlertPriority.HIGH,
+    });
+  });
+
   watch(priceQueryError, () => {
     if (priceQueryError.value) {
       addAlert({
