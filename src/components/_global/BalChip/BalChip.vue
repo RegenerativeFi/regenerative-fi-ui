@@ -33,7 +33,7 @@ const { classes: iconClasses, iconSize } = useCloseIconClasses(props);
 </script>
 
 <template>
-  <div :class="['bal-chip', classes]">
+  <div :class="['bal-chip', classes, '!font-normal'] ">
     <div class="content-container">
       <span v-if="label">
         {{ label }}
