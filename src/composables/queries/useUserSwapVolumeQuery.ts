@@ -26,26 +26,25 @@ export default function useUserSwapVolumeQuery(options: QueryOptions = {}) {
   );
 
   // METHODS
-  function getWeekRange() {
-    const now = new Date();
+function getWeekRange() {
+  const now = new Date();
 
-    // Find the previous Wednesday
-    const lastWednesday = new Date(now);
-    lastWednesday.setUTCHours(23, 59, 59, 999);
-    lastWednesday.setUTCDate(
-      lastWednesday.getUTCDate() - ((lastWednesday.getUTCDay() + 4) % 7)
-    );
+  // Find the previous Thursday
+  const lastThursday = new Date(now);
+  lastThursday.setUTCHours(0, 0, 0, 0); // Set to midnight
+  lastThursday.setUTCDate(
+    lastThursday.getUTCDate() - ((lastThursday.getUTCDay() + 3) % 7)
+  );
 
-    // Find the next Thursday
-    const nextThursday = new Date(lastWednesday);
-    nextThursday.setUTCDate(lastWednesday.getUTCDate() + 7);
-    nextThursday.setUTCHours(0, 0, 0, 0);
+  // Find the next Thursday
+  const nextThursday = new Date(lastThursday);
+  nextThursday.setUTCDate(lastThursday.getUTCDate() + 7);
 
-    return {
-      timestamp_gte: Math.floor(lastWednesday.getTime() / 1000),
-      timestamp_lte: Math.floor(nextThursday.getTime() / 1000),
-    };
-  }
+  return {
+    timestamp_gte: Math.floor(lastThursday.getTime() / 1000),
+    timestamp_lte: Math.floor(nextThursday.getTime() / 1000),
+  };
+}
 
   const queryFn = async ({ pageParam = 0 }) => {
     console.debug(timestamp_gte, timestamp_lte);
