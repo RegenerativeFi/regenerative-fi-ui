@@ -16,10 +16,10 @@ const WeeklyTiers = [
   { level: 5, volume: 5000, points: 50 },
 ];
 const currentWeeklyTier = computed(() => {
-  const currentTier = WeeklyTiers.find(
+  const currentTier = WeeklyTiers.filter(
     tier => props.weeklyVolume >= tier.volume
   );
-  return currentTier ? currentTier : WeeklyTiers[0];
+  return currentTier ? currentTier[currentTier.length - 1] : WeeklyTiers[0];
 });
 
 const nextWeeklyTier = computed(() => {
