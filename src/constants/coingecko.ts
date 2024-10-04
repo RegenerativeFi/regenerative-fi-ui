@@ -7,6 +7,7 @@ export const Tokens = {
       '0xd8763cba276a3738e6de85b4b3bf5fded6d6ca73',
       '0x9995cc8f20db5896943afc8ee0ba463259c931ed',
       '0x765de816845861e75a25fca122bb6898b8b1282a',
+      '0xcebA9300f2b948710d2653dD7B07f33A8B32118C',
       '0x62b8b11039fcfe5ab0c56e502b1c372a3d2a9c7a',
     ],
     mocks: [
