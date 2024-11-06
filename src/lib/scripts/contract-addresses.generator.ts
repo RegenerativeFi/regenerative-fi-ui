@@ -4,21 +4,25 @@ import { Address } from '@/types';
 
 const fs = require('fs');
 
-type AddressMap = Record<Address, { task: string; name: string }>;
+// type AddressMap = Record<Address, { task: string; name: string }>;
 type ContractMap = Record<string, Address>;
 
 async function generate() {
   Object.values(config).forEach(async (config: Config) => {
     if (!config.monorepoName) return;
 
-    const network = config.monorepoName;
+    const network = 'celo';
     console.log(`Generating contract addresses for network ${network}...`);
-    const addresses: AddressMap = require(`@balancer-labs/v2-deployments/dist/addresses/${network}.json`);
+    const deployments = require(`@regenerative/v2-deployments/dist/addresses/${network}.json`);
 
     const contracts: ContractMap = {};
-    for (const [address, value] of Object.entries(addresses)) {
-      contracts[value.name] = address;
-    }
+    Object.values(deployments).forEach((deployment: any) => {
+      deployment.contracts.forEach(
+        (contract: { name: string; address: string }) => {
+          contracts[contract.name] = contract.address;
+        }
+      );
+    });
 
     const sortedContracts = Object.fromEntries(
       Object.entries(contracts).sort(([nameA], [nameB]) =>

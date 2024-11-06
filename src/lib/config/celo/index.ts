@@ -23,12 +23,12 @@ const config: Config = {
   explorer: 'https://celoscan.io/',
   explorerName: 'Celoscan',
   subgraph:
-    'https://api.studio.thegraph.com/query/63886/refi-celo/version/latest',
+    'https://api.studio.thegraph.com/query/92572/regenerative-pools-subgraph/version/latest',
   balancerApi: '',
   poolsUrlV2: '',
   subgraphs: {
     main: [
-      'https://api.studio.thegraph.com/query/63886/refi-celo/version/latest',
+      'https://api.studio.thegraph.com/query/92572/regenerative-pools-subgraph/version/latest',
     ],
     aave: '',
     gauge: '',
