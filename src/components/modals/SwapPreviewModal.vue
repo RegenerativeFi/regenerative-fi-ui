@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SubgraphPoolBase } from '@kolektivo-labs/sdk';
+import { SubgraphPoolBase } from '@regenerative/sdk';
 import { formatUnits } from '@ethersproject/units';
 import { mapValues } from 'lodash';
 import { computed, ref, watch } from 'vue';

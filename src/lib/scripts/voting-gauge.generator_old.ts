@@ -423,7 +423,7 @@ async function getRootGaugeInfo(
   retries = 5
 ): Promise<GaugeInfo[] | null> {
   log(`getRootGaugeAddress. network: ${network} recipient: ${recipients}`);
-  const subgraphEndpoint = config[Network.MAINNET].subgraphs.gauge;
+  const subgraphEndpoint = config[Network.ALFAJORES].subgraphs.gauge;
 
   const query = `
     {

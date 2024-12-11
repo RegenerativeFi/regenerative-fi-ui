@@ -1,4 +1,4 @@
-import { initApi } from './balancer-api';
+// import { initApi } from './balancer-api';
 import { initEthersContract } from './EthersContract';
 import { initMulticall } from './multicall';
 import { initMulticaller } from './Multicaller';
@@ -14,7 +14,7 @@ export function initDependencies() {
   // - initPoolsFallbackRepository
   // that are explicitly initialized the first time they are accessed via getter
   initMulticall();
-  initApi();
+  // initApi();
   initRpcProviderService();
   initMulticaller();
   initOldMulticaller();

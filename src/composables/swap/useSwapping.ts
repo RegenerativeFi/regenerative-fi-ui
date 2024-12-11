@@ -11,7 +11,7 @@ import {
   someJoinExit,
   SubgraphPoolBase,
   SwapTypes,
-} from '@kolektivo-labs/sdk';
+} from '@regenerative/sdk';
 
 import useWeb3 from '@/services/web3/useWeb3';
 import { networkId } from '../useNetwork';

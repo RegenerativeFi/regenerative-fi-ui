@@ -7,7 +7,7 @@ import { Pool } from '@/services/pool/types';
 
 import useNetwork from '../useNetwork';
 import usePoolQuery from './usePoolQuery';
-import { AprBreakdown } from '@kolektivo-labs/sdk';
+import { AprBreakdown } from '@regenerative/sdk';
 import { getBalancerSDK } from '@/dependencies/balancer-sdk';
 
 type QueryOptions = QueryObserverOptions<AprBreakdown>;

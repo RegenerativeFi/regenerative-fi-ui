@@ -103,6 +103,7 @@ export const tokenListsProvider = () => {
     onBeforeMount(async () => {
       const module = await tokensListPromise;
       const tokenLists = module.default as TokenListMap;
+      console.log('tokenLists', tokenLists);
 
       // filter token lists by network id
       allTokenLists.value = TokenListService.filterTokensList(

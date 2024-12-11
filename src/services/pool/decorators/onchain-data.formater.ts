@@ -1,4 +1,4 @@
-import { toNormalizedWeights } from '@kolektivo-labs/sdk';
+import { toNormalizedWeights } from '@regenerative/sdk';
 import { formatUnits } from '@ethersproject/units';
 
 import { isStableLike, isWeightedLike } from '@/composables/usePoolHelpers';

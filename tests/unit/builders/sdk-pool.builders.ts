@@ -1,4 +1,4 @@
-import { AprBreakdown, Pool } from '@kolektivo-labs/sdk';
+import { AprBreakdown, Pool } from '@regenerative/sdk';
 
 // BAL 80% WETH 20% is the default pool used in builders
 export const defaultSdkPool = {

@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers';
 import { Address } from '@/types';
-import { Pool as SDKPool, PoolToken, PoolType } from '@kolektivo-labs/sdk';
+import { Pool as SDKPool, PoolToken, PoolType } from '@regenerative/sdk';
 
-export type { SubPool, PoolToken } from '@kolektivo-labs/sdk';
-export { PoolType } from '@kolektivo-labs/sdk';
+export type { SubPool, PoolToken } from '@regenerative/sdk';
+export { PoolType } from '@regenerative/sdk';
 export interface Pool extends SDKPool {
   tokens: PoolToken[];
   onchain?: OnchainPoolData;

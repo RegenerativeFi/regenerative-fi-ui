@@ -11,7 +11,7 @@ import {
 } from '@/composables/usePoolHelpers';
 import { APR_THRESHOLD, VOLUME_THRESHOLD } from '@/constants/pools';
 import { Pool } from '@/services/pool/types';
-import { AprBreakdown } from '@kolektivo-labs/sdk';
+import { AprBreakdown } from '@regenerative/sdk';
 import { useCrossChainSync } from '@/providers/cross-chain-sync.provider';
 import useNetwork from '@/composables/useNetwork';
 import useWeb3 from '@/services/web3/useWeb3';

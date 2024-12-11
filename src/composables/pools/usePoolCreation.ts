@@ -19,7 +19,7 @@ import { balancerService } from '@/services/balancer/balancer.service';
 import useWeb3 from '@/services/web3/useWeb3';
 
 import { useTokens } from '@/providers/tokens.provider';
-import { PoolType } from '@kolektivo-labs/sdk';
+import { PoolType } from '@regenerative/sdk';
 import { wNativeAssetAddress } from '../usePoolHelpers';
 import { isGoerli } from '../useNetwork';
 

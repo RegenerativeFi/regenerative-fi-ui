@@ -1,4 +1,4 @@
-import { PoolType, toNormalizedWeights } from '@kolektivo-labs/sdk';
+import { PoolType, toNormalizedWeights } from '@regenerative/sdk';
 import { Vault__factory } from '@balancer-labs/typechain';
 import { getAddress } from '@ethersproject/address';
 import { BigNumber } from '@ethersproject/bignumber';

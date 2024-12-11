@@ -1,4 +1,4 @@
-import { AprBreakdown } from '@kolektivo-labs/sdk';
+import { AprBreakdown } from '@regenerative/sdk';
 import { EmptyPoolMock } from '@/__mocks__/pool';
 
 import APRTooltip from './APRTooltip.vue';

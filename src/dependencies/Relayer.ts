@@ -1,4 +1,4 @@
-import { Relayer } from '@kolektivo-labs/sdk';
+import { Relayer } from '@regenerative/sdk';
 import { handleDependencyError } from '.';
 
 let _Relayer: typeof Relayer = Relayer;

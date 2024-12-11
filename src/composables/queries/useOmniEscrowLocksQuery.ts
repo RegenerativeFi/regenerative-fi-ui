@@ -41,7 +41,7 @@ export function useOmniEscrowLocksQuery(account: ComputedRef<string>) {
   const queryKey = QUERY_KEYS.Gauges.OmniEscrowLocks(networkId, account);
 
   return useGraphQuery<OmniEscrowLockResponse>(
-    config[Network.MAINNET].subgraphs.gauge,
+    config[Network.ALFAJORES].subgraphs.gauge,
     queryKey,
     () => ({
       __name: 'OmniEscrowLocks',

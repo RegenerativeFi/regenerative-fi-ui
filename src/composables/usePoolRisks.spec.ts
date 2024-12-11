@@ -6,7 +6,7 @@ import {
 } from './usePoolRisks';
 import { aWeightedPool } from '@/__mocks__/weighted-pool';
 import { aPool } from '@tests/unit/builders/pool.builders';
-import { PoolType } from '@kolektivo-labs/sdk';
+import { PoolType } from '@regenerative/sdk';
 import { networkId } from '@/composables/useNetwork';
 import { Network } from '@/lib/config/types';
 import { POOLS } from '@/constants/pools';

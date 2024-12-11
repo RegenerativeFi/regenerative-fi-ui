@@ -1,4 +1,4 @@
-import { AprBreakdown, PoolType } from '@kolektivo-labs/sdk';
+import { AprBreakdown, PoolType } from '@regenerative/sdk';
 import { getAddress } from '@ethersproject/address';
 
 import { APR_THRESHOLD } from '@/constants/pools';

@@ -3,7 +3,7 @@ import {
   SingleSwap,
   SwapType,
   SwapV2,
-} from '@kolektivo-labs/sdk';
+} from '@regenerative/sdk';
 import { Vault__factory } from '@balancer-labs/typechain';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { ContractInterface } from '@ethersproject/contracts';

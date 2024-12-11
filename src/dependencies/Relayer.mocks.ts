@@ -1,5 +1,5 @@
 import { initRelayer } from './Relayer';
-import { Relayer } from '@kolektivo-labs/sdk';
+import { Relayer } from '@regenerative/sdk';
 
 export const defaultRelayerSignature = 'test relayer signature';
 

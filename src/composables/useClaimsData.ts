@@ -12,7 +12,7 @@ import useProtocolRewardsQuery, {
 } from './queries/useProtocolRewardsQuery';
 import { isQueryLoading } from './queries/useQueryHelpers';
 import { subgraphFallbackService } from '@/services/balancer/subgraph/subgraph-fallback.service';
-import { PoolType } from '@kolektivo-labs/sdk';
+import { PoolType } from '@regenerative/sdk';
 import QUERY_KEYS from '@/constants/queryKeys';
 
 export type GaugePool = {

@@ -7,7 +7,7 @@ import useSor, { calcPriceImpact } from '@/composables/swap/useSor';
 import { SorManager } from '@/lib/utils/balancer/helpers/sor/sorManager';
 import { configService } from '@/services/config/config.service';
 import { rpcProviderService } from '@/services/rpc-provider/rpc-provider.service';
-import { SwapType } from '@kolektivo-labs/sdk';
+import { SwapType } from '@regenerative/sdk';
 import { initDependenciesWithDefaultMocks } from '@/dependencies/default-mocks';
 
 initDependenciesWithDefaultMocks();

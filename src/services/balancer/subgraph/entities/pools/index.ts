@@ -6,7 +6,7 @@ import {
   GraphQLArgs,
   GraphQLQuery,
   PoolsSubgraphRepository,
-} from '@kolektivo-labs/sdk';
+} from '@regenerative/sdk';
 import _ from 'lodash';
 import Service from '../../balancer-subgraph.service';
 import queryBuilder from './query';

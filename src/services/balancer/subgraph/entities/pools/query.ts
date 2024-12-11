@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 
 import { POOLS } from '@/constants/pools';
-import { GraphQLArgs } from '@kolektivo-labs/sdk';
+import { GraphQLArgs } from '@regenerative/sdk';
 
 const defaultArgs: GraphQLArgs = {
   first: 1000,

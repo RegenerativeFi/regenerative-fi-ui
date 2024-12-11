@@ -12,10 +12,10 @@ import {
 import { TokenInfoMap } from '@/types/TokenList';
 
 import { OnchainDataFormater } from './decorators/onchain-data.formater';
-import { AprBreakdown } from '@kolektivo-labs/sdk';
+import { AprBreakdown } from '@regenerative/sdk';
 import { networkId } from '@/composables/useNetwork';
 import { getBalancerSDK } from '@/dependencies/balancer-sdk';
-import { Pool as SDKPool } from '@kolektivo-labs/sdk';
+import { Pool as SDKPool } from '@regenerative/sdk';
 import { captureBalancerException } from '@/lib/utils/errors';
 
 export default class PoolService {

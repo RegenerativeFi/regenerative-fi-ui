@@ -33,7 +33,7 @@ export function useVotingEscrowLocksQuery(
       return false;
     }
 
-    if (networkId === Network.MAINNET) {
+    if (networkId === Network.ALFAJORES) {
       return true;
     }
 

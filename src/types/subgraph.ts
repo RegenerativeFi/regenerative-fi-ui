@@ -1,4 +1,4 @@
-import { GraphQLQuery } from '@kolektivo-labs/sdk';
+import { GraphQLQuery } from '@regenerative/sdk';
 
 export type QueryArgs = Record<string, any>;
 export type QueryAttrs = Record<string, any>;

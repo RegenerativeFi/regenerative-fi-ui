@@ -1,5 +1,5 @@
 import { bnum } from '@/lib/utils';
-import { AprBreakdown } from '@kolektivo-labs/sdk';
+import { AprBreakdown } from '@regenerative/sdk';
 
 /**
  * @summary A pool has staking rewards if there either a BAL

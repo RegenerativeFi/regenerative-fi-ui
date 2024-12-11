@@ -10,7 +10,7 @@ import { Pool } from '@/services/pool/types';
 import StakingBreakdown from './components/StakingBreakdown.vue';
 import VeBalBreakdown from './components/VeBalBreakdown.vue';
 import YieldBreakdown from './components/YieldBreakdown.vue';
-import { AprBreakdown } from '@kolektivo-labs/sdk';
+import { AprBreakdown } from '@regenerative/sdk';
 import { hasStakingRewards } from '@/composables/useAPR';
 import useWeb3 from '@/services/web3/useWeb3';
 

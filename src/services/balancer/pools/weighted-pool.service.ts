@@ -1,4 +1,4 @@
-import { toNormalizedWeights } from '@kolektivo-labs/sdk';
+import { toNormalizedWeights } from '@regenerative/sdk';
 import {
   Vault__factory,
   WeightedPool__factory,

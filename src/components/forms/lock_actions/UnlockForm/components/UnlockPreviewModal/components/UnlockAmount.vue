@@ -4,7 +4,7 @@ import { computed } from 'vue';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import { useTokens } from '@/providers/tokens.provider';
 import { Pool } from '@/services/pool/types';
-import { PoolToken } from '@kolektivo-labs/sdk';
+import { PoolToken } from '@regenerative/sdk';
 
 /**
  * TYPES

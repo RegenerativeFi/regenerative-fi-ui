@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SubgraphPoolBase, SwapV2 } from '@kolektivo-labs/sdk';
+import { SubgraphPoolBase, SwapV2 } from '@regenerative/sdk';
 import { getAddress } from '@ethersproject/address';
 import { AddressZero } from '@ethersproject/constants';
 import BigNumber from 'bignumber.js';

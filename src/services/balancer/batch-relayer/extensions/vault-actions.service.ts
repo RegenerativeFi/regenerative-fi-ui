@@ -6,7 +6,7 @@ import {
   EncodeJoinPoolInput,
   ExitPoolData,
 } from '../relayer-types';
-import { ExitPoolRequest } from '@kolektivo-labs/sdk';
+import { ExitPoolRequest } from '@regenerative/sdk';
 
 export class VaultActionsService {
   public encodeBatchSwap(params: EncodeBatchSwapInput): string {

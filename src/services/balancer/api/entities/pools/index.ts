@@ -5,7 +5,7 @@ import {
   GraphQLArgs,
   GraphQLQuery,
   PoolsBalancerAPIRepository,
-} from '@kolektivo-labs/sdk';
+} from '@regenerative/sdk';
 import _ from 'lodash';
 
 import Service from '../../balancer-api.service';

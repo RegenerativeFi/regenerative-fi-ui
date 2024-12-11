@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
-import { PoolsFallbackRepository } from '@kolektivo-labs/sdk';
+import { PoolsFallbackRepository } from '@regenerative/sdk';
 import { handleDependencyError } from '.';
 
 // Initializing this heavy dependency by default we avoid calling initPoolsFallbackRepository in initDependencies from main.ts

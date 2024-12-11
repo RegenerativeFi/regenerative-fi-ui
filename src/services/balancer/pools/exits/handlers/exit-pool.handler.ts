@@ -1,4 +1,4 @@
-import { Address, BalancerSDK } from '@kolektivo-labs/sdk';
+import { Address, BalancerSDK } from '@regenerative/sdk';
 import { AmountOut } from '@/providers/local/exit-pool.provider';
 import { Pool } from '@/services/pool/types';
 import { TokenInfoMap } from '@/types/TokenList';

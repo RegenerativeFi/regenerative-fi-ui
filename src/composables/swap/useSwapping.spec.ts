@@ -9,7 +9,7 @@ import {
   UserSettingsProviderSymbol,
   UserSettingsResponse,
 } from '@/providers/user-settings.provider';
-import { BalancerSDK, SwapInfo } from '@kolektivo-labs/sdk';
+import { BalancerSDK, SwapInfo } from '@regenerative/sdk';
 import { BigNumber } from '@ethersproject/bignumber';
 import { mountComposableWithFakeTokensProvider as mountComposable } from '@tests/mount-helpers';
 import { wethAddress } from '@tests/unit/builders/address';

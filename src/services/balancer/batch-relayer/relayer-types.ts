@@ -6,7 +6,7 @@ import {
   FundManagement,
   JoinPoolRequest,
   SwapType,
-} from '@kolektivo-labs/sdk';
+} from '@regenerative/sdk';
 
 export type OutputReference = {
   index: number;

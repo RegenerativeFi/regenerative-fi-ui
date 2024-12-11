@@ -3,7 +3,7 @@ import {
   SwapType,
   SwapTypes,
   parseFixed,
-} from '@kolektivo-labs/sdk';
+} from '@regenerative/sdk';
 import { BigNumber, formatFixed } from '@ethersproject/bignumber';
 import {
   AddressZero,

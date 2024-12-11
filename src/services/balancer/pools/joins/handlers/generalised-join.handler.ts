@@ -1,5 +1,5 @@
 import { Pool } from '@/services/pool/types';
-import { BalancerSDK, SimulationType } from '@kolektivo-labs/sdk';
+import { BalancerSDK, SimulationType } from '@regenerative/sdk';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { Ref } from 'vue';
 import { JoinParams, JoinPoolHandler, QueryOutput } from './join-pool.handler';

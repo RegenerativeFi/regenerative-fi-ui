@@ -8,7 +8,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { formatUnits } from '@ethersproject/units';
 import { ipfsService } from '../ipfs/ipfs.service';
 import { configService } from '../config/config.service';
-import { Address } from '@kolektivo-labs/sdk';
+import { Address } from '@regenerative/sdk';
 
 type Attributes = {
   trait_type: string;

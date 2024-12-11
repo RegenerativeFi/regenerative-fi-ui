@@ -1,4 +1,4 @@
-import { BatchSwapStep, SwapV2 } from '@kolektivo-labs/sdk';
+import { BatchSwapStep, SwapV2 } from '@regenerative/sdk';
 import { BigNumberish } from '@ethersproject/bignumber';
 import { TransactionRequest } from '@ethersproject/providers';
 

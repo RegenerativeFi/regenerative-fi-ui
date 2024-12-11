@@ -101,7 +101,7 @@ export default function useTokenPricesQuery(
       console.log('Fetching', Object.values(celoPrices).length, 'prices');
       return pricesMap;
     }
-
+    console.log('api', api);
     if (!api) return {};
 
     const { prices } = await api.GetCurrentTokenPrices();

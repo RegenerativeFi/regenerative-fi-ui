@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 
-import { PoolToken } from '@kolektivo-labs/sdk';
+import { PoolToken } from '@regenerative/sdk';
 
 import { configService } from '@/services/config/config.service';
 

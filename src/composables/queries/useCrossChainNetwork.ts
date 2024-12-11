@@ -21,7 +21,7 @@ export function useCrossChainNetwork(
    * for regular UI users, remoteUser will be the same as localUser
    */
   const remoteUser = computed(() => {
-    if (networkId === Network.MAINNET) {
+    if (networkId === Network.ALFAJORES) {
       return account.value;
     }
     const layerZeroChainId = configs[networkId].layerZeroChainId || '';

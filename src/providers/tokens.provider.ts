@@ -90,7 +90,7 @@ export const tokensProvider = (
     injectedTokens: {},
     spenders: compact([
       networkConfig.addresses.vault,
-      networkConfig.tokens.Addresses.wstETH,
+      // networkConfig.tokens.Addresses.wstETH,
       configService.network.addresses.veBAL,
     ]),
     injectedPrices: {},
@@ -465,6 +465,7 @@ export const tokensProvider = (
    * @param pricesToInject A map of <address, price> to inject
    */
   function injectPrices(pricesToInject: TokenPrices) {
+    console.log('injectPrices', pricesToInject);
     state.injectedPrices = {
       ...state.injectedPrices,
       ...pricesToInject,

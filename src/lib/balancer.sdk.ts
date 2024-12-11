@@ -1,4 +1,4 @@
-import { BalancerSDK } from '@kolektivo-labs/sdk';
+import { BalancerSDK } from '@regenerative/sdk';
 import { Network } from '@/lib/config/types';
 import { configService } from '@/services/config/config.service';
 import { ref } from 'vue';

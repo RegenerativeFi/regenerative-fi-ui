@@ -7,7 +7,7 @@ import {
   PoolType,
 } from '@/services/pool/types';
 import { aPoolToken, aWeightedPool } from '@/__mocks__/weighted-pool';
-import { PoolWithMethods, PriceRateProvider } from '@kolektivo-labs/sdk';
+import { PoolWithMethods, PriceRateProvider } from '@regenerative/sdk';
 import { mock } from 'vitest-mock-extended';
 import { randomAddress, wethAddress } from './address';
 

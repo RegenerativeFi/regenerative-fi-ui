@@ -1,4 +1,4 @@
-import { GraphQLArgs } from '@kolektivo-labs/sdk';
+import { GraphQLArgs } from '@regenerative/sdk';
 import { POOLS } from '@/constants/pools';
 import { merge } from 'lodash';
 

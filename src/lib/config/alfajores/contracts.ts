@@ -1,23 +1,23 @@
 import { Contracts } from '../types';
-import * as alfajores from '@/assets/data/contracts/alfajores.json';
+import * as alfajores from '@/assets/data/contracts/celoAlfajores.json';
 
 const contracts: Contracts = {
   merkleRedeem: '',
   merkleOrchard: '',
   merkleOrchardV2: '',
-  multicall: alfajores.Multicall,
+  multicall: '0xca11bde05977b3631167028862be2a173976ca11',
   authorizer: alfajores.Authorizer,
   vault: alfajores.Vault,
   weightedPoolFactory: alfajores.WeightedPoolFactory,
-  stablePoolFactory: '',
+  stablePoolFactory: alfajores.ComposableStablePoolFactory,
   lidoRelayer: '',
   balancerHelpers: alfajores.BalancerHelpers,
-  batchRelayer: '',
+  batchRelayer: alfajores.BalancerRelayer,
   gaugeFactory: '',
   balancerMinter: '',
-  gaugeController: '',
+  gaugeController: alfajores.GaugeController,
   tokenAdmin: '',
-  veBAL: '',
+  veBAL: alfajores.VotingEscrow,
   veDelegationProxy: '',
   veBALHelpers: '',
   feeDistributor: '',
@@ -26,9 +26,9 @@ const contracts: Contracts = {
   gaugeRewardsHelper: '',
   gaugeWorkingBalanceHelper: '',
   gaugeCheckpointer: '',
-  simpleMinter: alfajores.SimpleMinter,
-  RFNFT: alfajores.RFNFT,
-  RFP: alfajores.RFP,
+  simpleMinter: '',
+  RFNFT: '',
+  RFP: '',
 };
 
 export default contracts;

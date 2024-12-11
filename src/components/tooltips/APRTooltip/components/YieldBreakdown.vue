@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Pool } from '@/services/pool/types';
-import { AprBreakdown } from '@kolektivo-labs/sdk';
+import { AprBreakdown } from '@regenerative/sdk';
 import { getAddress } from '@ethersproject/address';
 import { computed } from 'vue';
 

@@ -14,7 +14,7 @@ import { includesAddress } from '@/lib/utils';
 import { usePoolStaking } from '@/providers/local/pool-staking.provider';
 import { Pool, PoolToken } from '@/services/pool/types';
 import useWeb3 from '@/services/web3/useWeb3';
-import { AprBreakdown } from '@kolektivo-labs/sdk';
+import { AprBreakdown } from '@regenerative/sdk';
 import { useDisabledJoinPool } from '@/composables/useDisabledJoinPool';
 import { poolMetadata as getPoolMetadata } from '@/lib/config/metadata';
 

@@ -3,7 +3,7 @@ import {
   // eslint-disable-next-line no-restricted-imports
   PoolsFallbackRepository,
   PoolsRepositoryFetchOptions,
-} from '@kolektivo-labs/sdk';
+} from '@regenerative/sdk';
 import { anSdkPool } from '@tests/unit/builders/sdk-pool.builders';
 import { initPoolsFallbackRepository } from './PoolsFallbackRepository';
 

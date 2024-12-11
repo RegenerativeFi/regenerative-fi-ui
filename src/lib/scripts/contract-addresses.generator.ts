@@ -11,7 +11,7 @@ async function generate() {
   Object.values(config).forEach(async (config: Config) => {
     if (!config.monorepoName) return;
 
-    const network = 'celo';
+    const network = 'celoAlfajores';
     console.log(`Generating contract addresses for network ${network}...`);
     const deployments = require(`@regenerative/v2-deployments/dist/addresses/${network}.json`);
 
