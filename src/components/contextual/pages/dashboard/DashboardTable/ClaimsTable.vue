@@ -1,10 +1,8 @@
-<script lang="ts" setup>
+<script setup lang="ts" >
 import { useI18n } from 'vue-i18n';
 import useBreakpoints from '@/composables/useBreakpoints';
 import { ColumnDefinition } from '@/components/_global/BalTable/types';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
-import RFP from '@/assets/images/icons/coins/RFP.svg';
-import { useAllocations } from '@/composables/campaigns/useAllocations';
 import useWeb3 from '@/services/web3/useWeb3';
 import { configService } from '@/services/config/config.service';
 
@@ -26,12 +24,8 @@ export type ClaimRow = {
  */
 const { t } = useI18n();
 const { fNum } = useNumbers();
-const { currentAllocation, isLoading, claimReward, isClaimingReward } =
-  useAllocations();
-watch(currentAllocation, () => {
-  console.debug(currentAllocation.value);
-});
 
+const isLoading = ref(false);
 /**
  * STATE
  */
@@ -74,16 +68,9 @@ const columns = ref<ColumnDefinition<ClaimRow>[]>([
 const selectedRows = ref([]);
 
 const handleButtonClick = () => {
-  claimReward();
+  console.log('GM');
 };
 
-const rewardsData = [
-  {
-    icon: RFP,
-    amount: currentAllocation,
-    value: 'NFT XP',
-  },
-];
 const { isWalletReady, isWalletConnecting } = useWeb3();
 
 const { upToLargeBreakpoint } = useBreakpoints();
@@ -95,9 +82,9 @@ const noPoolsLabel = computed(() => {
     : t('connectYourWallet');
 });
 
-const hasCurrentAllocation = computed(() => {
-  return parseInt(currentAllocation.value as string) > 0;
-});
+// const hasCurrentAllocation = computed(() => {
+//   return false;
+// });
 </script>
 
 <template>
@@ -111,14 +98,14 @@ const hasCurrentAllocation = computed(() => {
       :columns="columns"
       sticky="both"
       :noResultsLabel="noPoolsLabel"
-      :data="hasCurrentAllocation ? rewardsData : []"
+      :data="[]"
       :isLoading="isLoading"
       skeletonClass="h-24"
       :square="upToLargeBreakpoint"
     >
       <template #iconsColumnCell>
         <div class="flex gap-4 justify-start items-center px-6 w-full">
-          <img :src="RFP" class="w-6 h-6" />
+          <!-- <img :src="RFP" class="w-6 h-6" /> -->
           <p class="text-base font-normal">RFPs</p>
         </div>
       </template>
@@ -134,8 +121,8 @@ const hasCurrentAllocation = computed(() => {
       </template>
       <template #claimTotalCell>
         <BalBtn
-          :color="selectedRows.length || isClaimingReward ? 'blue' : 'gray'"
-          :disabled="isClaimingReward || !selectedRows.length"
+          :color="selectedRows.length ? 'blue' : 'gray'"
+          :disabled="!selectedRows.length"
           class="w-fit"
           size="sm"
           @click="handleButtonClick"

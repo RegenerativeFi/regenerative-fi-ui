@@ -282,14 +282,6 @@ const QUERY_KEYS = {
       { networkId, account },
     ],
   },
-  Swaps: {
-    Week: (
-      networkId: Ref<Network>,
-      account: Ref<string>,
-      startTime: number,
-      endTime: number
-    ) => ['swaps', 'week', { networkId, account, startTime, endTime }],
-  },
   Balancers: {
     Pools: (networkId: Ref<Network>) => ['balancers', 'pools', { networkId }],
   },
