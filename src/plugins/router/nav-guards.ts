@@ -174,7 +174,7 @@ function applyVotingRedirects(router: Router): Router {
     ) {
       next({
         name: 'vebal',
-        params: { networkSlug: 'ethereum' },
+        params: { networkSlug: 'celo' },
       });
     } else next();
   });
