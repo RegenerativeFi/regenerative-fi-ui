@@ -107,7 +107,11 @@ function handleSuccess() {
       </div>
     </template>
 
-    <LockAmount :lockablePool="lockablePool" :totalLpTokens="totalLpTokens" />
+    <LockAmount
+      :lockableTokenInfo="lockablePoolTokenInfo"
+      :lockablePool="lockablePool"
+      :totalLpTokens="totalLpTokens"
+    />
 
     <LockSummary
       :lockablePool="lockablePool"

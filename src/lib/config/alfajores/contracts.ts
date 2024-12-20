@@ -27,8 +27,7 @@ const contracts: Contracts = {
   gaugeWorkingBalanceHelper: '',
   gaugeCheckpointer: '',
   simpleMinter: '',
-  RFNFT: '',
-  RFP: '',
+  ReFi: alfajores.TestBalancerToken,
 };
 
 export default contracts;

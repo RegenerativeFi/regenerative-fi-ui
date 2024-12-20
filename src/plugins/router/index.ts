@@ -132,8 +132,8 @@ const routes: RouteRecordRaw[] = [
     meta: { layout: 'FocussedLayout' },
   },
   {
-    path: '/:networkSlug/get-vebal',
-    name: 'get-vebal',
+    path: '/:networkSlug/get-verefi',
+    name: 'get-verefi',
     component: GetVeBalPage,
     meta: { layout: 'FocussedLayout' },
   },

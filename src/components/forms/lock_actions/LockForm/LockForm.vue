@@ -5,7 +5,6 @@ import Col3Layout from '@/components/layouts/Col3Layout.vue';
 import usePoolQuery from '@/composables/queries/usePoolQuery';
 import useVeBalLockInfoQuery from '@/composables/queries/useVeBalLockInfoQuery';
 import useBreakpoints from '@/composables/useBreakpoints';
-import { useTokens } from '@/providers/tokens.provider';
 import useVeBal from '@/composables/useVeBAL';
 import { Pool } from '@/services/pool/types';
 import useWeb3 from '@/services/web3/useWeb3';
@@ -14,14 +13,15 @@ import HowToLock from './components/HowToLock.vue';
 import LockableTokens from './components/LockableTokens.vue';
 import MyVeBAL from './components/MyVeBAL.vue';
 import VeBalForm from './components/VeBalForm/VeBalForm.vue';
+import useREFI from '@/composables/useREFI';
 
 /**
  * COMPOSABLES
  */
-const { getToken } = useTokens();
 const { isWalletReady } = useWeb3();
 const { lockablePoolId } = useVeBal();
 const { isDesktop, isMobile } = useBreakpoints();
+const { ReFiTokenInfo } = useREFI();
 
 /**
  * QUERIES
@@ -40,9 +40,7 @@ const lockablePool = computed<Pool | undefined>(
   () => lockablePoolQuery.data.value
 );
 
-const lockablePoolTokenInfo = computed(() =>
-  lockablePool.value != null ? getToken(lockablePool.value.address) : null
-);
+const lockablePoolTokenInfo = ReFiTokenInfo;
 
 const veBalLockInfo = computed(() => veBalLockInfoQuery.data.value);
 

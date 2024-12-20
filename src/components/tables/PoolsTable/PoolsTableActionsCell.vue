@@ -71,7 +71,7 @@ const showVeBalLock = computed(() => isVeBalPool(props.pool.id));
       v-else-if="showVeBalLock"
       tag="router-link"
       :to="{
-        name: 'get-vebal',
+        name: 'get-verefi',
         query: {
           networkSlug,
           returnRoute: $route.name,

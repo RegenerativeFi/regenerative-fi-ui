@@ -2,9 +2,8 @@
 import { computed, ref, toRef } from 'vue';
 
 import { LockType } from '@/components/forms/lock_actions/LockForm/types';
-import { useTokens } from '@/providers/tokens.provider';
+// import { useTokens } from '@/providers/tokens.provider';
 import { expectedVeBal } from '@/composables/useVeBAL';
-import { bnum } from '@/lib/utils';
 import { VeBalLockInfo } from '@/services/balancer/contracts/contracts/veBAL';
 import { configService } from '@/services/config/config.service';
 import { Pool } from '@/services/pool/types';
@@ -55,35 +54,33 @@ const {
 /**
  * COMPOSABLES
  */
-const { balanceFor } = useTokens();
+// const { balanceFor } = useTokens();
 
 /**
  * COMPUTED
  */
-const lockablePoolBptBalance = computed(() =>
-  balanceFor(props.lockablePool.address)
-);
+// const lockablePoolBptBalance = computed(() =>
+//   balanceFor(props.lockablePool.address)
+// );
 
 const submissionDisabled = computed(() => {
   if (isMismatchedNetwork.value) {
     return true;
   }
 
-  const lockableAmount = bnum(lockablePoolBptBalance.value || '0');
-  const toLockAmount = bnum(lockAmount.value || '0');
+  // const toLockAmount = bnum(lockAmount.value || '0');
 
-  if (toLockAmount.isGreaterThan(lockableAmount)) {
-    return true;
-  }
+  // if (toLockAmount.isGreaterThan(lockableAmount)) {
+  //   return true;
+  // }
 
   if (props.veBalLockInfo?.hasExistingLock && !props.veBalLockInfo?.isExpired) {
     return !isIncreasedLockAmount.value && !isExtendedLockEndDate.value;
   }
 
   return (
-    !lockableAmount.gt(0) ||
-    !isValidLockAmount.value ||
-    !isValidLockEndDate.value
+    // !lockableAmount.gt(0) ||
+    !isValidLockAmount.value || !isValidLockEndDate.value
   );
 });
 

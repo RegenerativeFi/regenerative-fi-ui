@@ -153,7 +153,10 @@ const cards = computed(() => {
           outline
           :disabled="Number(bptBalance) === 0"
           @click="
-            $router.push({ name: 'get-vebal', query: { returnRoute: 'vebal' } })
+            $router.push({
+              name: 'get-verefi',
+              query: { returnRoute: 'vebal' },
+            })
           "
         >
           Lock for veBAL
@@ -177,7 +180,10 @@ const cards = computed(() => {
           outline
           class="mr-3"
           @click="
-            $router.push({ name: 'get-vebal', query: { returnRoute: 'vebal' } })
+            $router.push({
+              name: 'get-verefi',
+              query: { returnRoute: 'vebal' },
+            })
           "
         >
           Extend lock

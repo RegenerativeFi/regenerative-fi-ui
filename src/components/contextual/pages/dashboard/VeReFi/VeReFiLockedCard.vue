@@ -1,6 +1,26 @@
 <script setup lang="ts">
 import Logo from '@/assets/images/icons/VeREFI/logo-light.svg';
 import Locked from '@/assets/images/icons/VeREFI/lock.svg';
+import useNumbers from '@/composables/useNumbers';
+import { TokenInfo } from '@/types/TokenList';
+const props = withDefaults(
+  defineProps<{
+    balance: string;
+    tokenInfo: TokenInfo | null;
+  }>(),
+  {
+    balance: '0.0',
+  }
+);
+
+const { toFiat } = useNumbers();
+
+const VeReFiBalance = computed(() => Number(props.balance).toFixed(2));
+const VeReFiBalanceFiat = computed(() =>
+  props.tokenInfo
+    ? toFiat(Number(props.balance), props.tokenInfo.address)
+    : '0.00'
+);
 </script>
 
 
@@ -16,9 +36,9 @@ import Locked from '@/assets/images/icons/VeREFI/lock.svg';
     <div>
       <div class="flex flex-row gap-2">
         <img :src="Logo" class="brightness-50" width="18" height="18" />
-        <p class="text-xl font-medium">0</p>
+        <p class="text-xl font-medium">{{ VeReFiBalance }}</p>
       </div>
-      <span class="text-sm text-disabled"> $0.00</span>
+      <span class="text-sm text-disabled"> ${{ VeReFiBalanceFiat }}</span>
     </div>
     <template #footer>
       <BalBtn

@@ -168,7 +168,6 @@ function getId(id: string, type: TransactionType) {
 
 function getTransactions(): TransactionsMap {
   const transactionsMap = transactionsState.value[networkId] ?? {};
-  console.debug({ transactionsMap });
   return transactionsMap;
 }
 

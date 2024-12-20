@@ -56,8 +56,7 @@ export interface Contracts {
   omniVotingEscrow?: string;
   claimSubmission?: string;
   simpleMinter?: string;
-  RFNFT?: string;
-  RFP?: string;
+  ReFi?: string;
 }
 
 export interface RateProviders {

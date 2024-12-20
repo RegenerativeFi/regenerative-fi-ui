@@ -38,6 +38,7 @@ const steps = computed(() => [
 
 <template>
   <BalAccordion
+    shadow="xl"
     class="mt-4"
     :showSectionBorder="false"
     :sections="[

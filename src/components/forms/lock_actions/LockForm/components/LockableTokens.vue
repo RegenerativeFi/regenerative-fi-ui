@@ -1,4 +1,4 @@
-<script setup lang="ts">
+0x56Fa6A4cBED97E2ed4c4d1d272b8375F46970F92<script setup lang="ts">
 import { computed } from 'vue';
 
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
@@ -44,7 +44,7 @@ const fiatTotal = computed((): string =>
 </script>
 
 <template>
-  <BalCard noPad shadow="none">
+  <BalCard noPad shadow="xl">
     <div class="p-4 w-full border-b dark:border-gray-900">
       <h6>
         {{ $t('getVeBAL.lockableTokens.title') }}

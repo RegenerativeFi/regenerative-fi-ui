@@ -132,8 +132,6 @@ export function handleNetworkSlug(
   const localStorageNetwork = networkFor(
     localStorage.getItem('networkId') ?? '42220'
   );
-  console.debug('networkFromUrl', networkFromUrl);
-  console.debug('localStorageNetwork', localStorageNetwork);
   if (!networkFromUrl) {
     return noNetworkChangeCallback();
   }

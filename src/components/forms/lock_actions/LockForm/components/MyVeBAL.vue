@@ -43,7 +43,7 @@ const percentVeBAL = computed(() => {
 </script>
 
 <template>
-  <BalCard noPad shadow="none">
+  <BalCard noPad shadow="xl">
     <div class="p-4 w-full border-b dark:border-gray-900">
       <h6>
         {{ $t('getVeBAL.myVeBAL.title') }}

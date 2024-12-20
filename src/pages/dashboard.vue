@@ -5,9 +5,12 @@ import ClaimTable from '@/components/contextual/pages/dashboard/DashboardTable/C
 import LiquidityTable from '@/components/contextual/pages/dashboard/DashboardTable/LiquidityTable.vue';
 import { provideUserStaking } from '@/providers/local/user-staking.provider';
 import { providerUserPools } from '@/providers/local/user-pools.provider';
+import useVeBal from '@/composables/useVeBAL';
 
 const userStaking = provideUserStaking();
 providerUserPools(userStaking);
+
+const { ReFiBalance, veBalBalance, veBalTokenInfo, ReFiTokenInfo } = useVeBal();
 </script>
 <template>
   <div
@@ -15,8 +18,8 @@ providerUserPools(userStaking);
   >
     <h2 class="text-xl font-medium leading-5 !mb-4">Manage your VeREFI</h2>
     <div class="flex flex-row gap-4">
-      <VeReFiBalanceCard />
-      <VeReFiLockedCard />
+      <VeReFiBalanceCard :tokenInfo="ReFiTokenInfo" :balance="ReFiBalance" />
+      <VeReFiLockedCard :tokenInfo="veBalTokenInfo" :balance="veBalBalance" />
     </div>
     <div>
       <h2 class="text-xl font-medium leading-5 !mb-4">Claim Rewards</h2>

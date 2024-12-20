@@ -91,13 +91,23 @@ export default function useVeBal() {
       ? getToken(networkConfig.addresses.veBAL)
       : null
   );
+  const ReFiTokenInfo = computed(() =>
+    networkConfig.addresses.ReFi ? getToken(networkConfig.addresses.ReFi) : null
+  );
 
+  const ReFiBalance = computed(() =>
+    networkConfig.addresses.ReFi
+      ? balanceFor(networkConfig.addresses.ReFi)
+      : '0.0'
+  );
   const veBalBalance = computed(() =>
     balanceFor(networkConfig.addresses.veBAL)
   );
 
+  const hasReFiBalance = computed(() => Number(ReFiBalance.value) > 0);
   const hasVeBalBalance = computed(() => Number(veBalBalance.value) > 0);
 
+  const noReFiBalance = computed(() => ReFiBalance.value === '0.0');
   const noVeBalBalance = computed(() => veBalBalance.value === '0.0');
 
   const lockablePoolId = computed(() => POOLS.IdsMap?.veBAL);
@@ -111,6 +121,10 @@ export default function useVeBal() {
     noVeBalBalance,
     lockablePoolId,
     showRedirectModal,
+    ReFiTokenInfo,
+    ReFiBalance,
+    hasReFiBalance,
+    noReFiBalance,
     // methods
     setShowRedirectModal,
   };

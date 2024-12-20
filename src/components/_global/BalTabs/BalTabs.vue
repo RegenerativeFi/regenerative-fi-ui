@@ -22,7 +22,6 @@ function isActiveTab(tab: Tab): boolean {
 }
 
 function onClick(tab: Tab) {
-  console.debug(tab.value);
   emit('selected', tab.value);
   emit('update:modelValue', tab.value);
 }

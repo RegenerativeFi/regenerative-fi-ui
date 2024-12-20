@@ -148,7 +148,7 @@ onUnmounted(() => {
           v-if="lockablePoolId === pool.id"
           tag="router-link"
           :to="{
-            name: 'get-vebal',
+            name: 'get-verefi',
             query: {
               returnRoute: $route.name,
               returnParams: JSON.stringify({

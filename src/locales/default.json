@@ -1068,7 +1068,7 @@
           "secondaryText": "{0} days"
         },
         "myVeBAL": {
-          "label": "My veBAL",
+          "label": "My veREFI",
           "secondaryText": "{0} of all veBAL"
         },
         "myExpiredLockTooltip": "Your previous lockup period has expired, so you no longer have any veBAL or voting power. You will no longer earn protocol fees, boosted yields on staked Ethereum Mainnet pools or veBAL incentives. However, you’ll still get the minimum 1.0x rate. Tap the minus icon to redeem your expired locked B-80BAL-20WETH LP tokens and then create a new lock to get veBAL."
@@ -1206,7 +1206,7 @@
       "percentVeBAL": "% of total veBAL"
     },
     "lockForm": {
-      "title": "Lock to get veBAL",
+      "title": "Lock to get veREFI",
       "lockAmount": {
         "title": "How much do you want to lock?"
       },
