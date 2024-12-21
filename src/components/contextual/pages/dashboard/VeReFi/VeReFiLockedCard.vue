@@ -47,6 +47,12 @@ const VeReFiBalanceFiat = computed(() =>
         flat="true"
         outline="true"
         class="font-medium"
+        @click="
+          $router.push({
+            name: 'get-verefi',
+            query: { returnRoute: 'dashboard' },
+          })
+        "
         >Extend lock</BalBtn
       >
     </template>
