@@ -4,7 +4,7 @@ import MyVeReFiInfoChip from './components/MyVeReFiInfoChip.vue';
 
 <template>
   <BalCard>
-    <div class="flex justify-between items-center p-2">
+    <div class="flex justify-between items-center px-2">
       <div class="flex gap-2">
         <p class="text-sm">Total voting power available for this epoch</p>
         <span class="px-3 text-sm rounded-xl bg-[#CEE9FF]">102,294.82 </span>

@@ -1,16 +1,14 @@
 <script lang="ts" setup>
 import useVotingEscrowLocks from '@/composables/useVotingEscrowLocks';
 import useVotingPools from '@/composables/useVotingPools';
-
+import Logo from '@/assets/images/icons/VeREFI/logo-light.svg';
 import useNetwork from '@/composables/useNetwork';
 import useNumbers from '@/composables/useNumbers';
 import useVeBal from '@/composables/useVeBAL';
 import { useVeBalLockInfo } from '@/composables/useVeBalLockInfo';
-
 import useWeb3 from '@/services/web3/useWeb3';
 import { isVotingCompleted, useVoting } from '../providers/voting.provider';
 import { bpsToPercentage } from '../voting-utils';
-import GaugesFilters from './GaugesFilters.vue';
 import GaugesTable from './GaugesTable.vue';
 import VotingAlert from './VotingAlert.vue';
 import { useLMVotingFilters } from './composables/useLMVotingFilters';
@@ -38,7 +36,7 @@ const { shouldResubmitVotes } = useVotingEscrowLocks();
 const { networkSlug } = useNetwork();
 const { isWalletReady, isMismatchedNetwork } = useWeb3();
 
-const { hasVeBalBalance, noVeBalBalance } = useVeBal();
+const { hasVeBalBalance, noVeBalBalance, veBalBalance } = useVeBal();
 const { fNum } = useNumbers();
 const {
   isLoading,
@@ -56,7 +54,6 @@ const {
   activeNetworkFilters,
   filteredVotingPools,
   tokenFilter,
-  networkFilters,
 } = useLMVotingFilters(votingPools, expiredGauges);
 
 /**
@@ -64,6 +61,10 @@ const {
  */
 const unallocatedVotesFormatted = computed<string>(() =>
   bpsToPercentage(unallocatedVotes.value, fNum)
+);
+
+const veBalBalanceFormated = computed<string>(() =>
+  Number(veBalBalance.value).toFixed(2)
 );
 
 const selectVotesDisabled = computed(
@@ -201,18 +202,38 @@ watch(account, (_, prevAccount) => {
 
     <div class="flex flex-wrap justify-between items-end px-4 lg:px-0">
       <div class="flex gap-2 xs:gap-3 mb-3 lg:mb-0">
-        <BalCard shadow="none" class="p-0 md:w-48 min-w-max">
+        <BalCard
+          shadow="none"
+          class="p-0 md:w-48 min-w-max bg-transparent border-complementary-b"
+        >
+          <div class="flex items-center">
+            <p class="inline mr-1 text-sm text-secondary">My veREFI Balance</p>
+          </div>
+          <div class="flex flex-row gap-2">
+            <img :src="Logo" class="brightness-50" width="18" height="18" />
+            <p class="inline mr-1 text-lg font-semibold">
+              <span v-if="hasVeBalBalance">
+                {{ veBalBalanceFormated }}
+              </span>
+              <span v-else class="mr-1">—</span>
+            </p>
+          </div>
+        </BalCard>
+        <BalCard
+          shadow="none"
+          class="p-0 md:w-48 min-w-max bg-transparent border-complementary-b"
+        >
           <div class="flex items-center">
             <p class="inline mr-1 text-sm text-secondary">
               My unallocated votes
             </p>
-            <BalTooltip
+            <!-- <BalTooltip
               :text="$t('veBAL.liquidityMining.myUnallocatedVotesTooltip')"
               iconClass="text-gray-400 dark:text-gray-600"
               iconSize="sm"
               width="72"
               class="mt-1"
-            />
+            /> -->
           </div>
           <p
             class="inline mr-1 text-lg font-semibold"
@@ -223,7 +244,7 @@ watch(account, (_, prevAccount) => {
             </span>
             <span v-else class="mr-1">—</span>
           </p>
-          <BalTooltip
+          <!-- <BalTooltip
             v-if="hasExpiredLock"
             :text="$t('veBAL.liquidityMining.votingPowerExpiredTooltip')"
             iconSize="sm"
@@ -231,9 +252,12 @@ watch(account, (_, prevAccount) => {
             :iconClass="'text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors'"
             width="72"
             class="relative top-0.5"
-          />
+          /> -->
         </BalCard>
-        <BalCard shadow="none" class="md:w-48 min-w-max">
+        <BalCard
+          shadow="none"
+          class="md:w-48 min-w-max bg-transparent border-complementary-b"
+        >
           <div class="flex items-center">
             <p
               :class="{ 'text-orange-500 font-medium': votingPeriodLastHour }"
@@ -241,13 +265,13 @@ watch(account, (_, prevAccount) => {
             >
               Voting period ends
             </p>
-            <BalTooltip
+            <!-- <BalTooltip
               :text="$t('veBAL.liquidityMining.votingPeriodTooltip')"
               iconSize="sm"
               iconClass="text-gray-400 dark:text-gray-600"
               width="72"
               class="mt-1"
-            />
+            /> -->
           </div>
           <p class="text-lg font-semibold tabular-nums">
             <span
@@ -279,19 +303,20 @@ watch(account, (_, prevAccount) => {
             </div>
           </template>
         </BalTextInput>
-        <GaugesFilters
+        <!-- <GaugesFilters
           :networkFilters="networkFilters"
           :showExpiredGauges="showExpiredGauges"
           :activeNetworkFilters="activeNetworkFilters"
           @update:show-expired-gauges="showExpiredGauges = $event"
           @update:active-network-filters="activeNetworkFilters = $event"
-        />
-        <div v-if="isWalletReady" class="flex-0 ml-5 w-32 h-8">
+        /> -->
+        <div v-if="isWalletReady" class="flex-0 w-32">
           <BalBtn
             :tag="votingDisabled ? 'div' : 'router-link'"
             :to="{ name: 'vebal-voting', params: { networkSlug } }"
             :label="hasSubmittedVotes ? 'Edit votes' : 'Vote'"
             color="gradient"
+            class="!h-full"
             :disabled="votingDisabled"
             block
           />
