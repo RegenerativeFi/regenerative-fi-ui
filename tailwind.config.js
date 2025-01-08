@@ -206,7 +206,7 @@ module.exports = {
           primary: '#7B7B7B',
           secondary: '#B6C7D6',
         },
-        disabled: '9F9F9F',
+        disabled: '#9F9F9F',
       },
     },
   },

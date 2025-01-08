@@ -274,7 +274,7 @@ function navigateToGetVeBAL() {
       >
         <BalLoadingBlock v-if="isLoadingData" darker class="w-full h-full" />
         <div v-else class="flex flex-col flex-1">
-          <div class="mb-2 text-xl font-bold">My veBAL</div>
+          <div class="mb-2 text-xl font-bold">My veREFI</div>
           <div class="mb-10 text-5xl font-black">
             {{ Number(veBalBalance).toFixed(2) }}
           </div>

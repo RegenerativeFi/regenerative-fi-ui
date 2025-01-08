@@ -2,7 +2,7 @@ import { TokenConstants } from '../types';
 
 const tokens: TokenConstants = {
   Popular: {
-    Symbols: ['tCELO', 'tREGEN', 'tUSDC', 'tcUSD'],
+    Symbols: ['tCELO', 'tREFI', 'tUSDC', 'tcUSD'],
   },
   InitialSwapTokens: {
     input: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',

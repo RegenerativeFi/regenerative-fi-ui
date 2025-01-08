@@ -1200,10 +1200,10 @@
       }
     },
     "myVeBAL": {
-      "title": "My veBAL",
+      "title": "My veREFI",
       "lockedEndDate": "Locked until",
       "expiredOn": "Expired on",
-      "percentVeBAL": "% of total veBAL"
+      "percentVeBAL": "% of total veREFI"
     },
     "lockForm": {
       "title": "Lock to get veREFI",

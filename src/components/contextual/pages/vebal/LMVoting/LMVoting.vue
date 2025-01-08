@@ -224,16 +224,7 @@ watch(account, (_, prevAccount) => {
           class="p-0 md:w-48 min-w-max bg-transparent border-complementary-secondary"
         >
           <div class="flex items-center">
-            <p class="inline mr-1 text-sm text-secondary">
-              My unallocated votes
-            </p>
-            <!-- <BalTooltip
-              :text="$t('veBAL.liquidityMining.myUnallocatedVotesTooltip')"
-              iconClass="text-gray-400 dark:text-gray-600"
-              iconSize="sm"
-              width="72"
-              class="mt-1"
-            /> -->
+            <p class="inline mr-1 text-sm text-secondary">Unallocated votes</p>
           </div>
           <p
             class="inline mr-1 text-lg font-semibold"
@@ -244,15 +235,6 @@ watch(account, (_, prevAccount) => {
             </span>
             <span v-else class="mr-1">—</span>
           </p>
-          <!-- <BalTooltip
-            v-if="hasExpiredLock"
-            :text="$t('veBAL.liquidityMining.votingPowerExpiredTooltip')"
-            iconSize="sm"
-            :iconName="'alert-triangle'"
-            :iconClass="'text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors'"
-            width="72"
-            class="relative top-0.5"
-          /> -->
         </BalCard>
         <BalCard
           shadow="none"
@@ -265,13 +247,6 @@ watch(account, (_, prevAccount) => {
             >
               Voting period ends
             </p>
-            <!-- <BalTooltip
-              :text="$t('veBAL.liquidityMining.votingPeriodTooltip')"
-              iconSize="sm"
-              iconClass="text-gray-400 dark:text-gray-600"
-              width="72"
-              class="mt-1"
-            /> -->
           </div>
           <p class="text-lg font-semibold tabular-nums">
             <span
@@ -330,7 +305,7 @@ watch(account, (_, prevAccount) => {
       :data="filteredVotingPools"
       :noPoolsLabel="$t('noInvestments')"
       :filterText="tokenFilter"
-      :selectVotesDisabled="selectVotesDisabled"
+      :selectVotesDisabled="true"
     />
     <div ref="intersectionSentinel" />
   </div>
