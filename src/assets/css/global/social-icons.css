@@ -1,5 +1,5 @@
 .social-icon .logo {
-  @apply transition-all fill-primary-refi;
+  @apply transition-all fill-refi-primary;
 }
 
 .dark .social-icon .logo {

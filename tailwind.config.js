@@ -7,8 +7,8 @@ module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
 
   safelist: [
-    'from-refi-text',
-    'to-light-blue',
+    'from-refi-foreground',
+    'to-sky-400',
     ...generateButtonClassSafelist(),
     // https://tailwindcss.com/docs/content-configuration#safelisting-classes
     // https://github.com/tailwindlabs/tailwindcss/discussions/10079
@@ -82,21 +82,19 @@ module.exports = {
           700: '#334155',
           800: '#1E293B',
           850: '#162031',
-          900: '#222732',
+          900: '#232833',
         },
         'primary-refi': '#001C52',
         'accent-refi': '#FA7369',
+        'refi-gray': '#232833',
         'refi-text': '#0468be',
         'refi-text-dark': '#1490FA',
         'light-blue': '#05DBF3',
+
         'pool-fees': '#AADA22',
         'pool-tvl': '#0468BE',
         'pool-volume': '#FF877E',
-        disabled: '#9F9F9F',
-        complementary: '#7B7B7B',
-        'complementary-b': '#B6C7D6',
         'pill-light': '#E7F4FF',
-        'refi-gray': '#232833',
 
         container: '#F3FAFF',
         primary: {
@@ -140,7 +138,7 @@ module.exports = {
           100: '#e0f2fe',
           200: '#bae6fd',
           300: '#7dd3fc',
-          400: '#38bdf8',
+          400: '#05DBF3',
           500: '#0ea5e9',
           600: '#0284c7',
           700: '#0369a1',
@@ -196,6 +194,19 @@ module.exports = {
           800: '#92400e',
           900: '#78350f',
         },
+        accent: '#FA7369',
+        refi: {
+          primary: '#001C52',
+          secondary: '#1490FA',
+          foreground: '#001C52',
+          text: '#0468be',
+          'text-dark': '#1490FA',
+        },
+        complementary: {
+          primary: '#7B7B7B',
+          secondary: '#B6C7D6',
+        },
+        disabled: '9F9F9F',
       },
     },
   },

@@ -47,7 +47,7 @@ defineProps<Props>();
               </h4>
             </div>
           </div>
-          <p class="text-sm font-normal text-complementary">
+          <p class="text-sm font-normal text-complementary-primary">
             There are currently {{ tokensAmount }} tokens listed.
             <a
               class="underline underline-offset-2"
@@ -70,12 +70,12 @@ defineProps<Props>();
         <div class="flex flex-col justify-between items-start w-full h-full">
           <h4 class="text-base font-medium">Explore regenerative</h4>
           <div>
-            <p class="text-sm font-normal text-complementary">
+            <p class="text-sm font-normal text-complementary-primary">
               Our platform provides information about the leading ReFi Tokens
               and Organizations.
             </p>
             <a
-              class="text-sm font-normal text-complementary underline underline-offset-2"
+              class="text-sm font-normal text-complementary-primary underline underline-offset-2"
               href="http://regenerative.fi/"
               target="_blank"
               >Visit the Regenerative platform.</a

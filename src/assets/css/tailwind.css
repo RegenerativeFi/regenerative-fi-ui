@@ -88,8 +88,8 @@
 
     background-image: linear-gradient(
       45deg,
-      theme('colors.light-blue'),
-      theme('colors.refi-text')
+      theme('colors.sky-400'),
+      theme('colors.refi-primary')
     );
     background-size: 100%;
     background-clip: text;
@@ -98,12 +98,12 @@
   }
 
   .link {
-    @apply text-blue-600 hover:text-accent-refi focus:text-accent-refi dark:text-blue-400 dark:hover:text-yellow-500
+    @apply text-blue-600 hover:text-accent focus:text-accent dark:text-blue-400 dark:hover:text-yellow-500
       dark:focus:text-yellow-500 transition-all;
   }
 
   .link-black {
-    @apply text-gray-900 hover:text-accent-refi focus:text-accent-refi dark:text-gray-100 dark:hover:text-yellow-500
+    @apply text-gray-900 hover:text-accent focus:text-accent dark:text-gray-100 dark:hover:text-yellow-500
       dark:focus:text-yellow-500 transition-all;
   }
 

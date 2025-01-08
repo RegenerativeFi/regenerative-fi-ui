@@ -112,7 +112,7 @@ const bgGradientClasses = computed(() => {
     return 'transition-colors button-gradient ';
   }
   if (props.disabled) {
-    return `bg-complementary-b dark:complementary-b text-white `;
+    return `bg-complementary-secondary dark:complementary-secondary text-white `;
   }
   if (props.loading) {
     return 'transition-colors button-gradient';

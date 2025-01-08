@@ -204,7 +204,7 @@ watch(account, (_, prevAccount) => {
       <div class="flex gap-2 xs:gap-3 mb-3 lg:mb-0">
         <BalCard
           shadow="none"
-          class="p-0 md:w-48 min-w-max bg-transparent border-complementary-b"
+          class="p-0 md:w-48 min-w-max bg-transparent border-complementary-secondary"
         >
           <div class="flex items-center">
             <p class="inline mr-1 text-sm text-secondary">My veREFI Balance</p>
@@ -221,7 +221,7 @@ watch(account, (_, prevAccount) => {
         </BalCard>
         <BalCard
           shadow="none"
-          class="p-0 md:w-48 min-w-max bg-transparent border-complementary-b"
+          class="p-0 md:w-48 min-w-max bg-transparent border-complementary-secondary"
         >
           <div class="flex items-center">
             <p class="inline mr-1 text-sm text-secondary">
@@ -256,7 +256,7 @@ watch(account, (_, prevAccount) => {
         </BalCard>
         <BalCard
           shadow="none"
-          class="md:w-48 min-w-max bg-transparent border-complementary-b"
+          class="md:w-48 min-w-max bg-transparent border-complementary-secondary"
         >
           <div class="flex items-center">
             <p
