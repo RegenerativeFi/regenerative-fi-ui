@@ -153,7 +153,7 @@ export function votingProvider() {
         isVotingTimeLocked(pool.lastUserVoteTime)
       ) && selectedPoolsVoteWeight.value === 100
   );
-
+  console.log('hasAllVotingPowerTimeLocked', hasAllVotingPowerTimeLocked.value);
   /**
    * METHODS
    */

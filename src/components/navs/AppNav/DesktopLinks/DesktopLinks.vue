@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Goals, trackGoal } from '@/composables/useFathom';
-import useNetwork from '@/composables/useNetwork';
+import useNetwork, { isTestnet } from '@/composables/useNetwork';
 import { useRoute } from 'vue-router';
 import DesktopLinkItem from './DesktopLinkItem.vue';
 
@@ -62,7 +62,7 @@ function isActive(page: string): boolean {
       <div class="flex items-center">
         {{ $t('claim') }}
       </div>
-    </DesktopLinkItem>
+    </DesktopLinkItem> -->
     <DesktopLinkItem
       v-if="isTestnet"
       :to="{ name: 'faucet', params: { networkSlug } }"
@@ -70,22 +70,22 @@ function isActive(page: string): boolean {
     >
       Faucet
     </DesktopLinkItem>
-    <DesktopLinkItem
+    <!-- <DesktopLinkItem
       :to="{ name: 'portfolio', params: { networkSlug } }"
       :active="isActive('portfolio')"
       prefetch
       @click="trackGoal(Goals.ClickNavPortfolio)"
     >
       {{ $t('portfolio') }}
-    </DesktopLinkItem>
+    </DesktopLinkItem> -->
     <DesktopLinkItem
       :to="{ name: 'vebal', params: { networkSlug } }"
       :active="isActive('vebal')"
       prefetch
       @click="trackGoal(Goals.ClickNavVebal)"
     >
-      veBAL
-    </DesktopLinkItem> -->
+      Vote
+    </DesktopLinkItem>
   </div>
 </template>
 

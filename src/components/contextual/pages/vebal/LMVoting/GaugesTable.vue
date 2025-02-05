@@ -65,6 +65,8 @@ const props = withDefaults(defineProps<Props>(), {
   data: () => [],
 });
 
+console.log(props.selectVotesDisabled);
+
 /**
  * COMPOSABLES
  */
@@ -113,28 +115,28 @@ const columns = computed((): ColumnDefinition<VotingPool>[] => [
     width: 160,
     cellClassName: 'font-numeric',
   },
-  // {
-  //   name: t('veBAL.liquidityMining.table.myVotes'),
-  //   accessor: 'myVotes',
-  //   align: 'right',
-  //   id: 'myVotes',
-  //   sortKey: pool => Number(pool.userVotes),
-  //   width: 100,
-  //   Cell: 'myVotesCell',
-  //   cellClassName: 'font-numeric',
-  //   hidden: !isWalletReady.value,
-  // },
-  // {
-  //   name: t('veBAL.liquidityMining.table.voteSelect'),
-  //   id: 'vote',
-  //   accessor: 'id',
-  //   align: 'right',
-  //   Cell: 'voteSelectColumnCell',
-  //   sortKey: pool => isSelected(pool),
-  //   width: 100,
-  //   hidden: !isWalletReady.value,
-  //   isCheckbox: true,
-  // },
+  {
+    name: t('veBAL.liquidityMining.table.myVotes'),
+    accessor: 'myVotes',
+    align: 'right',
+    id: 'myVotes',
+    sortKey: pool => Number(pool.userVotes),
+    width: 100,
+    Cell: 'myVotesCell',
+    cellClassName: 'font-numeric',
+    hidden: !isWalletReady.value,
+  },
+  {
+    name: t('veBAL.liquidityMining.table.voteSelect'),
+    id: 'vote',
+    accessor: 'id',
+    align: 'right',
+    Cell: 'voteSelectColumnCell',
+    sortKey: pool => isSelected(pool),
+    width: 100,
+    hidden: !isWalletReady.value,
+    isCheckbox: true,
+  },
 ]);
 
 /**

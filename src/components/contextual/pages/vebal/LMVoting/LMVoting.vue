@@ -74,10 +74,16 @@ const selectVotesDisabled = computed(
     hasAllVotingPowerTimeLocked.value
 );
 
+console.log('hasAllVotingPowerTimeLocked', hasAllVotingPowerTimeLocked.value);
+console.log('hasVeBalBalance', hasVeBalBalance.value);
+console.log('selectVotesDisabled', selectVotesDisabled.value);
+console.log('unlockedSelectedPools', unlockedSelectedPools.value);
+console.log('isMismatchedNetwork', isMismatchedNetwork.value);
+
 const votingDisabled = computed(
   () =>
     selectVotesDisabled.value ||
-    unlockedSelectedPools.value.length === 0 ||
+    // unlockedSelectedPools.value.length === 0 ||
     isMismatchedNetwork.value
 );
 
@@ -305,7 +311,7 @@ watch(account, (_, prevAccount) => {
       :data="filteredVotingPools"
       :noPoolsLabel="$t('noInvestments')"
       :filterText="tokenFilter"
-      :selectVotesDisabled="true"
+      :selectVotesDisabled="selectVotesDisabled"
     />
     <div ref="intersectionSentinel" />
   </div>

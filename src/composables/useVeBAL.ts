@@ -103,6 +103,7 @@ export default function useVeBal() {
   const veBalBalance = computed(() =>
     balanceFor(networkConfig.addresses.veBAL)
   );
+  console.log('veBalBalance', veBalBalance.value);
 
   const hasReFiBalance = computed(() => Number(ReFiBalance.value) > 0);
   const hasVeBalBalance = computed(() => Number(veBalBalance.value) > 0);

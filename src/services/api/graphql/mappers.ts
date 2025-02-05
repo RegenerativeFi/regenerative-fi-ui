@@ -28,6 +28,10 @@ export function mapApiChain(
       return Network.SEPOLIA;
     case 'GOERLI':
       return Network.GOERLI;
+    case GqlChain.Alfajores:
+      return Network.ALFAJORES;
+    case GqlChain.Celo:
+      return Network.CELO;
 
     default:
       throw new Error(`Unexpected API chain: ${apiChain}`);

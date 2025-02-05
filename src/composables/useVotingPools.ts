@@ -31,6 +31,7 @@ export default function useVotingPools() {
   const isLoading = computed(() => isQueryLoading(votingPoolsQuery));
 
   const votingPools = computed(() => votingPoolsQuery.data.value || []);
+  console.log('votingPools', votingPools.value);
 
   const votingGauges = computed(() =>
     votingPools.value.map(pool => pool.gauge)

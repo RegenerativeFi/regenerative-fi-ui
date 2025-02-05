@@ -1,17 +1,18 @@
 import { useQuery, UseQueryOptions } from '@tanstack/vue-query';
 
 import QUERY_KEYS from '@/constants/queryKeys';
-import { getApi } from '@/dependencies/balancer-api';
+// import { getApi } from '@/dependencies/balancer-api';
 import {
   GaugeControllerDecorator,
   VotingPoolWithVotes,
 } from '@/services/balancer/gauges/gauge-controller.decorator';
 import useWeb3 from '@/services/web3/useWeb3';
-import { isTestnet } from '@/composables/useNetwork';
+import { networkId } from '@/composables/useNetwork';
 import { VeBalGetVotingListQuery } from '@/services/api/graphql/generated/api-types';
 import { Network } from '@/lib/config/types';
 import { PoolType } from '@/services/pool/types';
-import { testnetVotingPools } from '@/components/contextual/pages/vebal/LMVoting/testnet-voting-pools';
+// import { testnetVotingPools } from '@/components/contextual/pages/vebal/LMVoting/testnet-voting-pools';
+import { alfajoresVotingPools } from '@/components/contextual/pages/vebal/LMVoting/alfajores-voting-pools';
 import { mapApiChain, mapApiPoolType } from '@/services/api/graphql/mappers';
 
 /**
@@ -51,18 +52,19 @@ export default function useVotingPoolsQuery(
   const queryFn = async (): Promise<VotingPool[]> => {
     try {
       let apiVotingPools: ApiVotingPools;
-      if (isTestnet.value) {
-        apiVotingPools = testnetVotingPools('GOERLI');
+      console.log('networkId', networkId.value);
+      if (networkId.value === Network.ALFAJORES) {
+        apiVotingPools = alfajoresVotingPools();
       } else {
-        const api = getApi();
-        const { veBalGetVotingList } = await api.VeBalGetVotingList();
-        apiVotingPools = veBalGetVotingList;
+        return [];
       }
 
       const pools = await new GaugeControllerDecorator().decorateWithVotes(
         apiVotingPools,
         account.value
       );
+
+      console.log('pools', pools);
       const poolsWithNetwork = pools.map(pool => {
         return {
           ...pool,

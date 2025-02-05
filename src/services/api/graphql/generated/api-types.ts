@@ -53,6 +53,8 @@ export enum GqlChain {
   Optimism = 'OPTIMISM',
   Polygon = 'POLYGON',
   Zkevm = 'ZKEVM',
+  Alfajores = 'ALFAJORES',
+  Celo = 'CELO',
 }
 
 export type GqlContentNewsItem = {
