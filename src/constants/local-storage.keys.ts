@@ -22,5 +22,6 @@ export default {
   Transactions: 'transactions',
   Alerts: {
     RecoveryExitDismissed: 'alerts.recoveryExitDismissed',
+    CultivateAlertAccepted: 'alerts.cultivateAlertAccepted',
   },
 };

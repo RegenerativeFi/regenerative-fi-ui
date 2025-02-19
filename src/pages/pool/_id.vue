@@ -34,6 +34,7 @@ import StakePreviewModal from '@/components/contextual/pages/pool/staking/StakeP
 import { usePool } from '@/providers/local/pool.provider';
 import { provideUserStaking } from '@/providers/local/user-staking.provider';
 import { providerUserPools } from '@/providers/local/user-pools.provider';
+import CultivateLiquidityCard from '@/components/contextual/pages/pool/cultivate/CultivateLiquidityCard.vue';
 
 const userStaking = provideUserStaking();
 providerUserPools(userStaking);
@@ -272,6 +273,12 @@ watch(
 
           <BalLoadingBlock v-if="loadingPool" class="h-40 pool-actions-card" />
           <StakingIncentivesCard
+            v-if="isStakablePool && !loadingPool && pool && isWalletReady"
+            :pool="pool"
+            class="staking-incentives"
+            @set-restake-visibility="setRestakeVisibility"
+          />
+          <CultivateLiquidityCard
             v-if="isStakablePool && !loadingPool && pool && isWalletReady"
             :pool="pool"
             class="staking-incentives"

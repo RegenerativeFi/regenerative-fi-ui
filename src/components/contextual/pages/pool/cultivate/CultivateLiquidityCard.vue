@@ -1,0 +1,351 @@
+<script setup lang="ts">
+import { getAddress } from '@ethersproject/address';
+import { lsSet, lsGet } from '@/lib/utils';
+
+import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
+import AnimatePresence from '@/components/animate/AnimatePresence.vue';
+import useNumbers, { FNumFormats } from '@/composables/useNumbers';
+import { useTokens } from '@/providers/tokens.provider';
+import { bnum } from '@/lib/utils';
+import { Pool } from '@/services/pool/types';
+
+// import StakePreviewModal from './StakePreviewModal.vue';
+import { usePoolStaking } from '@/providers/local/pool-staking.provider';
+
+// import { StakeAction } from '../staking/composables/useStakePreview';
+// import StakingCardSyncAlert from '../../vebal/cross-chain-boost/StakingCardSyncAlert.vue';
+import TokenInput from '@/components/inputs/TokenInput/TokenInput.vue';
+import BalCheckbox from '@/components/_global/BalCheckbox/BalCheckbox.vue';
+import localStorageKeys from '@/constants/local-storage.keys';
+
+type Props = {
+  pool: Pool;
+};
+const props = defineProps<Props>();
+
+const _tokenInAmount = ref<string>('');
+const _tokenInAddress = ref<string>('');
+
+const isAlertVisible = ref(false);
+const isCheckboxChecked = ref(false);
+
+const ALERT_ACCEPTED_KEY = localStorageKeys.Alerts.CultivateAlertAccepted;
+
+/**
+ * COMPOSABLES
+ */
+const { fNum } = useNumbers();
+const { balanceFor } = useTokens();
+const {
+  isStakablePool,
+  isLoading: isLoadingStakingData,
+  isRefetchingStakedShares,
+  hasNonPrefGaugeBalance,
+} = usePoolStaking();
+
+/**
+ * COMPUTED
+ */
+// const fiatValueOfStakedShares = computed(() => {
+//   return bnum(props.pool.totalLiquidity)
+//     .div(props.pool.totalShares)
+//     .times((stakedShares.value || 0).toString())
+//     .toString();
+// });
+
+const fiatValueOfUnstakedShares = computed(() => {
+  return bnum(props.pool.totalLiquidity)
+    .div(props.pool.totalShares)
+    .times(balanceFor(getAddress(props.pool.address)))
+    .toString();
+});
+
+// const isStakeDisabled = computed(() => {
+//   return (
+//     !!deprecatedDetails(props.pool.id) ||
+//     fiatValueOfUnstakedShares.value === '0' ||
+//     hasNonPrefGaugeBalance.value ||
+//     !preferentialGaugeAddress.value
+//   );
+// });
+
+// /**
+//  * METHODS
+//  */
+// function showStakePreview() {
+//   if (fiatValueOfUnstakedShares.value === '0') return;
+//   stakeAction.value = 'stake';
+//   isStakePreviewVisible.value = true;
+// }
+
+// function showUnstakePreview() {
+//   if (fiatValueOfStakedShares.value === '0') return;
+//   stakeAction.value = 'unstake';
+//   isStakePreviewVisible.value = true;
+// }
+
+// function handlePreviewClose() {
+//   isStakePreviewVisible.value = false;
+// }
+
+const isAlertAccepted = lsGet<boolean>(ALERT_ACCEPTED_KEY, false);
+
+function handleUnlockClick() {
+  if (!isAlertAccepted) {
+    isAlertVisible.value = true;
+  }
+}
+
+function handleDepositClick() {
+  // Lógica para el botón de depósito
+}
+
+function handleCheckboxChange() {
+  isCheckboxChecked.value = !isCheckboxChecked.value;
+}
+
+function handleContinueClick() {
+  lsSet(ALERT_ACCEPTED_KEY, true);
+  isAlertVisible.value = false;
+}
+
+function handleInAmountChange(value: string): void {
+  _tokenInAmount.value = value;
+}
+
+function handleInputTokenChange(address: string): void {
+  _tokenInAddress.value = address;
+}
+
+watchEffect(() => {
+  _tokenInAmount.value = '0';
+  _tokenInAddress.value = props.pool.address;
+});
+
+// Check if the alert has been accepted before
+if (lsGet<boolean>(ALERT_ACCEPTED_KEY, false)) {
+  isAlertVisible.value = false;
+}
+</script>
+
+<template>
+  <div>
+    <AnimatePresence :isVisible="!isLoadingStakingData">
+      <div class="relative">
+        <BalAccordion
+          :class="['shadow-2xl', { handle: isStakablePool }]"
+          :sections="[
+            {
+              title: 'Cultivate Liquidity',
+              id: 'staking-incentives',
+              handle: 'staking-handle',
+              isDisabled: !isStakablePool,
+            },
+          ]"
+          :reCalcKey="hasNonPrefGaugeBalance ? 0 : 1"
+          :isOpenedByDefault="isOpenedByDefault"
+        >
+          <template #staking-handle>
+            <button
+              class="p-4 w-full hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors"
+            >
+              <BalStack horizontal justify="between" align="center">
+                <BalStack spacing="sm" align="center">
+                  <div
+                    :class="[
+                      'flex items-center p-1 text-white rounded-full bg-gray-400',
+                    ]"
+                  >
+                    <BalIcon size="sm" name="x" />
+                  </div>
+                  <h6>Cultivate Liquidity</h6>
+                </BalStack>
+                <BalStack
+                  v-if="isStakablePool"
+                  horizontal
+                  spacing="sm"
+                  align="center"
+                >
+                  <BalIcon name="chevron-down" class="text-blue-500" />
+                </BalStack>
+              </BalStack>
+            </button>
+          </template>
+          <template #staking-incentives>
+            <div class="relative bg-white dark:bg-gray-850 rounded-b-lg">
+              <BalStack
+                vertical
+                spacing="sm"
+                class="p-4 rounded-b-lg border-t dark:border-gray-900"
+              >
+                <span>Incentive for {{ pool.symbol }} pool</span>
+                <BalStack horizontal justify="between">
+                  <span>Current votes</span>
+                  <BalStack horizontal spacing="sm" align="center">
+                    <AnimatePresence :isVisible="isRefetchingStakedShares">
+                      <BalLoadingBlock class="h-5" />
+                    </AnimatePresence>
+                    <AnimatePresence :isVisible="!isRefetchingStakedShares">
+                      <span>
+                        {{
+                          fNum(fiatValueOfUnstakedShares, FNumFormats.percent)
+                        }}
+                      </span>
+                    </AnimatePresence>
+                  </BalStack>
+                </BalStack>
+                <BalStack horizontal justify="between">
+                  <span>Current incentives</span>
+                  <BalStack horizontal spacing="sm" align="center">
+                    <AnimatePresence :isVisible="isRefetchingStakedShares">
+                      <BalLoadingBlock class="h-5" />
+                    </AnimatePresence>
+                    <AnimatePresence :isVisible="!isRefetchingStakedShares">
+                      <span>
+                        {{ fNum(fiatValueOfUnstakedShares, FNumFormats.fiat) }}
+                      </span>
+                    </AnimatePresence>
+                  </BalStack>
+                </BalStack>
+                <hr />
+                <h6 class="text-base font-semibold">Deposit incentive</h6>
+
+                <TokenInput
+                  name="tokenIn"
+                  :disabled="!isAlertAccepted"
+                  :address="_tokenInAddress"
+                  :amount="_tokenInAmount"
+                  :excludedTokens="[]"
+                  @update:amount="handleInAmountChange"
+                  @update:address="handleInputTokenChange"
+                />
+                <BalStack horizontal justify="start">
+                  <BalBtn
+                    v-if="!isAlertAccepted"
+                    outline
+                    color="blue"
+                    size="md"
+                    class="px-3 w-20 h-8 py-[6px] rounded-[4px]"
+                    @click="handleUnlockClick"
+                    >Unlock</BalBtn
+                  >
+                  <BalBtn
+                    v-else
+                    color="gradient"
+                    class="px-3 w-24 h-4 py-[6px] rounded-[4px]"
+                    @click="handleDepositClick"
+                    >Deposit</BalBtn
+                  >
+                </BalStack>
+              </BalStack>
+            </div>
+          </template>
+        </BalAccordion>
+        <transition name="fade">
+          <div
+            v-if="isAlertVisible"
+            class="absolute top-0 bottom-0 left-0 py-16 px-8 text-white rounded-md bg-[#222732F0]"
+            :title="$t('staking.restakeGauge')"
+          >
+            <BalStack vertical spacing="base">
+              <p>
+                By continuing with the next steps you acknowledge that you
+                understand the mechanics of the protocol and after depositing
+                any rewards as incentives you won't be able to withdraw them.
+              </p>
+              <div class="flex gap-2 items-center text-accent">
+                <BalCheckbox
+                  color="#FA7369"
+                  name="understand-checkbox"
+                  class="w-5 h-5"
+                  noMargin
+                  :modelValue="isCheckboxChecked"
+                  @click.stop
+                  @input="handleCheckboxChange()"
+                />
+                <label for="understand-checkbox"
+                  >I understand I will NOT be able to withdraw incentives</label
+                >
+              </div>
+              <BalBtn
+                color="blue"
+                :disabled="!isCheckboxChecked"
+                size="md"
+                class="px-3 w-full h-8 py-[6px] rounded-[4px]"
+                @click="handleContinueClick"
+                >Continue</BalBtn
+              >
+            </BalStack>
+          </div>
+        </transition>
+      </div>
+    </AnimatePresence>
+    <AnimatePresence :isVisible="isLoadingStakingData" unmountInstantly>
+      <BalLoadingBlock class="h-12" />
+    </AnimatePresence>
+    <!-- <StakePreviewModal
+      :isVisible="isStakePreviewVisible"
+      :pool="pool"
+      :action="stakeAction"
+      @close="handlePreviewClose"
+    /> -->
+  </div>
+</template>
+
+<style>
+.handle {
+  @apply overflow-hidden rounded-xl;
+}
+
+.handle::before {
+  @apply absolute left-0 w-full opacity-100;
+
+  content: '';
+  top: -2px;
+  height: calc(100% + 4px);
+  background: linear-gradient(90deg, #4254ff, #f441a5, #ffeb3b, #4254ff);
+  background-size: 400%;
+  animation: anim-half 3s ease-out both;
+  border-radius: 14px;
+  z-index: -1;
+}
+
+.handle:hover::before {
+  animation: anim 12s linear infinite;
+}
+
+.handle .bal-card {
+  @apply mx-auto;
+
+  width: calc(100% - 4px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+
+@keyframes anim-half {
+  from {
+    background-position: 0;
+  }
+
+  to {
+    background-position: 125%;
+  }
+}
+
+@keyframes anim {
+  from {
+    background-position: 125%;
+  }
+
+  to {
+    background-position: 600%;
+  }
+}
+</style>
