@@ -81,15 +81,6 @@ const { getIsGaugeExpired, toggleSelection, isSelected } = useVoting();
  */
 const columns = computed((): ColumnDefinition<VotingPool>[] => [
   {
-    name: t('veBAL.liquidityMining.table.chain'),
-    id: 'chain',
-    accessor: '',
-    Header: 'chainColumnHeader',
-    Cell: 'networkColumnCell',
-    width: 50,
-    noGrow: true,
-  },
-  {
     name: t('veBAL.liquidityMining.table.assets'),
     id: 'icons',
     accessor: 'uri',
@@ -104,6 +95,20 @@ const columns = computed((): ColumnDefinition<VotingPool>[] => [
     accessor: 'id',
     Cell: 'poolCompositionCell',
     width: 350,
+  },
+  {
+    name: 'Rewards',
+    id: 'rewards',
+    accessor: 'id',
+    Cell: 'rewardsCell',
+    width: 100,
+  },
+  {
+    name: '$ Per vote',
+    id: 'perVote',
+    accessor: 'id',
+    Cell: 'perVoteCell',
+    width: 110,
   },
   {
     name: t('veBAL.liquidityMining.table.nextPeriodVotes'),
@@ -282,6 +287,15 @@ function getPickedTokens(tokens: VotingPool['tokens']) {
             class="ml-2"
           />
         </div>
+      </template>
+      <template #rewardsCell>
+        <div v-if="!isLoading" class="py-4 px-6">
+          0$
+          <BalTooltip width="36" iconSize="sm" iconClass="ml-1"> </BalTooltip>
+        </div>
+      </template>
+      <template #perVoteCell>
+        <div v-if="!isLoading" class="py-4 px-6">0$</div>
       </template>
       <template #nextPeriodVotesCell="pool: VotingPool">
         <!-- Put to BalLazy the most expensive to render component -->

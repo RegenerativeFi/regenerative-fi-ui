@@ -83,7 +83,7 @@ console.log('isMismatchedNetwork', isMismatchedNetwork.value);
 const votingDisabled = computed(
   () =>
     selectVotesDisabled.value ||
-    // unlockedSelectedPools.value.length === 0 ||
+    unlockedSelectedPools.value.length === 0 ||
     isMismatchedNetwork.value
 );
 

@@ -64,12 +64,19 @@ export default function useVotingPoolsQuery(
         account.value
       );
 
+      const bribesRes = await fetch(
+        'https://incentives.regenerativefi.workers.dev/alfajores/get-incentives'
+      ).then(res => res.json());
+
+      const { bribes } = bribesRes;
+
       console.log('pools', pools);
       const poolsWithNetwork = pools.map(pool => {
         return {
           ...pool,
           network: mapApiChain(pool.chain),
           poolType: mapApiPoolType(pool.type),
+          bribes: bribes.filter(bribe => bribe.gauge === pool.gauge.address),
         } as VotingPool;
       });
       return poolsWithNetwork.map(v => Object.freeze(v));
