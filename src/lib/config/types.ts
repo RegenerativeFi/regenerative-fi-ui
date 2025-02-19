@@ -57,6 +57,9 @@ export interface Contracts {
   claimSubmission?: string;
   simpleMinter?: string;
   ReFi?: string;
+  bribeVault?: string;
+  bribeMarket?: string;
+  rewardDistributor?: string;
 }
 
 export interface RateProviders {

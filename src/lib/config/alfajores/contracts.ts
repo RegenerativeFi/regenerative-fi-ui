@@ -28,6 +28,9 @@ const contracts: Contracts = {
   simpleMinter: '',
   ReFi: alfajores.TestBalancerToken,
   faucet: '0xae9465eee8c802ac353bd4a90964b2684bb49a68',
+  bribeVault: '0x16A3793F3B62C285B7d5dcb36cc4652FF2a46d2A',
+  bribeMarket: '0xfc1a572A24a902DEc2706a7A34F2803EaBaEba3C',
+  rewardDistributor: '0x60DcBeC73d95ab9E823b0eE7343003df121AA478',
 };
 
 export default contracts;
