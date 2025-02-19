@@ -14,6 +14,8 @@ import { PoolType } from '@/services/pool/types';
 // import { testnetVotingPools } from '@/components/contextual/pages/vebal/LMVoting/testnet-voting-pools';
 import { alfajoresVotingPools } from '@/components/contextual/pages/vebal/LMVoting/alfajores-voting-pools';
 import { mapApiChain, mapApiPoolType } from '@/services/api/graphql/mappers';
+import { useTokens } from '@/providers/tokens.provider';
+import { TokenInfo } from '@gnosis.pm/safe-apps-sdk';
 
 /**
  * TYPES
@@ -26,6 +28,12 @@ export type ApiVotingGauge = ApiVotingPools[number]['gauge'];
 export type VotingPool = VotingPoolWithVotes & {
   network: Network;
   poolType: PoolType;
+  bribes: {
+    token: TokenInfo;
+    amount: string;
+    proposal: string;
+    gauge: string;
+  }[];
 };
 
 type QueryOptions = UseQueryOptions<VotingPool[]>;
@@ -40,6 +48,8 @@ export default function useVotingPoolsQuery(
    * COMPOSABLES
    */
   const { account } = useWeb3();
+
+  const { getToken } = useTokens();
 
   /**
    * QUERY KEY
@@ -72,11 +82,23 @@ export default function useVotingPoolsQuery(
 
       console.log('pools', pools);
       const poolsWithNetwork = pools.map(pool => {
+        const poolBribes = bribes.filter(
+          bribe => bribe.gauge === pool.gauge.address
+        );
+        const poolBribesWithTokens = poolBribes.map(bribe => {
+          const bribeToken = getToken(bribe.token);
+          return {
+            ...bribe,
+            token: {
+              ...bribeToken,
+            },
+          };
+        });
         return {
           ...pool,
           network: mapApiChain(pool.chain),
           poolType: mapApiPoolType(pool.type),
-          bribes: bribes.filter(bribe => bribe.gauge === pool.gauge.address),
+          bribes: poolBribesWithTokens,
         } as VotingPool;
       });
       return poolsWithNetwork.map(v => Object.freeze(v));

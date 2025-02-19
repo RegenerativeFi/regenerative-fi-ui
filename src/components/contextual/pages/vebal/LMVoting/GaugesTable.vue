@@ -40,6 +40,8 @@ import {
   hasUserVotes,
   isGaugeNew,
 } from '@/components/contextual/pages/vebal/voting-utils';
+import useNumbers, { FNumFormats } from '@/composables/useNumbers';
+import { bnum } from '@/lib/utils';
 
 /**
  * TYPES
@@ -72,6 +74,7 @@ console.log(props.selectVotesDisabled);
  */
 const router = useRouter();
 const { t } = useI18n();
+const { fNum, toFiat } = useNumbers();
 const { upToLargeBreakpoint } = useBreakpoints();
 const { isWalletReady } = useWeb3();
 const { getIsGaugeExpired, toggleSelection, isSelected } = useVoting();
@@ -288,10 +291,52 @@ function getPickedTokens(tokens: VotingPool['tokens']) {
           />
         </div>
       </template>
-      <template #rewardsCell>
-        <div v-if="!isLoading" class="py-4 px-6">
-          0$
-          <BalTooltip width="36" iconSize="sm" iconClass="ml-1"> </BalTooltip>
+      <template #rewardsCell="pool: VotingPool">
+        <div v-if="!isLoading && pool.bribes.length > 0" class="flex py-4 px-6">
+          <!--TODO: put real data here-->
+          {{
+            fNum(
+              pool.bribes.reduce(
+                (acc, bribe) =>
+                  acc +
+                  Number(toFiat(bribe.amount, bribe.token.address).toString()),
+                0
+              ),
+              FNumFormats.fiat
+            )
+          }}$
+          <BalTooltip width="200px" iconSize="sm" iconClass="ml-1">
+            <div class="flex flex-col gap-2 w-fit">
+              <div
+                v-for="bribe in pool.bribes"
+                :key="bribe.token.address"
+                class="flex justify-start items-center text-xs font-normal gap-[6px]"
+              >
+                <img
+                  :src="bribe.token.logoURI || ''"
+                  :alt="bribe.token.symbol"
+                  class="w-6 h-6"
+                />
+                {{
+                  fNum(
+                    bnum(bribe.amount)
+                      .div(10 ** bribe.token.decimals)
+                      .toString(),
+                    FNumFormats.token
+                  )
+                }}
+                {{ bribe.token.symbol }}
+                <span class="text-xs text-gray-500">
+                  {{
+                    fNum(
+                      toFiat(bribe.amount, bribe.token.address).toString(),
+                      FNumFormats.fiat
+                    )
+                  }}
+                </span>
+              </div>
+            </div>
+          </BalTooltip>
         </div>
       </template>
       <template #perVoteCell>
