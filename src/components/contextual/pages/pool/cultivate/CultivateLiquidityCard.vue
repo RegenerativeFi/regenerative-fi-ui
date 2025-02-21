@@ -25,6 +25,12 @@ const props = defineProps<Props>();
 
 const _tokenInAmount = ref<string>('');
 const _tokenInAddress = ref<string>('');
+// TODO: add a dynamic allowlist of tokens
+const _subsetTokens = ref<string[]>([
+  '0xE036290F41c367AeC59aec5B69C2B72068C441f6',
+  '0x51f29e07c7cf53D2603e1A224E27b1c74E181a17',
+  '0x9A3a52f4462585c31025e2242C9b4074a9FB4a1f',
+]);
 
 const isAlertVisible = ref(false);
 const isCheckboxChecked = ref(false);
@@ -119,7 +125,7 @@ function handleInputTokenChange(address: string): void {
 
 watchEffect(() => {
   _tokenInAmount.value = '0';
-  _tokenInAddress.value = props.pool.address;
+  _tokenInAddress.value = _subsetTokens.value[0];
 });
 
 // Check if the alert has been accepted before
@@ -143,7 +149,7 @@ if (lsGet<boolean>(ALERT_ACCEPTED_KEY, false)) {
             },
           ]"
           :reCalcKey="hasNonPrefGaugeBalance ? 0 : 1"
-          :isOpenedByDefault="isOpenedByDefault"
+          :isOpenedByDefault="true"
         >
           <template #staking-handle>
             <button
@@ -216,6 +222,7 @@ if (lsGet<boolean>(ALERT_ACCEPTED_KEY, false)) {
                   :address="_tokenInAddress"
                   :amount="_tokenInAmount"
                   :excludedTokens="[]"
+                  :subsetTokens="_subsetTokens"
                   @update:amount="handleInAmountChange"
                   @update:address="handleInputTokenChange"
                 />
