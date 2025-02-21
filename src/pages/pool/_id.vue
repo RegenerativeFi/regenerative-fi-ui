@@ -46,7 +46,6 @@ const route = useRoute();
 const router = useRouter();
 const poolId = (route.params.id as string).toLowerCase();
 const isRestakePreviewVisible = ref(false);
-
 /**
  * COMPOSABLES
  */
@@ -282,7 +281,6 @@ watch(
             v-if="isStakablePool && !loadingPool && pool && isWalletReady"
             :pool="pool"
             class="staking-incentives"
-            @set-restake-visibility="setRestakeVisibility"
           />
           <PoolLockingCard
             v-if="_isVeBalPool && !loadingPool && pool"

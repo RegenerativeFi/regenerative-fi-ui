@@ -1,30 +1,30 @@
 <script setup lang="ts">
 import { getAddress } from '@ethersproject/address';
-import { lsSet, lsGet } from '@/lib/utils';
-
+import { lsSet, lsGet, scale } from '@/lib/utils';
 import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
 import AnimatePresence from '@/components/animate/AnimatePresence.vue';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import { useTokens } from '@/providers/tokens.provider';
 import { bnum } from '@/lib/utils';
 import { Pool } from '@/services/pool/types';
-
-// import StakePreviewModal from './StakePreviewModal.vue';
 import { usePoolStaking } from '@/providers/local/pool-staking.provider';
-
-// import { StakeAction } from '../staking/composables/useStakePreview';
-// import StakingCardSyncAlert from '../../vebal/cross-chain-boost/StakingCardSyncAlert.vue';
 import TokenInput from '@/components/inputs/TokenInput/TokenInput.vue';
 import BalCheckbox from '@/components/_global/BalCheckbox/BalCheckbox.vue';
 import localStorageKeys from '@/constants/local-storage.keys';
-
+import BigNumber from 'bignumber.js';
+import CultivateLiquidityPreviewModal from './CultivateLiquidityPreviewModal.vue';
 type Props = {
   pool: Pool;
 };
 const props = defineProps<Props>();
 
-const _tokenInAmount = ref<string>('');
-const _tokenInAddress = ref<string>('');
+/**
+ * STATE
+ */
+
+const isCultivateLiquidityVisible = ref(false);
+const tokenInAddress = ref<string>('');
+const tokenInAmount = ref<string>('');
 // TODO: add a dynamic allowlist of tokens
 const _subsetTokens = ref<string[]>([
   '0xE036290F41c367AeC59aec5B69C2B72068C441f6',
@@ -52,12 +52,6 @@ const {
 /**
  * COMPUTED
  */
-// const fiatValueOfStakedShares = computed(() => {
-//   return bnum(props.pool.totalLiquidity)
-//     .div(props.pool.totalShares)
-//     .times((stakedShares.value || 0).toString())
-//     .toString();
-// });
 
 const fiatValueOfUnstakedShares = computed(() => {
   return bnum(props.pool.totalLiquidity)
@@ -65,34 +59,6 @@ const fiatValueOfUnstakedShares = computed(() => {
     .times(balanceFor(getAddress(props.pool.address)))
     .toString();
 });
-
-// const isStakeDisabled = computed(() => {
-//   return (
-//     !!deprecatedDetails(props.pool.id) ||
-//     fiatValueOfUnstakedShares.value === '0' ||
-//     hasNonPrefGaugeBalance.value ||
-//     !preferentialGaugeAddress.value
-//   );
-// });
-
-// /**
-//  * METHODS
-//  */
-// function showStakePreview() {
-//   if (fiatValueOfUnstakedShares.value === '0') return;
-//   stakeAction.value = 'stake';
-//   isStakePreviewVisible.value = true;
-// }
-
-// function showUnstakePreview() {
-//   if (fiatValueOfStakedShares.value === '0') return;
-//   stakeAction.value = 'unstake';
-//   isStakePreviewVisible.value = true;
-// }
-
-// function handlePreviewClose() {
-//   isStakePreviewVisible.value = false;
-// }
 
 const isAlertAccepted = lsGet<boolean>(ALERT_ACCEPTED_KEY, false);
 
@@ -103,7 +69,7 @@ function handleUnlockClick() {
 }
 
 function handleDepositClick() {
-  // Lógica para el botón de depósito
+  showCultivateLiquidityPreview();
 }
 
 function handleCheckboxChange() {
@@ -116,21 +82,40 @@ function handleContinueClick() {
 }
 
 function handleInAmountChange(value: string): void {
-  _tokenInAmount.value = value;
+  tokenInAmount.value = value;
 }
 
 function handleInputTokenChange(address: string): void {
-  _tokenInAddress.value = address;
+  tokenInAddress.value = address;
 }
 
 watchEffect(() => {
-  _tokenInAmount.value = '0';
-  _tokenInAddress.value = _subsetTokens.value[0];
+  tokenInAddress.value = _subsetTokens.value[0];
 });
 
 // Check if the alert has been accepted before
 if (lsGet<boolean>(ALERT_ACCEPTED_KEY, false)) {
   isAlertVisible.value = false;
+}
+
+const myVotes = computed(() => {
+  const normalizedVotes = scale(new BigNumber(props.pool.userVotes), -4);
+  return fNum(normalizedVotes.toString(), {
+    style: 'percent',
+    maximumFractionDigits: 2,
+  });
+});
+
+/**
+ * METHODS
+ */
+function showCultivateLiquidityPreview() {
+  if (fiatValueOfUnstakedShares.value === '0') return;
+  isCultivateLiquidityVisible.value = true;
+}
+
+function handlePreviewClose() {
+  isCultivateLiquidityVisible.value = false;
 }
 </script>
 
@@ -193,9 +178,7 @@ if (lsGet<boolean>(ALERT_ACCEPTED_KEY, false)) {
                     </AnimatePresence>
                     <AnimatePresence :isVisible="!isRefetchingStakedShares">
                       <span>
-                        {{
-                          fNum(fiatValueOfUnstakedShares, FNumFormats.percent)
-                        }}
+                        {{ myVotes }}
                       </span>
                     </AnimatePresence>
                   </BalStack>
@@ -219,8 +202,8 @@ if (lsGet<boolean>(ALERT_ACCEPTED_KEY, false)) {
                 <TokenInput
                   name="tokenIn"
                   :disabled="!isAlertAccepted"
-                  :address="_tokenInAddress"
-                  :amount="_tokenInAmount"
+                  :address="tokenInAddress"
+                  :amount="tokenInAmount"
                   :excludedTokens="[]"
                   :subsetTokens="_subsetTokens"
                   @update:amount="handleInAmountChange"
@@ -290,12 +273,15 @@ if (lsGet<boolean>(ALERT_ACCEPTED_KEY, false)) {
     <AnimatePresence :isVisible="isLoadingStakingData" unmountInstantly>
       <BalLoadingBlock class="h-12" />
     </AnimatePresence>
-    <!-- <StakePreviewModal
-      :isVisible="isStakePreviewVisible"
+    <CultivateLiquidityPreviewModal
+      v-if="!!pool"
+      :isVisible="isCultivateLiquidityVisible"
       :pool="pool"
-      :action="stakeAction"
+      :tokenInAddress="tokenInAddress"
+      :tokenInAmount="tokenInAmount"
+      action="stake"
       @close="handlePreviewClose"
-    /> -->
+    />
   </div>
 </template>
 

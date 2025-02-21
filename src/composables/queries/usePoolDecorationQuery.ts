@@ -5,6 +5,7 @@ import QUERY_KEYS from '@/constants/queryKeys';
 import { PoolDecorator } from '@/services/pool/decorators/pool.decorator';
 import { useTokens } from '@/providers/tokens.provider';
 import { cloneDeep } from 'lodash';
+import useVotingPools from '../useVotingPools';
 
 /**
  * TYPES
@@ -25,6 +26,7 @@ export default function usePoolDecorationQuery(
    * COMPOSABLES
    */
   const { tokens } = useTokens();
+  const { votingPools } = useVotingPools();
 
   /**
    * COMPUTED
@@ -40,11 +42,20 @@ export default function usePoolDecorationQuery(
    */
   const queryFn = async () => {
     if (!pool.value) return undefined;
+    // This is kinda ugly, but it's the only easy way to get the votes for the pool I found
+    const associatedPool = votingPools.value.find(
+      votingPool => pool.value?.id == votingPool.id
+    );
     const _pool = cloneDeep(pool.value);
     const poolDecorator = new PoolDecorator([_pool]);
     // Decorate pool updating only the onchain attributes.
     const [decoratedPool] = await poolDecorator.decorate(tokens.value, false);
-    return decoratedPool;
+    return {
+      ...decoratedPool,
+      votes: associatedPool?.votes,
+      userVotes: associatedPool?.userVotes,
+      gauge: associatedPool?.gauge,
+    };
   };
 
   /**

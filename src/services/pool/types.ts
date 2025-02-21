@@ -5,8 +5,16 @@ import { Pool as SDKPool, PoolToken, PoolType } from '@regenerative/sdk';
 export type { SubPool, PoolToken } from '@regenerative/sdk';
 export { PoolType } from '@regenerative/sdk';
 export interface Pool extends SDKPool {
+  gauge: {
+    address: string;
+    isKilled: boolean;
+    relativeWeightCap?: string | null;
+    addedTimestamp?: number | null;
+  };
   tokens: PoolToken[];
   onchain?: OnchainPoolData;
+  userVotes?: string;
+  votes?: string;
 }
 
 export interface RawPoolTokens {

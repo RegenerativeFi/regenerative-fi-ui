@@ -59,7 +59,8 @@ export type TransactionAction =
   | 'claimSubmission'
   | 'mintNFT'
   | 'upgradeNFT'
-  | 'claimRewards';
+  | 'claimRewards'
+  | 'cultivate';
 
 export type TransactionType = 'order' | 'tx';
 
