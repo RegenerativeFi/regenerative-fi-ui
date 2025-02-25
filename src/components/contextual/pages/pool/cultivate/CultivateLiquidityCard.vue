@@ -60,10 +60,10 @@ const fiatValueOfUnstakedShares = computed(() => {
     .toString();
 });
 
-const isAlertAccepted = lsGet<boolean>(ALERT_ACCEPTED_KEY, false);
+const isAlertAccepted = ref(lsGet<boolean>(ALERT_ACCEPTED_KEY, false));
 
 function handleUnlockClick() {
-  if (!isAlertAccepted) {
+  if (!isAlertAccepted.value) {
     isAlertVisible.value = true;
   }
 }
@@ -79,6 +79,7 @@ function handleCheckboxChange() {
 function handleContinueClick() {
   lsSet(ALERT_ACCEPTED_KEY, true);
   isAlertVisible.value = false;
+  isAlertAccepted.value = true;
 }
 
 function handleInAmountChange(value: string): void {
@@ -93,7 +94,6 @@ watchEffect(() => {
   tokenInAddress.value = _subsetTokens.value[0];
 });
 
-// Check if the alert has been accepted before
 if (lsGet<boolean>(ALERT_ACCEPTED_KEY, false)) {
   isAlertVisible.value = false;
 }
