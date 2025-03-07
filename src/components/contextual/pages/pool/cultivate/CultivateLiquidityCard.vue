@@ -7,12 +7,12 @@ import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import { useTokens } from '@/providers/tokens.provider';
 import { bnum } from '@/lib/utils';
 import { Pool } from '@/services/pool/types';
-import { usePoolStaking } from '@/providers/local/pool-staking.provider';
 import TokenInput from '@/components/inputs/TokenInput/TokenInput.vue';
 import BalCheckbox from '@/components/_global/BalCheckbox/BalCheckbox.vue';
 import localStorageKeys from '@/constants/local-storage.keys';
 import BigNumber from 'bignumber.js';
 import CultivateLiquidityPreviewModal from './CultivateLiquidityPreviewModal.vue';
+import useVotingPools from '@/composables/useVotingPools';
 type Props = {
   pool: Pool;
 };
@@ -40,14 +40,9 @@ const ALERT_ACCEPTED_KEY = localStorageKeys.Alerts.CultivateAlertAccepted;
 /**
  * COMPOSABLES
  */
-const { fNum } = useNumbers();
+const { fNum, toFiat } = useNumbers();
 const { balanceFor } = useTokens();
-const {
-  isStakablePool,
-  isLoading: isLoadingStakingData,
-  isRefetchingStakedShares,
-  hasNonPrefGaugeBalance,
-} = usePoolStaking();
+const { isLoadingVotingPools, votingPools } = useVotingPools();
 
 /**
  * COMPUTED
@@ -106,6 +101,22 @@ const myVotes = computed(() => {
   });
 });
 
+const currentIncentives = computed(() => {
+  const foundPool = votingPools.value.find(
+    pool => pool.address === props.pool.address
+  );
+  if (!foundPool) {
+    return fNum('0', FNumFormats.fiat);
+  }
+  const totalBribes =
+    foundPool?.bribes.reduce(
+      (acc, bribe) =>
+        acc + Number(toFiat(bribe.amount, bribe.token.address).toString()),
+      0
+    ) || 0;
+
+  return fNum(totalBribes, FNumFormats.fiat);
+});
 /**
  * METHODS
  */
@@ -121,19 +132,19 @@ function handlePreviewClose() {
 
 <template>
   <div>
-    <AnimatePresence :isVisible="!isLoadingStakingData">
+    <AnimatePresence :isVisible="!isLoadingVotingPools">
       <div class="relative">
         <BalAccordion
-          :class="['shadow-2xl', { handle: isStakablePool }]"
+          :class="['shadow-2xl', { handle: true }]"
           :sections="[
             {
               title: 'Cultivate Liquidity',
               id: 'staking-incentives',
               handle: 'staking-handle',
-              isDisabled: !isStakablePool,
+              isDisabled: false,
             },
           ]"
-          :reCalcKey="hasNonPrefGaugeBalance ? 0 : 1"
+          :reCalcKey="0"
           :isOpenedByDefault="true"
         >
           <template #staking-handle>
@@ -151,12 +162,7 @@ function handlePreviewClose() {
                   </div>
                   <h6>Cultivate Liquidity</h6>
                 </BalStack>
-                <BalStack
-                  v-if="isStakablePool"
-                  horizontal
-                  spacing="sm"
-                  align="center"
-                >
+                <BalStack horizontal spacing="sm" align="center">
                   <BalIcon name="chevron-down" class="text-blue-500" />
                 </BalStack>
               </BalStack>
@@ -173,26 +179,19 @@ function handlePreviewClose() {
                 <BalStack horizontal justify="between">
                   <span>Current votes</span>
                   <BalStack horizontal spacing="sm" align="center">
-                    <AnimatePresence :isVisible="isRefetchingStakedShares">
-                      <BalLoadingBlock class="h-5" />
-                    </AnimatePresence>
-                    <AnimatePresence :isVisible="!isRefetchingStakedShares">
-                      <span>
-                        {{ myVotes }}
-                      </span>
-                    </AnimatePresence>
+                    <span>
+                      {{ myVotes }}
+                    </span>
                   </BalStack>
                 </BalStack>
                 <BalStack horizontal justify="between">
                   <span>Current incentives</span>
                   <BalStack horizontal spacing="sm" align="center">
-                    <AnimatePresence :isVisible="isRefetchingStakedShares">
+                    <AnimatePresence :isVisible="isLoadingVotingPools">
                       <BalLoadingBlock class="h-5" />
                     </AnimatePresence>
-                    <AnimatePresence :isVisible="!isRefetchingStakedShares">
-                      <span>
-                        {{ fNum(fiatValueOfUnstakedShares, FNumFormats.fiat) }}
-                      </span>
+                    <AnimatePresence :isVisible="!isLoadingVotingPools">
+                      <span> {{ currentIncentives }} </span>
                     </AnimatePresence>
                   </BalStack>
                 </BalStack>
@@ -270,7 +269,7 @@ function handlePreviewClose() {
         </transition>
       </div>
     </AnimatePresence>
-    <AnimatePresence :isVisible="isLoadingStakingData" unmountInstantly>
+    <AnimatePresence :isVisible="isLoadingVotingPools" unmountInstantly>
       <BalLoadingBlock class="h-12" />
     </AnimatePresence>
     <CultivateLiquidityPreviewModal
