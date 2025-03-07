@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { getAddress } from '@ethersproject/address';
 import { lsSet, lsGet, scale } from '@/lib/utils';
 import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
 import AnimatePresence from '@/components/animate/AnimatePresence.vue';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
-import { useTokens } from '@/providers/tokens.provider';
-import { bnum } from '@/lib/utils';
 import { Pool } from '@/services/pool/types';
 import TokenInput from '@/components/inputs/TokenInput/TokenInput.vue';
 import BalCheckbox from '@/components/_global/BalCheckbox/BalCheckbox.vue';
@@ -41,19 +38,11 @@ const ALERT_ACCEPTED_KEY = localStorageKeys.Alerts.CultivateAlertAccepted;
  * COMPOSABLES
  */
 const { fNum, toFiat } = useNumbers();
-const { balanceFor } = useTokens();
 const { isLoadingVotingPools, votingPools } = useVotingPools();
 
 /**
  * COMPUTED
  */
-
-const fiatValueOfUnstakedShares = computed(() => {
-  return bnum(props.pool.totalLiquidity)
-    .div(props.pool.totalShares)
-    .times(balanceFor(getAddress(props.pool.address)))
-    .toString();
-});
 
 const isAlertAccepted = ref(lsGet<boolean>(ALERT_ACCEPTED_KEY, false));
 
@@ -121,7 +110,6 @@ const currentIncentives = computed(() => {
  * METHODS
  */
 function showCultivateLiquidityPreview() {
-  if (fiatValueOfUnstakedShares.value === '0') return;
   isCultivateLiquidityVisible.value = true;
 }
 
