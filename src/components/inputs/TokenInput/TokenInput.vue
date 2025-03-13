@@ -47,6 +47,7 @@ type Props = {
   tokenSelectProps?: Partial<TokenSelectProps>;
   slider?: boolean;
   sliderProps?: Partial<BalRangeInputProps>;
+  subsetTokens?: string[];
 };
 
 /**
@@ -79,6 +80,7 @@ const props = withDefaults(defineProps<Props>(), {
   tokenSelectProps: () => ({}),
   slider: false,
   sliderProps: () => ({}),
+  subsetTokens: () => [],
 });
 
 const emit = defineEmits<{
@@ -272,6 +274,7 @@ watch(_address, async (newAddress, oldAddress) => {
           :options="options"
           class="mr-2"
           :excludedTokens="excludedTokens"
+          :subsetTokens="subsetTokens"
           @update:model-value="emit('update:address', $event)"
         />
       </slot>

@@ -128,7 +128,7 @@ watch(poolTypeFilter, newPoolTypeFilter => {
               {{ networkConfig.chainName }}
               <span class="lowercase">{{ $t('pools') }}</span>
             </h3>
-            <BalBtn
+            <!-- <BalBtn
               v-if="upToSmallBreakpoint"
               color="blue"
               size="sm"
@@ -137,7 +137,7 @@ watch(poolTypeFilter, newPoolTypeFilter => {
               @click="navigateToCreatePool"
             >
               {{ $t('createAPool.title') }}
-            </BalBtn>
+            </BalBtn> -->
           </div>
 
           <div

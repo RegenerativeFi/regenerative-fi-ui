@@ -191,7 +191,6 @@ function handlePreviewClose() {
                   :disabled="!isAlertAccepted"
                   :address="tokenInAddress"
                   :amount="tokenInAmount"
-                  :excludedTokens="[]"
                   :subsetTokens="_subsetTokens"
                   @update:amount="handleInAmountChange"
                   @update:address="handleInputTokenChange"

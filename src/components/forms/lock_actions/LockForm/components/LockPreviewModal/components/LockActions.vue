@@ -19,13 +19,11 @@ import { balancerContractsService } from '@/services/balancer/contracts/balancer
 import useWeb3 from '@/services/web3/useWeb3';
 import { TokenInfo } from '@/types/TokenList';
 import { TransactionActionInfo } from '@/types/transactions';
-import useVotingPools from '@/composables/useVotingPools';
 import { VeBalLockInfo } from '@/services/balancer/contracts/contracts/veBAL';
 import { ApprovalAction } from '@/composables/approvals/types';
 import useTokenApprovalActions from '@/composables/approvals/useTokenApprovalActions';
 import { captureBalancerException } from '@/lib/utils/errors';
 import { useCrossChainSync } from '@/providers/cross-chain-sync.provider';
-import FeedbackCard from '@/components/cards/FeedbackCard.vue';
 
 /**
  * TYPES
@@ -78,7 +76,6 @@ const { getProvider, explorerLinks, isMismatchedNetwork } = useWeb3();
 const { addTransaction } = useTransactions();
 const { txListener, getTxConfirmedAt } = useEthers();
 const { fNum } = useNumbers();
-const { totalVotes, unallocatedVotes } = useVotingPools();
 const { networkSlug } = useNetwork();
 const { getTokenApprovalActions } = useTokenApprovalActions();
 const { refetch: refetchSyncData } = useCrossChainSync();
@@ -100,10 +97,6 @@ const actions = ref<TransactionActionInfo[]>([...lockActions]);
  */
 const lockActionStatesConfirmed = computed(() =>
   lockActionStates.every(lockActionState => lockActionState.confirmed)
-);
-
-const shouldResubmitVotes = computed<boolean>(
-  () => totalVotes !== unallocatedVotes.value
 );
 
 const amountsToApprove = computed(() => [
@@ -261,7 +254,7 @@ onBeforeMount(async () => {
           />
         </BalLink>
       </div>
-      <BalAlert
+      <!-- <BalAlert
         v-if="lockConfirmed && !veBalLockInfo.hasExistingLock"
         class="mt-4"
         type="tip"
@@ -276,20 +269,20 @@ onBeforeMount(async () => {
         :title="t('veBAL.liquidityMining.resubmit.hint.title')"
         :description="t('veBAL.liquidityMining.resubmit.hint.description')"
       >
-      </BalAlert>
+      </BalAlert> -->
       <BalBtn
         tag="router-link"
-        :to="{ name: 'vebal', params: { networkSlug } }"
+        :to="{ name: 'dashboard', params: { networkSlug } }"
         color="gray"
         outline
         block
         class="mt-4"
       >
-        {{ $t('getVeBAL.previewModal.returnToVeBalPage') }}
+        Return to Dashboard
       </BalBtn>
-      <transition name="pop">
+      <!-- <transition name="pop">
         <FeedbackCard class="mt-3" />
-      </transition>
+      </transition> -->
     </template>
   </div>
 </template>

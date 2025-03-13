@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { PoolTypeFilter, PoolAttributeFilter } from '@/types/pools';
 
@@ -17,11 +16,11 @@ const emit = defineEmits<{
 const options = [
   PoolTypeFilter.Weighted,
   PoolTypeFilter.Stable,
-  PoolTypeFilter.CLP,
-  PoolTypeFilter.LBP,
+  // PoolTypeFilter.CLP,
+  // PoolTypeFilter.LBP,
 ];
 
-const attributeOptions = [PoolAttributeFilter.New];
+// const attributeOptions = [PoolAttributeFilter.New];
 
 const _selectedPoolType = ref<PoolTypeFilter>();
 const _selectedAttributes = reactive<PoolAttributeFilter[]>([]);
@@ -52,14 +51,14 @@ function handlePoolTypeCheck(event, option) {
   }
 }
 
-function handleAttributeCheck(event, option) {
-  if (event.target.checked) {
-    _selectedAttributes.push(option);
-  } else {
-    const index = _selectedAttributes.indexOf(option);
-    _selectedAttributes.splice(index, 1);
-  }
-}
+// function handleAttributeCheck(event, option) {
+//   if (event.target.checked) {
+//     _selectedAttributes.push(option);
+//   } else {
+//     const index = _selectedAttributes.indexOf(option);
+//     _selectedAttributes.splice(index, 1);
+//   }
+// }
 </script>
 
 <template>
@@ -96,7 +95,7 @@ function handleAttributeCheck(event, option) {
         </div>
       </BalVStack>
 
-      <BalVStack spacing="sm">
+      <!-- <BalVStack spacing="sm">
         <BalText size="lg" weight="bold" margin>Pool attributes</BalText>
         <div
           v-for="option in attributeOptions"
@@ -112,7 +111,7 @@ function handleAttributeCheck(event, option) {
             @input="event => handleAttributeCheck(event, option)"
           />
         </div>
-      </BalVStack>
+      </BalVStack> -->
     </BalVStack>
   </BalPopover>
 </template>

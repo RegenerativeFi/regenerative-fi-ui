@@ -12,8 +12,11 @@ import { PoolAction } from '../../pools/types';
 /**
  * STATE
  */
-const showStakeModal = ref(false);
-const stakePool = ref<Pool | undefined>();
+const showUnstakeModal = ref(false);
+const poolToUnstake = ref<Pool | undefined>();
+const showRestakeModal = ref(false);
+const poolToRestake = ref<Pool | undefined>();
+
 const networkName = configService.network.shortName;
 const hiddenColumns = ['poolVolume', 'migrate', 'lockEndDate', 'volume'];
 
@@ -34,9 +37,9 @@ const {
   isLoading: isLoadingPools,
 } = useUserPools();
 const defaultPoolActions = [
-  PoolAction.Stake,
+  PoolAction.Unstake,
   PoolAction.Add,
-  PoolAction.Remove,
+  PoolAction.Vote,
 ];
 
 /**
@@ -53,17 +56,17 @@ const poolsToRenderKey = computed(() => JSON.stringify(stakedPools.value));
 /**
  * METHODS
  */
-function handleStake(pool: Pool) {
-  showStakeModal.value = true;
-  stakePool.value = pool;
+function handleUnstake(pool: Pool) {
+  showUnstakeModal.value = true;
+  poolToUnstake.value = pool;
 }
 
 function handleModalClose() {
   refetchAllUserPools();
-  showStakeModal.value = false;
+  showUnstakeModal.value = false;
 }
 
-async function handleStakeSuccess() {
+async function handleUnstakeSuccess() {
   await refetchAllUserPools();
 }
 
@@ -86,16 +89,27 @@ onMounted(() => {
         :defaultPoolActions="defaultPoolActions"
         showPoolShares
         showActions
-        @trigger-stake="handleStake"
+        showStakeActions
+        poolsType="staked"
+        @trigger-unstake="handleUnstake"
       />
     </BalStack>
     <StakePreviewModal
-      v-if="stakePool"
-      :pool="stakePool"
-      :isVisible="showStakeModal"
-      action="stake"
+      v-if="poolToUnstake"
+      :pool="poolToUnstake"
+      :isVisible="showUnstakeModal"
+      action="unstake"
       @close="handleModalClose"
-      @success="handleStakeSuccess"
+      @success="handleUnstakeSuccess"
+    />
+    <!-- Restake modal -->
+    <StakePreviewModal
+      v-if="poolToRestake"
+      :pool="poolToRestake"
+      :isVisible="showRestakeModal"
+      action="restake"
+      @close="handleModalClose"
+      @success="handleUnstakeSuccess"
     />
   </div>
 </template>
