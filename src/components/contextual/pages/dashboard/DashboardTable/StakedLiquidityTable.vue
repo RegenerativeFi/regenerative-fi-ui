@@ -36,11 +36,7 @@ const {
   refetchAllUserPools,
   isLoading: isLoadingPools,
 } = useUserPools();
-const defaultPoolActions = [
-  PoolAction.Unstake,
-  PoolAction.Add,
-  PoolAction.Vote,
-];
+const defaultPoolActions = [PoolAction.Unstake, PoolAction.Vote];
 
 /**
  * COMPUTED
