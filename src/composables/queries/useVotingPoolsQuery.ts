@@ -7,12 +7,13 @@ import {
   VotingPoolWithVotes,
 } from '@/services/balancer/gauges/gauge-controller.decorator';
 import useWeb3 from '@/services/web3/useWeb3';
-import { networkId } from '@/composables/useNetwork';
+import { networkId, networkSlug } from '@/composables/useNetwork';
 import { VeBalGetVotingListQuery } from '@/services/api/graphql/generated/api-types';
 import { Network } from '@/lib/config/types';
 import { PoolType } from '@/services/pool/types';
 // import { testnetVotingPools } from '@/components/contextual/pages/vebal/LMVoting/testnet-voting-pools';
 import { alfajoresVotingPools } from '@/components/contextual/pages/vebal/LMVoting/alfajores-voting-pools';
+import { celoVotingPools } from '@/components/contextual/pages/vebal/LMVoting/celo-voting-pools';
 import { mapApiChain, mapApiPoolType } from '@/services/api/graphql/mappers';
 import { useTokens } from '@/providers/tokens.provider';
 import { TokenInfo } from '@gnosis.pm/safe-apps-sdk';
@@ -62,9 +63,10 @@ export default function useVotingPoolsQuery(
   const queryFn = async (): Promise<VotingPool[]> => {
     try {
       let apiVotingPools: ApiVotingPools;
-      console.log('networkId', networkId.value);
       if (networkId.value === Network.ALFAJORES) {
         apiVotingPools = alfajoresVotingPools();
+      } else if (networkId.value === Network.CELO) {
+        apiVotingPools = celoVotingPools();
       } else {
         return [];
       }
@@ -75,12 +77,16 @@ export default function useVotingPoolsQuery(
       );
 
       const bribesRes = await fetch(
-        'https://incentives.regenerativefi.workers.dev/alfajores/get-incentives'
-      ).then(res => res.json());
+        `https://incentives.regenerativefi.workers.dev/${networkSlug}/get-incentives`
+      )
+        .then(res => res.json())
+        .catch(err => {
+          console.error('Failed to get bribes', err);
+          return [];
+        });
 
       const { bribes } = bribesRes;
-
-      console.log('pools', pools);
+      console.log('bribes', bribes);
       const poolsWithNetwork = pools.map(pool => {
         const poolBribes = bribes.filter(
           bribe => bribe.gauge === pool.gauge.address

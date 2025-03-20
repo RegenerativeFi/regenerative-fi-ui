@@ -17,7 +17,7 @@ const config: Config = {
   unknown: false,
   visibleInUI: true,
   testNetwork: false,
-  rpc: `https://celo-mainnet.infura.io/v3/${keys.infura}`,
+  rpc: `https://forno.celo.org`,
   ws: ``,
   publicRpc: 'https://forno.celo.org',
   explorer: 'https://celoscan.io/',
@@ -31,7 +31,8 @@ const config: Config = {
       'https://api.studio.thegraph.com/query/92572/regenerative-pools-subgraph/version/latest',
     ],
     aave: '',
-    gauge: '',
+    gauge:
+      'https://api.studio.thegraph.com/query/92572/regenerative-gauges-subgraph/version/latest',
     blocks: '',
   },
   bridgeUrl: 'https://portalbridge.com/',

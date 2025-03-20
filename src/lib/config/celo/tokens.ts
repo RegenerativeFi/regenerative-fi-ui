@@ -10,8 +10,8 @@ const tokens: TokenConstants = {
   },
   Addresses: {
     nativeAsset: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-    wNativeAsset: '0x471EcE3750Da237f93B8E339c536989b8978a438', // CELO
-    WETH: '0x66803FB87aBd4aaC3cbB3fAd7C3aa01f6F3FB207',
+    wNativeAsset: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // CELO
+    WETH: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
     BAL: '', // TODO
   },
 };

@@ -189,7 +189,7 @@ export class GaugeControllerDecorator {
     if (isTestnet.value) {
       return networkId.value;
     } else {
-      return Network.MAINNET;
+      return Network.CELO;
     }
   }
 

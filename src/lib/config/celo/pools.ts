@@ -10,17 +10,12 @@ const pools: Pools = {
     PerPoolInitial: 5,
   },
   BoostsEnabled: false,
-  DelegateOwner: '0xba1ba1ba1ba1ba1ba1ba1ba1ba1ba1ba1ba1ba1b',
+  DelegateOwner: '0x28f3b901f667fbab647486f4bdfeaef0e588f89c',
   ZeroAddress: '0x0000000000000000000000000000000000000000',
   DynamicFees: {
     Gauntlet: [],
   },
-  BlockList: [
-    '0xac95f160947a68d222f70760f0c6d40a7aa639cd000200000000000000000002',
-    '0x518282155ff9d72dfb2c6d205a402ebd86625999000200000000000000000003',
-    '0xeb1aa80b91f8b7146e15cc6ab1939f579cac32bc000200000000000000000001',
-    '0x0bb36015d267708ffda79c9d71c8820238358017000200000000000000000004',
-  ],
+  BlockList: [''],
   IncludedPoolTypes: ['Weighted', 'Stable', 'ComposableStable'],
   Stable: {
     AllowList: [],
@@ -32,18 +27,21 @@ const pools: Pools = {
     // Only effective after given timestamp here: usePool.ts#createdAfterTimestamp
     // see useDisabledJoinPool.ts#nonAllowedWeightedPoolAfterTimestamp for logic.
     AllowList: [
-      '0xd218f56d30a3699c9de4c82cd37e23a6dfefe479000200000000000000000005',
-      '0x0c8210bc5f459266eae911bf738caa54517e2a23000200000000000000000009',
-      '0x056955c8f43a3b670f8c31deaf2e298c6ecdb34700020000000000000000000a',
-      '0xb700654049fbaef655b45fef49be8556751e46e700020000000000000000000b',
+      '0x1a239aab16b9625c45d80744a4341f8de2200e1a000200000000000000000004', // tCELO-tREFI
+      '0x4433f250f4952055784b48fb0df74d0aa1a5126a000200000000000000000003', // tCELO-tcUSD
+      '0xada3c5d33261c17011a4cf36cf859af1841a2c74000200000000000000000002', // tCELO-tUSDC
     ],
   },
   Factories: {
-    '0xeb1055c017a1427726f01368c8247649c5a79bf9': 'weightedPool', // Weighted v4
-    '0xA66501F277e27fEB17f653174954590e319404c4': 'composableStablePool', // ComposableStable V4
+    '0xdbd173227b8C07dC46Eb2a38F937B690159Cb40f': 'weightedPool', // Weighted v4
+    '0x1051Ec689f101D36271325347c21614eDF03e102': 'composableStablePool', // ComposableStable V4
   },
   Stakable: {
-    VotingGaugePools: [],
+    VotingGaugePools: [
+      '0x1a239aab16b9625c45d80744a4341f8de2200e1a000200000000000000000004', // tCELO-tREFI
+      '0x4433f250f4952055784b48fb0df74d0aa1a5126a000200000000000000000003', // tCELO-tcUSD
+      '0xada3c5d33261c17011a4cf36cf859af1841a2c74000200000000000000000002', // tCELO-tUSDC
+    ],
     AllowList: [],
   },
   Metadata: {},

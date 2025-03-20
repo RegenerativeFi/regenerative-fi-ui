@@ -64,6 +64,7 @@ export class Multicaller {
   }
 
   private async _execute<T>(): Promise<(T | null)[]> {
+    console.log('provider', this.provider);
     const multicaller = this.getMulticallerInstance();
     const interfaces = this.callInterfaces();
 
