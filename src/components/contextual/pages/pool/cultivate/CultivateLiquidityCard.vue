@@ -24,9 +24,10 @@ const tokenInAddress = ref<string>('');
 const tokenInAmount = ref<string>('');
 // TODO: add a dynamic allowlist of tokens
 const _subsetTokens = ref<string[]>([
-  '0xE036290F41c367AeC59aec5B69C2B72068C441f6',
-  '0x51f29e07c7cf53D2603e1A224E27b1c74E181a17',
-  '0x9A3a52f4462585c31025e2242C9b4074a9FB4a1f',
+  '0xD1531Aa8F91f5Fd8D5D820CD5841e3880283D1Be',
+  '0xB08Dd0b53abD8fB842cDec75cc5064FDD74e99C7',
+  '0x76C12F93ad8975609f95C13782fd8A0B4135e4c6',
+  '0x68DF333c5F5835A186AA8bCe4a704432006fDF49',
 ]);
 
 const isAlertVisible = ref(false);
