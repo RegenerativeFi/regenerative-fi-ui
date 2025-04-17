@@ -35,7 +35,7 @@ export const networkConfig = config[NETWORK_ID];
 
 export const networkId = ref<Network>(NETWORK_ID);
 
-export const isMainnet = computed(() => networkId.value === Network.MAINNET);
+export const isMainnet = computed(() => networkId.value === Network.CELO);
 export const isPolygon = computed(() => networkId.value === Network.POLYGON);
 export const isZkevm = computed(() => networkId.value === Network.ZKEVM);
 export const isOptimism = computed(() => networkId.value === Network.OPTIMISM);

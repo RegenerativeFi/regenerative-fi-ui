@@ -180,7 +180,7 @@ function handlePreviewClose() {
                   </BalStack>
                 </BalStack>
                 <StakingCardSyncAlert
-                  v-if="networkId !== Network.MAINNET"
+                  v-if="networkId !== Network.CELO"
                   :poolAddress="pool.address"
                   :poolId="pool.id"
                   :fiatValueOfStakedShares="fiatValueOfStakedShares"
@@ -232,7 +232,7 @@ function handlePreviewClose() {
                   </BalBtn>
                 </BalStack>
                 <BalAlert
-                  v-if="hasNonPrefGaugeBalance && networkId === Network.MAINNET"
+                  v-if="hasNonPrefGaugeBalance && networkId === Network.CELO"
                   :title="$t('staking.restakeGauge')"
                   class="mt-2"
                 >

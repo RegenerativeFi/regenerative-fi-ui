@@ -37,7 +37,7 @@ const { networkId, getNetworkSlug } = useNetwork();
         @click="
           $router.push({
             name: 'vebal',
-            params: { networkSlug: getNetworkSlug(Network.MAINNET) },
+            params: { networkSlug: getNetworkSlug(Network.CELO) },
           })
         "
       />
