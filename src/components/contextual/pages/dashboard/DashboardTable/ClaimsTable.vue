@@ -1,50 +1,77 @@
-<script setup lang="ts" >
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import useBreakpoints from '@/composables/useBreakpoints';
 import { ColumnDefinition } from '@/components/_global/BalTable/types';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import useWeb3 from '@/services/web3/useWeb3';
 import { configService } from '@/services/config/config.service';
+import useVoterRewardsQuery from '@/composables/queries/useVoterRewardsQuery';
+import { bnum } from '@/lib/utils';
+import { TokenInfo } from '@/types/TokenList';
+import { useTokens } from '@/providers/tokens.provider';
+import ClaimVoterRewardsBtn from '@/components/btns/ClaimVoterRewardsBtn.vue';
 
 /**
  * TYPES
  */
-export type ClaimRow = {
-  token: string;
+export type VoterRewardRow = {
+  token: TokenInfo;
   amount: string;
   value: string;
+  proofs: {
+    identifier: string;
+    amount: string;
+    proof: string[];
+  }[];
 };
 
-/**
- * PROPS & EMITS
- */
+type ProofsByToken = {
+  [tokenAddress: string]: {
+    proofs: {
+      identifier: string;
+      amount: string;
+      proof: string[];
+    }[];
+    totalAmount: string;
+  };
+};
 
 /**
  * COMPOSABLES
  */
 const { t } = useI18n();
 const { fNum } = useNumbers();
+const { getToken, priceFor } = useTokens();
+const { data: voterRewards, isLoading } = useVoterRewardsQuery();
+const { upToLargeBreakpoint } = useBreakpoints();
+const { isWalletReady, isWalletConnecting } = useWeb3();
 
-const isLoading = ref(false);
 /**
  * STATE
  */
-//  ref<ColumnDefinition<RewardRow>[]>
-const columns = ref<ColumnDefinition<ClaimRow>[]>([
+const columns = ref<ColumnDefinition<VoterRewardRow>[]>([
   {
     name: t('token'),
-    id: 'icon',
-    accessor: 'uri',
-    Cell: 'iconsColumnCell',
-    width: 100,
+    id: 'token',
+    accessor: 'token',
+    Cell: 'tokenColumnCell',
+    align: 'left',
+    width: 50,
     noGrow: true,
+  },
+  {
+    name: '',
+    id: 'symbol',
+    accessor: 'symbol',
+    Cell: 'symbolColumnCell',
+    width: 350,
   },
   {
     name: t('amount'),
     id: 'amount',
     align: 'right',
     width: 150,
-    totalsCell: 'totalAmountCell',
     accessor: ({ amount }) => `${fNum(amount, FNumFormats.token)}`,
   },
   {
@@ -53,7 +80,7 @@ const columns = ref<ColumnDefinition<ClaimRow>[]>([
     align: 'right',
     width: 150,
     totalsCell: 'totalValueCell',
-    accessor: ({ value }) => value,
+    accessor: ({ value }) => fNum(value, FNumFormats.fiat),
   },
   {
     name: '',
@@ -65,26 +92,102 @@ const columns = ref<ColumnDefinition<ClaimRow>[]>([
   },
 ]);
 
-const selectedRows = ref([]);
+const selectedRows = ref<VoterRewardRow[]>([]);
 
-const handleButtonClick = () => {
-  console.log('GM');
-};
+/**
+ * COMPUTED
+ */
+const rewardsData = computed(() => {
+  if (!voterRewards.value?.proofs) return [] as VoterRewardRow[];
 
-const { isWalletReady, isWalletConnecting } = useWeb3();
+  const proofsByToken = Object.values(voterRewards.value.proofs)
+    .flat()
+    .reduce((acc: ProofsByToken, proof) => {
+      if (!acc[proof.token]) {
+        acc[proof.token] = {
+          proofs: [],
+          totalAmount: '0',
+        };
+      }
 
-const { upToLargeBreakpoint } = useBreakpoints();
-const networkName = configService.network.shortName;
+      acc[proof.token].proofs.push({
+        identifier: proof.identifier,
+        amount: proof.claimable,
+        proof: proof.proof,
+      });
+
+      acc[proof.token].totalAmount = bnum(acc[proof.token].totalAmount)
+        .plus(proof.claimable)
+        .toString();
+
+      return acc;
+    }, {});
+
+  const result = Object.entries(proofsByToken).map(([tokenAddress, data]) => {
+    const tokenInfo = getToken(tokenAddress);
+    const normalizedAmount = bnum(data.totalAmount)
+      .div(10 ** (tokenInfo?.decimals || 18))
+      .toString();
+
+    // Calculate token value
+    const tokenPrice = priceFor(tokenAddress);
+    console.log('tokenPrice', tokenPrice);
+    const value = bnum(normalizedAmount).times(tokenPrice).toString();
+
+    return {
+      token: {
+        address: tokenAddress,
+        symbol: tokenInfo?.symbol || tokenAddress,
+        decimals: tokenInfo?.decimals || 18,
+      },
+      amount: normalizedAmount,
+      value,
+      proofs: data.proofs,
+    };
+  });
+
+  return result;
+});
+
+// const totalClaimAmount = computed((): string =>
+//   rewardsData.value
+//     .reduce((acc, row) => acc.plus(row.amount), bnum('0'))
+//     .toString()
+// );
+
+const totalClaimValue = computed((): string =>
+  rewardsData.value
+    .reduce((acc, row) => acc.plus(row.value), bnum('0'))
+    .toString()
+);
+
+// const hasClaimableBalance = computed((): boolean => {
+//   if (isLoading.value) return true;
+//   return bnum(totalClaimAmount.value).gt(0);
+// });
 
 const noPoolsLabel = computed(() => {
   return isWalletReady.value || isWalletConnecting.value
-    ? t('noRewardsToClaim', [networkName])
+    ? t('noRewardsToClaim', [configService.network.shortName])
     : t('connectYourWallet');
 });
 
-// const hasCurrentAllocation = computed(() => {
-//   return false;
-// });
+// Update the isRowSelected helper
+const isRowSelected = (data: VoterRewardRow): boolean =>
+  selectedRows.value.some(
+    selected => selected.token.address === data.token.address
+  );
+
+// Update checkbox handling function
+function handleCheckboxChange(data: VoterRewardRow, checked: boolean) {
+  if (checked) {
+    selectedRows.value.push(data);
+  } else {
+    selectedRows.value = selectedRows.value.filter(
+      r => r.token.address !== data.token.address
+    );
+  }
+}
 </script>
 
 <template>
@@ -98,36 +201,49 @@ const noPoolsLabel = computed(() => {
       :columns="columns"
       sticky="both"
       :noResultsLabel="noPoolsLabel"
-      :data="[]"
+      :data="rewardsData"
       :isLoading="isLoading"
       skeletonClass="h-24"
       :square="upToLargeBreakpoint"
     >
-      <template #iconsColumnCell>
-        <div class="flex gap-4 justify-start items-center px-6 w-full">
-          <!-- <img :src="RFP" class="w-6 h-6" /> -->
-          <p class="text-base font-normal">RFPs</p>
+      <template #tokenColumnCell="{ token }">
+        <div class="flex justify-center ml-4 xl:ml-0">
+          <BalAsset :address="token.address" />
         </div>
       </template>
-      <template #claimColumnCell="{ row }">
+
+      <template #symbolColumnCell="{ token }">
+        <div class="flex py-4 px-6">
+          {{ token.symbol }}
+        </div>
+      </template>
+
+      <template #totalValueCell>
+        <div class="flex justify-end">
+          {{ fNum(totalClaimValue, FNumFormats.fiat) }}
+        </div>
+      </template>
+
+      <template #claimColumnCell="cellData">
         <div class="py-4 px-6">
           <input
-            v-model="selectedRows"
-            :value="row"
             type="checkbox"
+            :checked="isRowSelected(cellData)"
             class="w-5 h-5 bg-transparent border-2 border-disabled cursor-pointer"
+            @change="(event) => handleCheckboxChange(cellData, (event.target as HTMLInputElement).checked)"
           />
         </div>
       </template>
+
       <template #claimTotalCell>
-        <BalBtn
-          :color="selectedRows.length ? 'blue' : 'gray'"
-          :disabled="!selectedRows.length"
-          class="w-fit"
-          size="sm"
-          @click="handleButtonClick"
-          >Claim</BalBtn
-        >
+        <div>
+          <ClaimVoterRewardsBtn
+            :claims="selectedRows.flatMap(row => row.proofs)"
+            :fiatValue="totalClaimValue"
+            :disabled="!selectedRows.length"
+            @success="selectedRows = []"
+          />
+        </div>
       </template>
     </BalTable>
   </BalCard>
