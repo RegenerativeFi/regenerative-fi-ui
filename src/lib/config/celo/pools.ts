@@ -19,7 +19,7 @@ const pools: Pools = {
   IncludedPoolTypes: ['Weighted', 'Stable', 'ComposableStable'],
   Stable: {
     AllowList: [
-      '0x3C090912A183FFDE4EC93AE242E8EAA80383DBB7000000000000000000000007', // R-waCelUSDC-waCelUSDT
+      '0x3c090912a183ffde4ec93ae242e8eaa80383dbb7000000000000000000000007', // R-waCelUSDC-waCelUSDT
     ],
   },
   Investment: {
@@ -32,13 +32,13 @@ const pools: Pools = {
       '0x1a239aab16b9625c45d80744a4341f8de2200e1a000200000000000000000004', // tCELO-tREFI
       '0x4433f250f4952055784b48fb0df74d0aa1a5126a000200000000000000000003', // tCELO-tcUSD
       '0xada3c5d33261c17011a4cf36cf859af1841a2c74000200000000000000000002', // tCELO-tUSDC
-      '0x4D58C5766A37BE24A78D4571975ABF2088DBB9D0000200000000000000000005', // 80CELO-20cUSD
-      '0x3D9DEA33D347B84DB99CE416B363B6EEB68EC199000200000000000000000006', // 50CELO-50cUSD
+      '0x4d58c5766a37be24a78d4571975abf2088dbb9d0000200000000000000000005', // 80CELO-20cUSD
+      '0x3d9dea33d347b84db99ce416b363b6eeb68ec199000200000000000000000006', // 50CELO-50cUSD
     ],
   },
   Factories: {
-    '0xdbd173227b8C07dC46Eb2a38F937B690159Cb40f': 'weightedPool', // Weighted v4
-    '0x1051Ec689f101D36271325347c21614eDF03e102': 'composableStablePool', // ComposableStable V4
+    '0xdbd173227b8c07dc46eb2a38f937b690159cb40f': 'weightedPool', // Weighted v4
+    '0x1051ec689f101d36271325347c21614edf03e102': 'composableStablePool', // ComposableStable V4
   },
   Stakable: {
     VotingGaugePools: [
@@ -53,7 +53,7 @@ const pools: Pools = {
   Deprecated: {},
   GaugeMigration: {},
   BoostedApr: [],
-  DisabledJoins: [...CSP_ISSUE_POOL_IDS[Network.ZKEVM]],
+  DisabledJoins: [...CSP_ISSUE_POOL_IDS[Network.CELO]],
   Risks: {},
   Issues: {
     // [PoolWarning.CspPoolVulnWarning]: CSP_ISSUE_POOL_IDS[Network.ZKEVM],
