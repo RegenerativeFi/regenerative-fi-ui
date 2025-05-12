@@ -32,7 +32,7 @@ const config: Config = {
     ],
     aave: '',
     gauge:
-      'https://api.studio.thegraph.com/query/92572/regenerative-gauges-subgraph/version/latest',
+      'https://api.studio.thegraph.com/query/92572/regenerative-gauges-subgraph/version/1.0.1',
     blocks: '',
   },
   bridgeUrl: 'https://portalbridge.com/',
