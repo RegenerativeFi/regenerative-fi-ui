@@ -38,7 +38,7 @@ const config: Config = {
   bridgeUrl: 'https://optics.app/',
   supportsEIP1559: false,
   supportsElementPools: false,
-  blockTime: 5,
+  blockTime: 2,
   nativeAsset: {
     name: 'Celo',
     address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
