@@ -23,12 +23,12 @@ const config: Config = {
   explorer: 'https://celoscan.io/',
   explorerName: 'Celoscan',
   subgraph:
-    'https://api.studio.thegraph.com/query/92572/regenerative-pools-subgraph/version/latest',
+    'https://api.goldsky.com/api/public/project_cmameg3xd03rh01yxazddhlgj/subgraphs/regenerative-pools-subgraph/1.0.0/gn',
   balancerApi: '',
   poolsUrlV2: '',
   subgraphs: {
     main: [
-      'https://api.studio.thegraph.com/query/92572/regenerative-pools-subgraph/version/latest',
+      'https://api.goldsky.com/api/public/project_cmameg3xd03rh01yxazddhlgj/subgraphs/regenerative-pools-subgraph/1.0.0/gn',
     ],
     aave: '',
     gauge:

@@ -41,6 +41,7 @@ export default class BlockService {
     useRange = true
   ): Promise<number> {
     try {
+      console.log('timestamp', timestamp);
       let query = {};
       if (useRange) {
         const oneHourLater = bnum(timestamp).plus(oneHourInSecs);
@@ -60,7 +61,7 @@ export default class BlockService {
 
       const response: BlockNumberResponse =
         await this.subgraphService.blockNumber.get(query);
-
+      console.log('response.blocks[0].number', response.blocks[0].number);
       return parseInt(response.blocks[0].number);
     } catch (error) {
       if (useRange) return this.fetchBlockByTime(timestamp, false);
