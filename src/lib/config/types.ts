@@ -14,6 +14,12 @@ export type CommonTokens = {
   stMATIC?: string;
 };
 
+export type Wrapper = {
+  underlying: string;
+  wrapper: string;
+  aToken?: string;
+};
+
 export type TokenConstants = {
   Popular: {
     Symbols: string[];
@@ -26,6 +32,7 @@ export type TokenConstants = {
   PriceChainMap?: Record<string, string>;
   DisableInternalBalanceWithdrawals?: string[];
   DoubleApprovalRequired?: string[];
+  Wrappers?: Wrapper[];
 };
 
 export interface Contracts {

@@ -1,5 +1,6 @@
 import { TransactionResponse } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
+import { Contract } from 'ethers';
 
 import configs from '@/lib/config';
 import { configService } from '@/services/config/config.service';
@@ -7,6 +8,7 @@ import { configService } from '@/services/config/config.service';
 import { convertStEthWrap } from './lido';
 import { TransactionBuilder } from '@/services/web3/transactions/transaction.builder';
 import { WalletProvider } from '@/dependencies/wallets/Web3Provider';
+import { rpcProviderService } from '@/services/rpc-provider/rpc-provider.service';
 
 export enum WrapType {
   NonWrap = 0,
@@ -23,21 +25,76 @@ export const isNativeAssetWrap = (
   return tokenIn === nativeAddress && tokenOut === wNativeAddress;
 };
 
+export const isERC4626Wrapper = (token: string): boolean => {
+  return (
+    configService.network.tokens.Wrappers?.some(
+      w => w.wrapper.toLowerCase() === token.toLowerCase()
+    ) ?? false
+  );
+};
+
 export const getWrapAction = (tokenIn: string, tokenOut: string): WrapType => {
   const nativeAddress = configService.network.tokens.Addresses.nativeAsset;
   const wNativeAddress = configService.network.tokens.Addresses.wNativeAsset;
   const { stETH, wstETH } = configService.network.tokens.Addresses;
 
+  const wrapper = configService.network.tokens.Wrappers?.find(
+    w =>
+      (w.underlying.toLowerCase() === tokenIn.toLowerCase() &&
+        w.wrapper.toLowerCase() === tokenOut.toLowerCase()) ||
+      (w.wrapper.toLowerCase() === tokenIn.toLowerCase() &&
+        w.underlying.toLowerCase() === tokenOut.toLowerCase())
+  );
+
+  if (wrapper) {
+    return tokenIn.toLowerCase() === wrapper.underlying.toLowerCase()
+      ? WrapType.Wrap
+      : WrapType.Unwrap;
+  }
+
   if (tokenIn === nativeAddress && tokenOut === wNativeAddress)
     return WrapType.Wrap;
   if (tokenIn === stETH && tokenOut === wstETH) return WrapType.Wrap;
-
   if (tokenOut === nativeAddress && tokenIn === wNativeAddress)
     return WrapType.Unwrap;
   if (tokenOut === stETH && tokenIn === wstETH) return WrapType.Unwrap;
 
   return WrapType.NonWrap;
 };
+
+type ConversionParams = {
+  amount: BigNumber;
+  isWrap: boolean; // true if converting assets to shares, false if converting shares to assets
+};
+
+export async function convertERC4626Wrap(
+  wrapper: string,
+  { amount, isWrap }: ConversionParams
+): Promise<BigNumber> {
+  try {
+    const rateProviderInfo =
+      configService.network.rateProviders[wrapper.toLowerCase()];
+    if (!rateProviderInfo || Object.keys(rateProviderInfo).length === 0) {
+      throw new Error('ERC4626 rate provider not set in config');
+    }
+    const rateProvider = Object.keys(rateProviderInfo)[0];
+
+    const contract = new Contract(
+      rateProvider,
+      ['function getRate() external view returns (uint256)'],
+      rpcProviderService.jsonProvider
+    );
+
+    const rate = await contract.getRate();
+    const ONE = BigNumber.from(10).pow(18);
+
+    return isWrap
+      ? amount.mul(ONE).div(rate) // assets to shares
+      : amount.mul(rate).div(ONE); // shares to assets
+  } catch (error) {
+    throw new Error('Failed to convert ERC4626', { cause: error });
+  }
+}
 
 export const getWrapOutput = async (
   wrapper: string,
@@ -51,6 +108,12 @@ export const getWrapOutput = async (
   if (wrapper === wNativeAddress) return BigNumber.from(wrapAmount);
   if (wrapper === wstETH) {
     return convertStEthWrap({
+      amount: wrapAmount,
+      isWrap: wrapType === WrapType.Wrap,
+    });
+  }
+  if (isERC4626Wrapper(wrapper)) {
+    return convertERC4626Wrap(wrapper, {
       amount: wrapAmount,
       isWrap: wrapType === WrapType.Wrap,
     });
@@ -69,6 +132,8 @@ export async function wrap(
       return wrapNative(network, web3, amount);
     } else if (wrapper === configs[network].tokens.Addresses.wstETH) {
       return wrapLido(network, web3, amount);
+    } else if (isERC4626Wrapper(wrapper)) {
+      return wrapERC4626(wrapper, web3, amount);
     }
     throw new Error('Unrecognised wrapper contract');
   } catch (e) {
@@ -88,6 +153,8 @@ export async function unwrap(
       return unwrapNative(network, web3, amount);
     } else if (wrapper === configs[network].tokens.Addresses.wstETH) {
       return unwrapLido(network, web3, amount);
+    } else if (isERC4626Wrapper(wrapper)) {
+      return unwrapERC4626(wrapper, web3, amount);
     }
     throw new Error('Unrecognised wrapper contract');
   } catch (e) {
@@ -149,5 +216,41 @@ const unwrapLido = async (
     abi: ['function unwrap(uint256 _wstETHAmount) returns (uint256)'],
     action: 'unwrap',
     params: [amount],
+  });
+};
+
+const wrapERC4626 = async (
+  wrapper: string,
+  web3: WalletProvider,
+  amount: BigNumber
+): Promise<TransactionResponse> => {
+  const txBuilder = new TransactionBuilder(web3.getSigner());
+  return await txBuilder.contract.sendTransaction({
+    contractAddress: wrapper,
+    abi: [
+      'function deposit(uint256 assets, address receiver) returns (uint256 shares)',
+    ],
+    action: 'deposit',
+    params: [amount, await web3.getSigner().getAddress()],
+  });
+};
+
+const unwrapERC4626 = async (
+  wrapper: string,
+  web3: WalletProvider,
+  amount: BigNumber
+): Promise<TransactionResponse> => {
+  const txBuilder = new TransactionBuilder(web3.getSigner());
+  return await txBuilder.contract.sendTransaction({
+    contractAddress: wrapper,
+    abi: [
+      'function redeem(uint256 shares, address receiver, address owner) returns (uint256 assets)',
+    ],
+    action: 'redeem',
+    params: [
+      amount,
+      await web3.getSigner().getAddress(),
+      await web3.getSigner().getAddress(),
+    ],
   });
 };
