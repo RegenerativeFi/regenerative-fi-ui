@@ -20,6 +20,7 @@ const pools: Pools = {
   Stable: {
     AllowList: [
       '0x3c090912a183ffde4ec93ae242e8eaa80383dbb7000000000000000000000007', // R-waCelUSDC-waCelUSDT
+      '0x1400eecf44933b1a1371792d48bf2561175763ad000000000000000000000008', //CELO-stCELO
     ],
   },
   Investment: {
