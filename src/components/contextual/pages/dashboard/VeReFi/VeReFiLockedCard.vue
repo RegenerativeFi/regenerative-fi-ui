@@ -23,40 +23,48 @@ const VeReFiBalanceFiat = computed(() =>
 );
 </script>
 
-
-
 <template>
-  <BalCard noPad class="flex-1 gap-4 p-8 card-gap">
-    <template #header>
-      <div class="flex flex-row flex-1 justify-between items-center">
-        <h4 class="text-lg font-medium">veREFI Balance</h4>
-        <img :src="Locked" />
-      </div>
+  <BalTooltip
+    text="REFI token launching soon."
+    class="w-full opacity-50 cursor-not-allowed"
+    placement="bottom"
+  >
+    <template #activator>
+      <BalCard noPad class="flex-1 gap-4 p-8 card-gap">
+        <template #header>
+          <div class="flex flex-row flex-1 justify-between items-center">
+            <h4 class="text-lg font-medium">veREFI Balance</h4>
+            <img :src="Locked" />
+          </div>
+        </template>
+        <div>
+          <div class="flex flex-row gap-2">
+            <img :src="Logo" class="brightness-50" width="18" height="18" />
+            <p class="text-xl font-medium">{{ VeReFiBalance }}</p>
+          </div>
+          <span class="block text-sm text-left text-disabled">
+            ${{ VeReFiBalanceFiat }}</span
+          >
+        </div>
+        <template #footer>
+          <BalBtn
+            size="sm"
+            color="blue"
+            flat="true"
+            outline="true"
+            class="font-medium"
+            @click="
+              $router.push({
+                name: 'get-verefi',
+                query: { returnRoute: 'dashboard' },
+              })
+            "
+            >Extend lock</BalBtn
+          >
+        </template>
+      </BalCard>
     </template>
-    <div>
-      <div class="flex flex-row gap-2">
-        <img :src="Logo" class="brightness-50" width="18" height="18" />
-        <p class="text-xl font-medium">{{ VeReFiBalance }}</p>
-      </div>
-      <span class="text-sm text-disabled"> ${{ VeReFiBalanceFiat }}</span>
-    </div>
-    <template #footer>
-      <BalBtn
-        size="sm"
-        color="blue"
-        flat="true"
-        outline="true"
-        class="font-medium"
-        @click="
-          $router.push({
-            name: 'get-verefi',
-            query: { returnRoute: 'dashboard' },
-          })
-        "
-        >Extend lock</BalBtn
-      >
-    </template>
-  </BalCard>
+  </BalTooltip>
 </template>
 
 <style scoped>

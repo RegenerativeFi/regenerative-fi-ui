@@ -23,40 +23,48 @@ const ReFiBalanceFiat = computed(() =>
 );
 </script>
 
-
-
 <template>
-  <BalCard noPad class="flex-1 gap-4 p-8 card-gap">
-    <template #header>
-      <div class="flex flex-row flex-1 justify-between items-center">
-        <h4 class="text-lg font-medium">Available REFI</h4>
-        <img :src="Unlocked" />
-      </div>
+  <BalTooltip
+    text="REFI token launching soon."
+    class="w-full opacity-50 cursor-not-allowed"
+    placement="bottom"
+  >
+    <template #activator>
+      <BalCard noPad class="flex-1 gap-4 p-8 card-gap">
+        <template #header>
+          <div class="flex flex-row flex-1 justify-between items-center">
+            <h4 class="text-lg font-medium">Available REFI</h4>
+            <img :src="Unlocked" />
+          </div>
+        </template>
+        <div>
+          <div class="flex flex-row gap-2">
+            <img :src="Logo" width="18" height="18" />
+            <p class="text-xl font-medium">{{ ReFiBalance }}</p>
+          </div>
+          <span class="block text-sm text-left text-disabled">
+            ${{ ReFiBalanceFiat }}</span
+          >
+        </div>
+        <template #footer>
+          <BalBtn
+            size="sm"
+            color="blue"
+            flat="true"
+            outline="true"
+            class="font-medium"
+            @click="
+              $router.push({
+                name: 'get-verefi',
+                query: { returnRoute: 'dashboard' },
+              })
+            "
+            >Lock for VeREFI</BalBtn
+          >
+        </template>
+      </BalCard>
     </template>
-    <div>
-      <div class="flex flex-row gap-2">
-        <img :src="Logo" width="18" height="18" />
-        <p class="text-xl font-medium">{{ ReFiBalance }}</p>
-      </div>
-      <span class="text-sm text-disabled"> ${{ ReFiBalanceFiat }}</span>
-    </div>
-    <template #footer>
-      <BalBtn
-        size="sm"
-        color="blue"
-        flat="true"
-        outline="true"
-        class="font-medium"
-        @click="
-          $router.push({
-            name: 'get-verefi',
-            query: { returnRoute: 'dashboard' },
-          })
-        "
-        >Lock for VeREFI</BalBtn
-      >
-    </template>
-  </BalCard>
+  </BalTooltip>
 </template>
 
 <style scoped>
