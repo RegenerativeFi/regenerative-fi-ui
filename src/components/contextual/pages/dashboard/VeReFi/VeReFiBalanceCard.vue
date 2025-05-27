@@ -52,12 +52,13 @@ const ReFiBalanceFiat = computed(() =>
             color="blue"
             flat="true"
             outline="true"
-            class="font-medium"
+            class="font-medium cursor-not-allowed"
             @click="
-              $router.push({
-                name: 'get-verefi',
-                query: { returnRoute: 'dashboard' },
-              })
+              () => {}
+              // $router.push({
+              //   name: 'get-verefi',
+              //   query: { returnRoute: 'dashboard' },
+              // })
             "
             >Lock for VeREFI</BalBtn
           >

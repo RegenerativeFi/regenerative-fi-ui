@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Logo from '@/assets/images/icons/VeREFI/logo-light.svg';
+import Logo from '@/assets/images/icons/VeREFI/veREFI.svg';
 import Locked from '@/assets/images/icons/VeREFI/lock.svg';
 import useNumbers from '@/composables/useNumbers';
 import { TokenInfo } from '@/types/TokenList';
@@ -39,7 +39,7 @@ const VeReFiBalanceFiat = computed(() =>
         </template>
         <div>
           <div class="flex flex-row gap-2">
-            <img :src="Logo" class="brightness-50" width="18" height="18" />
+            <img :src="Logo" width="18" height="18" />
             <p class="text-xl font-medium">{{ VeReFiBalance }}</p>
           </div>
           <span class="block text-sm text-left text-disabled">
@@ -52,12 +52,13 @@ const VeReFiBalanceFiat = computed(() =>
             color="blue"
             flat="true"
             outline="true"
-            class="font-medium"
+            class="font-medium cursor-not-allowed"
             @click="
-              $router.push({
-                name: 'get-verefi',
-                query: { returnRoute: 'dashboard' },
-              })
+              () => {}
+              // $router.push({
+              //   name: 'get-verefi',
+              //   query: { returnRoute: 'dashboard' },
+              // })
             "
             >Extend lock</BalBtn
           >

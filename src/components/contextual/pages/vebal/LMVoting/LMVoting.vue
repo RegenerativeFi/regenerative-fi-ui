@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import useVotingEscrowLocks from '@/composables/useVotingEscrowLocks';
 import useVotingPools from '@/composables/useVotingPools';
-import Logo from '@/assets/images/icons/VeREFI/logo-light.svg';
+import Logo from '@/assets/images/icons/VeREFI/veREFI.svg';
 import useNetwork from '@/composables/useNetwork';
 import useNumbers from '@/composables/useNumbers';
 import useVeBal from '@/composables/useVeBAL';
@@ -216,7 +216,7 @@ watch(account, (_, prevAccount) => {
             <p class="inline mr-1 text-sm text-secondary">My veREFI Balance</p>
           </div>
           <div class="flex flex-row gap-2">
-            <img :src="Logo" class="brightness-50" width="18" height="18" />
+            <img :src="Logo" width="18" height="18" />
             <p class="inline mr-1 text-lg font-semibold">
               <span v-if="hasVeBalBalance">
                 {{ veBalBalanceFormated }}
