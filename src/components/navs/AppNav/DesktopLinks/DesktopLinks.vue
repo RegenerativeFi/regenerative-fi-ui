@@ -3,6 +3,7 @@ import { Goals, trackGoal } from '@/composables/useFathom';
 import useNetwork, { isTestnet } from '@/composables/useNetwork';
 import { useRoute } from 'vue-router';
 import DesktopLinkItem from './DesktopLinkItem.vue';
+import BalTooltip from '@/components/_global/BalTooltip/BalTooltip.vue';
 
 /**
  * COMPOSABLES
@@ -45,14 +46,6 @@ function isActive(page: string): boolean {
     >
       {{ $t('vote') }}
     </DesktopLinkItem> -->
-    <DesktopLinkItem
-      :to="{ name: 'dashboard', params: { networkSlug } }"
-      :active="isActive('dashboard')"
-      prefetch
-      @click="trackGoal(Goals.ClickNavPools)"
-    >
-      {{ $t('dashboard') }}
-    </DesktopLinkItem>
     <!-- <DesktopLinkItem
       :to="{ name: 'claim', params: { networkSlug } }"
       :active="isActive('claim')"
@@ -78,13 +71,24 @@ function isActive(page: string): boolean {
     >
       {{ $t('portfolio') }}
     </DesktopLinkItem> -->
-    <DesktopLinkItem
-      :to="{ name: 'vebal', params: { networkSlug } }"
-      :active="isActive('vebal')"
-      prefetch
-      @click="trackGoal(Goals.ClickNavVebal)"
+    <BalTooltip
+      text="Vote page coming soon."
+      width="64"
+      class="opacity-50 cursor-not-allowed"
+      placement="bottom"
+      textAlign="center"
     >
-      Vote
+      <template #activator>
+        <span class="text-base font-medium">Vote</span>
+      </template>
+    </BalTooltip>
+    <DesktopLinkItem
+      :to="{ name: 'dashboard', params: { networkSlug } }"
+      :active="isActive('dashboard')"
+      prefetch
+      @click="trackGoal(Goals.ClickNavPools)"
+    >
+      {{ $t('dashboard') }}
     </DesktopLinkItem>
   </div>
 </template>
