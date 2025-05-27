@@ -1,13 +1,15 @@
 <script lang="ts" setup>
-import { useAppzi } from '@/composables/useAppzi';
-import useDarkMode from '@/composables/useDarkMode';
+// import { useAppzi } from '@/composables/useAppzi';
+// import useDarkMode from '@/composables/useDarkMode';
 
-const { darkMode } = useDarkMode();
-const { openNpsModal } = useAppzi();
+// const { darkMode } = useDarkMode();
+// const { openNpsModal } = useAppzi();
 </script>
 
 <template>
-  <BalHStack
+  <div></div>
+
+  <!-- <BalHStack
     class="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg"
     justify="between"
     align="center"
@@ -20,5 +22,5 @@ const { openNpsModal } = useAppzi();
     <BalBtn size="xs" :color="darkMode ? 'gray' : 'white'" @click="openNpsModal"
       >Give feedback</BalBtn
     >
-  </BalHStack>
+  </BalHStack> -->
 </template>
