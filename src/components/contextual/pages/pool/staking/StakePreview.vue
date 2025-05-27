@@ -9,6 +9,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 import StakeSummary from './StakeSummary.vue';
 import { StakeAction, useStakePreview } from './composables/useStakePreview';
 import FeedbackCard from '@/components/cards/FeedbackCard.vue';
+import { networkSlug } from '@/composables/useNetwork';
 
 /**
  * TYPES
@@ -97,7 +98,12 @@ const assetRowWidth = computed(
           v-if="action === 'stake'"
           color="gradient"
           block
-          @click="$router.push({ name: 'claim' })"
+          @click="
+            $router.push({
+              name: 'pool',
+              params: { networkSlug: networkSlug, id: pool.id },
+            })
+          "
         >
           {{ $t('viewClaims') }}
         </BalBtn>
