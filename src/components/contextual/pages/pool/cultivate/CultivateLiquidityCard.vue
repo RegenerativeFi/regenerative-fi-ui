@@ -11,6 +11,7 @@ import BigNumber from 'bignumber.js';
 import CultivateLiquidityPreviewModal from './CultivateLiquidityPreviewModal.vue';
 import useVotingPools from '@/composables/useVotingPools';
 import BalTooltip from '@/components/_global/BalTooltip/BalTooltip.vue';
+import CultivateIcon from '@/assets/images/icons/cultivate.svg';
 
 type Props = {
   pool: Pool;
@@ -157,7 +158,12 @@ function handlePreviewClose() {
                           'flex items-center p-1 text-white rounded-full bg-gray-400',
                         ]"
                       >
-                        <BalIcon size="sm" name="x" />
+                        <img
+                          :src="CultivateIcon"
+                          width="18"
+                          height="18"
+                          class="text-white"
+                        />
                       </div>
                       <h6>Cultivate Liquidity</h6>
                     </BalStack>
