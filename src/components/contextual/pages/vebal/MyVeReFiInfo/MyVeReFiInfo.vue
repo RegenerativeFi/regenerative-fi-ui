@@ -6,8 +6,13 @@ import MyVeReFiInfoChip from './components/MyVeReFiInfoChip.vue';
   <BalCard>
     <div class="flex justify-between items-center px-2">
       <div class="flex gap-2">
-        <p class="text-sm">Total voting power available for this epoch</p>
-        <span class="px-3 text-sm rounded-xl bg-[#CEE9FF]">102,294.82 </span>
+        <p class="text-sm dark:text-gray-200">
+          Total voting power available for this epoch
+        </p>
+        <span
+          class="px-3 text-sm dark:text-gray-200 dark:bg-gray-800 rounded-xl bg-[#CEE9FF]"
+          >102,294.82
+        </span>
       </div>
       <div class="flex gap-6 justify-evenly items-center text-center">
         <MyVeReFiInfoChip description="Total Fees" :value="1342124" />
