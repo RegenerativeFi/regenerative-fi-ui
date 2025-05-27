@@ -10,6 +10,8 @@ import localStorageKeys from '@/constants/local-storage.keys';
 import BigNumber from 'bignumber.js';
 import CultivateLiquidityPreviewModal from './CultivateLiquidityPreviewModal.vue';
 import useVotingPools from '@/composables/useVotingPools';
+import BalTooltip from '@/components/_global/BalTooltip/BalTooltip.vue';
+
 type Props = {
   pool: Pool;
 };
@@ -123,101 +125,111 @@ function handlePreviewClose() {
   <div>
     <AnimatePresence :isVisible="!isLoadingVotingPools">
       <div class="relative">
-        <BalAccordion
-          :class="['shadow-2xl', { handle: true }]"
-          :sections="[
-            {
-              title: 'Cultivate Liquidity',
-              id: 'staking-incentives',
-              handle: 'staking-handle',
-              isDisabled: false,
-            },
-          ]"
-          :reCalcKey="0"
-          :isOpenedByDefault="true"
+        <BalTooltip
+          text="Liquidity cultivation coming soon."
+          class="w-full opacity-50 cursor-not-allowed"
+          placement="bottom"
+          textAlign="center"
         >
-          <template #staking-handle>
-            <button
-              class="p-4 w-full hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors"
+          <template #activator>
+            <BalAccordion
+              :class="['shadow-2xl', { handle: false }]"
+              :sections="[
+                {
+                  title: 'Cultivate Liquidity',
+                  id: 'staking-incentives',
+                  handle: 'staking-handle',
+                  isDisabled: false,
+                },
+              ]"
+              :reCalcKey="0"
+              :isOpenedByDefault="false"
             >
-              <BalStack horizontal justify="between" align="center">
-                <BalStack spacing="sm" align="center">
-                  <div
-                    :class="[
-                      'flex items-center p-1 text-white rounded-full bg-gray-400',
-                    ]"
+              <template #staking-handle>
+                <button
+                  class="p-4 w-full hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors"
+                  disabled
+                >
+                  <BalStack horizontal justify="between" align="center">
+                    <BalStack spacing="sm" align="center">
+                      <div
+                        :class="[
+                          'flex items-center p-1 text-white rounded-full bg-gray-400',
+                        ]"
+                      >
+                        <BalIcon size="sm" name="x" />
+                      </div>
+                      <h6>Cultivate Liquidity</h6>
+                    </BalStack>
+                    <BalStack horizontal spacing="sm" align="center">
+                      <BalIcon name="chevron-down" class="text-gray-400" />
+                    </BalStack>
+                  </BalStack>
+                </button>
+              </template>
+              <template #staking-incentives>
+                <div class="relative bg-white dark:bg-gray-850 rounded-b-lg">
+                  <BalStack
+                    vertical
+                    spacing="sm"
+                    class="p-4 rounded-b-lg border-t dark:border-gray-900"
                   >
-                    <BalIcon size="sm" name="x" />
-                  </div>
-                  <h6>Cultivate Liquidity</h6>
-                </BalStack>
-                <BalStack horizontal spacing="sm" align="center">
-                  <BalIcon name="chevron-down" class="text-blue-500" />
-                </BalStack>
-              </BalStack>
-            </button>
-          </template>
-          <template #staking-incentives>
-            <div class="relative bg-white dark:bg-gray-850 rounded-b-lg">
-              <BalStack
-                vertical
-                spacing="sm"
-                class="p-4 rounded-b-lg border-t dark:border-gray-900"
-              >
-                <span>Incentive for {{ pool.symbol }} pool</span>
-                <BalStack horizontal justify="between">
-                  <span>Current votes</span>
-                  <BalStack horizontal spacing="sm" align="center">
-                    <span>
-                      {{ myVotes }}
-                    </span>
-                  </BalStack>
-                </BalStack>
-                <BalStack horizontal justify="between">
-                  <span>Current incentives</span>
-                  <BalStack horizontal spacing="sm" align="center">
-                    <AnimatePresence :isVisible="isLoadingVotingPools">
-                      <BalLoadingBlock class="h-5" />
-                    </AnimatePresence>
-                    <AnimatePresence :isVisible="!isLoadingVotingPools">
-                      <span> {{ currentIncentives }} </span>
-                    </AnimatePresence>
-                  </BalStack>
-                </BalStack>
-                <hr />
-                <h6 class="text-base font-semibold">Deposit incentive</h6>
+                    <span>Incentive for {{ pool.symbol }} pool</span>
+                    <BalStack horizontal justify="between">
+                      <span>Current votes</span>
+                      <BalStack horizontal spacing="sm" align="center">
+                        <span>
+                          {{ myVotes }}
+                        </span>
+                      </BalStack>
+                    </BalStack>
+                    <BalStack horizontal justify="between">
+                      <span>Current incentives</span>
+                      <BalStack horizontal spacing="sm" align="center">
+                        <AnimatePresence :isVisible="isLoadingVotingPools">
+                          <BalLoadingBlock class="h-5" />
+                        </AnimatePresence>
+                        <AnimatePresence :isVisible="!isLoadingVotingPools">
+                          <span> {{ currentIncentives }} </span>
+                        </AnimatePresence>
+                      </BalStack>
+                    </BalStack>
+                    <hr />
+                    <h6 class="text-base font-semibold">Deposit incentive</h6>
 
-                <TokenInput
-                  name="tokenIn"
-                  :disabled="!isAlertAccepted"
-                  :address="tokenInAddress"
-                  :amount="tokenInAmount"
-                  :subsetTokens="_subsetTokens"
-                  @update:amount="handleInAmountChange"
-                  @update:address="handleInputTokenChange"
-                />
-                <BalStack horizontal justify="start">
-                  <BalBtn
-                    v-if="!isAlertAccepted"
-                    outline
-                    color="blue"
-                    size="md"
-                    class="px-3 w-20 h-8 py-[6px] rounded-[4px]"
-                    @click="handleUnlockClick"
-                    >Unlock</BalBtn
-                  >
-                  <BalBtn
-                    v-else
-                    color="gradient"
-                    class="px-3 w-24 h-4 py-[6px] rounded-[4px]"
-                    @click="handleDepositClick"
-                    >Deposit</BalBtn
-                  >
-                </BalStack>
-              </BalStack>
-            </div>
+                    <TokenInput
+                      name="tokenIn"
+                      :disabled="!isAlertAccepted"
+                      :address="tokenInAddress"
+                      :amount="tokenInAmount"
+                      :subsetTokens="_subsetTokens"
+                      @update:amount="handleInAmountChange"
+                      @update:address="handleInputTokenChange"
+                    />
+                    <BalStack horizontal justify="start">
+                      <BalBtn
+                        v-if="!isAlertAccepted"
+                        outline
+                        color="blue"
+                        size="md"
+                        class="px-3 w-20 h-8 py-[6px] rounded-[4px]"
+                        @click="handleUnlockClick"
+                        >Unlock</BalBtn
+                      >
+                      <BalBtn
+                        v-else
+                        color="gradient"
+                        class="px-3 w-24 h-4 py-[6px] rounded-[4px]"
+                        @click="handleDepositClick"
+                        >Deposit</BalBtn
+                      >
+                    </BalStack>
+                  </BalStack>
+                </div>
+              </template>
+            </BalAccordion>
           </template>
-        </BalAccordion>
+        </BalTooltip>
         <transition name="fade">
           <div
             v-if="isAlertVisible"
