@@ -78,15 +78,15 @@ const routes: RouteRecordRaw[] = [
     component: RecoveryExitPage,
   },
   {
-    path: '/:networkSlug/swap/:assetIn?/:assetOut?',
+    path: '/swap/:assetIn?/:assetOut?',
     name: 'swap',
     component: SwapPage,
   },
   {
-    path: '/:networkSlug/trade/:assetIn?/:assetOut?',
+    path: '/trade/:assetIn?/:assetOut?',
     name: 'trade-redirect',
     redirect: to => {
-      return `/${to.params.networkSlug}/swap${to.path.split('/trade')[1]}`;
+      return `/swap${to.path.split('/trade')[1]}`;
     },
   },
   {
@@ -169,7 +169,7 @@ const routes: RouteRecordRaw[] = [
     component: ClaimSubmissionsPage,
   },
   {
-    path: '/:networkSlug/dashboard',
+    path: '/dashboard',
     name: 'dashboard',
     component: Dashboard,
   },

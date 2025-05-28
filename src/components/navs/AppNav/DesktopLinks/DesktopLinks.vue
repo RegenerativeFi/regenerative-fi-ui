@@ -36,7 +36,7 @@ function isActive(page: string): boolean {
       prefetch
       @click="trackGoal(Goals.ClickNavPools)"
     >
-      {{ $t('pool') }}
+      {{ $t('pools') }}
     </DesktopLinkItem>
     <!-- <DesktopLinkItem
       :to="{ name: 'home', params: { networkSlug } }"

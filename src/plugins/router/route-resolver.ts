@@ -6,6 +6,5 @@ export interface RouteTo {
 
 export function resolveRoute(to: RouteTo) {
   if (!to?.name) throw new Error(`Provided route (${to}) must have name`);
-  return router.resolve({ name: to.name, params: { networkSlug: 'celo' } })
-    .matched[0].components?.default;
+  return router.resolve({ name: to.name }).matched[0].components?.default;
 }
