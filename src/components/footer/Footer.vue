@@ -8,11 +8,9 @@ import { EXTERNAL_LINKS } from '@/constants/links';
 
 import useNetwork from '@/composables/useNetwork';
 
-import { useAppzi } from '@/composables/useAppzi';
 import AppLogo from '../images/AppLogo.vue';
 
 const { networkSlug } = useNetwork();
-const { openNpsModal } = useAppzi();
 </script>
 
 <template>
@@ -85,7 +83,7 @@ const { openNpsModal } = useAppzi();
             </BalLink>
 
             <BalLink
-              :href="EXTERNAL_LINKS.RegenerativeFI.Forum"
+              :href="EXTERNAL_LINKS.RegenerativeFI.Tokens"
               external
               noStyle
               class="group link link--external"
@@ -100,24 +98,6 @@ const { openNpsModal } = useAppzi();
               class="group link link--external"
             >
               {{ $t('forum') }}
-            </BalLink>
-
-            <BalLink
-              :href="EXTERNAL_LINKS.RegenerativeFI.Support"
-              external
-              noStyle
-              class="group link link--external"
-            >
-              {{ $t('support') }}
-            </BalLink>
-
-            <BalLink
-              :href="EXTERNAL_LINKS.RegenerativeFI.Analytics"
-              external
-              noStyle
-              class="group link link--external"
-            >
-              {{ $t('analytics') }}
             </BalLink>
           </div>
         </div>
@@ -167,7 +147,6 @@ const { openNpsModal } = useAppzi();
           <div
             class="flex flex-wrap md:order-3 gap-x-3 lg:gap-x-4 gap-y-2 lg:gap-y-0 md:justify-start h-full"
           >
-            <button class="policy" @click="openNpsModal">Feedback</button>
             <router-link class="policy" :to="{ name: 'terms-of-use' }">
               {{ $t('policies.termsOfUse') }}
             </router-link>
