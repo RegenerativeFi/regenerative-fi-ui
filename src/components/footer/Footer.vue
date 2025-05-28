@@ -59,9 +59,9 @@ const { openNpsModal } = useAppzi();
             <p>
               <router-link
                 class="text-lg font-medium link"
-                :to="{ name: 'portfolio', params: { networkSlug } }"
+                :to="{ name: 'dashboard', params: { networkSlug } }"
               >
-                {{ $t('portfolio') }}
+                Dashboard
               </router-link>
             </p>
             <p>
