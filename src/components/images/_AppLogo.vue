@@ -52,8 +52,8 @@ const logoText = computed(() => {
       aria-labelledby="logoTitle logoDesc"
       role="img"
     >
-      <title id="logoTitle">Balancer logo homepage link</title>
-      <desc id="logoDesc">Balancer Logotype homepage link</desc>
+      <title id="logoTitle">Regenerative logo homepage link</title>
+      <desc id="logoDesc">Regenerative Logotype homepage link</desc>
       <path
         class="svg-path"
         d="M6.09193 1.78711C6.76483 1.78711 7.31032 2.33188 7.31032
