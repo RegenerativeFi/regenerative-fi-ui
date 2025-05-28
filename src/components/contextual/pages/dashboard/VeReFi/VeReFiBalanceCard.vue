@@ -38,8 +38,8 @@ const ReFiBalanceFiat = computed(() =>
           </div>
         </template>
         <div>
-          <div class="flex flex-row gap-2">
-            <img :src="Logo" width="18" height="18" />
+          <div class="flex flex-row gap-2 items-center">
+            <img :src="Logo" width="18" height="18" class="h-[18px] w-[18px]" />
             <p class="text-xl font-medium">{{ ReFiBalance }}</p>
           </div>
           <span class="block text-sm text-left text-disabled">
