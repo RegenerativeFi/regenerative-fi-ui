@@ -12,7 +12,7 @@ import { usePoolHelpers } from '@/composables/usePoolHelpers';
 import { useSwapState } from '@/composables/swap/useSwapState';
 import { includesAddress } from '@/lib/utils';
 import { useUserTokens } from '@/providers/local/user-tokens.provider';
-
+import useConfig from '@/composables/useConfig';
 /**
  * TYPES
  */
@@ -74,6 +74,8 @@ function handleAssetClick(tokenAddress) {
   const isPoolToken = includesAddress(poolJoinTokens.value, tokenAddress);
   emit('click:asset', tokenAddress, isPoolToken);
 }
+
+const { networkConfig } = useConfig();
 
 const emit = defineEmits<{
   (e: 'click:asset', tokenAddress: string, isPoolToken: boolean): void;
@@ -178,7 +180,11 @@ const emit = defineEmits<{
               :width="275"
               wrap
               :size="30"
-              :addresses="tokensWithBalance"
+              :addresses="
+                tokensWithBalance.filter(
+                  token => token !== networkConfig.nativeAsset.address
+                )
+              "
               :maxAssetsPerLine="7"
               @click="handleAssetClick"
             />

@@ -73,17 +73,19 @@ const title = computed(() => {
 });
 
 const tokens = computed(() => {
-  const tokensWithValues = Object.values(state.results).map(token => {
-    const balance = balanceFor(token.address);
-    const price = priceFor(token.address);
-    const value = Number(balance) * price;
-    return {
-      ...token,
-      price,
-      balance,
-      value,
-    };
-  });
+  const tokensWithValues = Object.values(state.results)
+    .map(token => {
+      const balance = balanceFor(token.address);
+      const price = priceFor(token.address);
+      const value = Number(balance) * price;
+      return {
+        ...token,
+        price,
+        balance,
+        value,
+      };
+    })
+    .filter(token => token.address !== nativeAsset.address);
 
   if (props.ignoreBalances) return tokensWithValues;
   else return orderBy(tokensWithValues, ['value', 'balance'], ['desc', 'desc']);
@@ -212,5 +214,3 @@ watchEffect(() => {
   height: 70vh;
 }
 </style>
-
-
