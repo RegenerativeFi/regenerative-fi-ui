@@ -36,7 +36,7 @@ const config: Config = {
     blocks:
       'https://gateway.thegraph.com/api/9c9c78167dd5f4b6bfea84de50cc2cb1/subgraphs/id/68pKaceT6yxMc2EgBbptM1rVksY5NDKu2AsTQaP4z3ER',
   },
-  bridgeUrl: 'https://portalbridge.com/',
+  bridgeUrl: 'https://superbridge.app/',
   supportsEIP1559: false,
   supportsElementPools: false,
   blockTime: 5,
