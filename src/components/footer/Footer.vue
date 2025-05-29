@@ -2,7 +2,6 @@
 import IconGithub from '@/components/icons/IconGithub.vue';
 import IconLinkedin from '@/components/icons/IconLinkedin.vue';
 import IconMail from '@/components/icons/IconMail.vue';
-import IconTelegram from '@/components/icons/IconTelegram.vue';
 import IconTwitter from '@/components/icons/IconTwitter.vue';
 import { EXTERNAL_LINKS } from '@/constants/links';
 
@@ -99,6 +98,14 @@ const { networkSlug } = useNetwork();
             >
               {{ $t('forum') }}
             </BalLink>
+            <BalLink
+              :href="EXTERNAL_LINKS.RegenerativeFI.Home"
+              external
+              noStyle
+              class="group link link--external"
+            >
+              {{ $t('Platform') }}
+            </BalLink>
           </div>
         </div>
         <div class="flex flex-col gap-8">
@@ -111,13 +118,6 @@ const { networkSlug } = useNetwork();
                   noStyle
                 >
                   <IconTwitter />
-                </BalLink>
-                <BalLink
-                  :href="EXTERNAL_LINKS.RegenerativeFI.Social.Telegram"
-                  external
-                  noStyle
-                >
-                  <IconTelegram />
                 </BalLink>
                 <BalLink
                   :href="EXTERNAL_LINKS.RegenerativeFI.Social.Github"

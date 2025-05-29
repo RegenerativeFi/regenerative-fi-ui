@@ -1,6 +1,6 @@
 export const EXTERNAL_LINKS = {
   RegenerativeFI: {
-    Home: 'https://balancer.fi',
+    Home: 'https://regenerative.fi',
     Analytics: 'https://dune.com/balancer',
     BalForGas:
       'https://docs.balancer.finance/core-concepts/bal-balancer-governance-token/bal-for-gas',
