@@ -153,9 +153,6 @@ const { networkSlug } = useNetwork();
             <router-link class="policy" :to="{ name: 'privacy-policy' }">
               {{ $t('policies.privacyPolicy') }}
             </router-link>
-            <router-link class="policy" :to="{ name: 'cookies-policy' }">
-              {{ $t('policies.cookiesPolicy') }}
-            </router-link>
           </div>
         </div>
       </div>

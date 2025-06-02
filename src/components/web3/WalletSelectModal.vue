@@ -67,38 +67,24 @@ function onBalRulesAccepted() {
       <template #label>
         <p class="pb-3 pl-1 -mt-1 mb-2 text-base">
           {{ $t('byConnectingWallet') }}
-          <router-link
-            :to="{ name: 'terms-of-use' }"
+          <a
+            href="https://docs.google.com/document/d/1XGCyBTLJxpmeTzbhDPftKQ0YhJiDdPG5fb2Jmldsr2g/edit?usp=sharing"
             target="_blank"
             @click.stop=""
           >
             <span className="link">{{ $t('policies.termsOfUse') }} </span>,
-          </router-link>
-          <router-link :to="{ name: 'risks' }" target="_blank" @click.stop="">
-            <span className="link">{{ $t('policies.risks') }} </span>,
-          </router-link>
-          <router-link
-            :to="{ name: 'cookies-policy' }"
+          </a>
+          <a
+            href="https://docs.google.com/document/d/1xx0rdN027YxDyyNvJsMoVAf_RtMkHuXeGZFbTspLteE/edit?usp=sharing"
             target="_blank"
             @click.stop=""
           >
-            <span className="link">
-              {{ $t('policies.cookiesPolicy') }}
-            </span> </router-link
+            <span className="link">{{ $t('policies.privacyPolicy') }} </span
+            >, </a
           >,
-          <span>{{ $t('useOf') }}&nbsp;</span>
-          <button @click.stop="onShowThirdParty">
-            <BalLink>
-              <span>{{ $t('policies.thirdPartyServices') }}</span>
-            </BalLink>
-          </button>
           {{ $t('and') }}
-          <router-link
-            :to="{ name: 'privacy-policy' }"
-            target="_blank"
-            @click.stop=""
-          >
-            <span className="link">{{ $t('policies.privacyPolicy') }} </span>.
+          <router-link :to="{ name: 'risks' }" target="_blank" @click.stop="">
+            <span className="link">Balancer's risks</span>.
           </router-link>
         </p>
       </template>
