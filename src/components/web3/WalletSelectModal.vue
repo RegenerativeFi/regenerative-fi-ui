@@ -79,9 +79,8 @@ function onBalRulesAccepted() {
             target="_blank"
             @click.stop=""
           >
-            <span className="link">{{ $t('policies.privacyPolicy') }} </span
-            >, </a
-          >,
+            <span className="link">{{ $t('policies.privacyPolicy') }} </span>,
+          </a>
           {{ $t('and') }}
           <router-link :to="{ name: 'risks' }" target="_blank" @click.stop="">
             <span className="link">Balancer's risks</span>.
