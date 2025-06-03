@@ -15,7 +15,11 @@ const pools: Pools = {
   DynamicFees: {
     Gauntlet: [],
   },
-  BlockList: [''],
+  BlockList: [
+    '0x1a239aab16b9625c45d80744a4341f8de2200e1a000200000000000000000004', // tCELO-tREFI
+    '0x4433f250f4952055784b48fb0df74d0aa1a5126a000200000000000000000003', // tCELO-tcUSD
+    '0xada3c5d33261c17011a4cf36cf859af1841a2c74000200000000000000000002', // tCELO-tUSDC
+  ],
   IncludedPoolTypes: ['Weighted', 'Stable', 'ComposableStable'],
   Stable: {
     AllowList: [
@@ -30,9 +34,6 @@ const pools: Pools = {
     // Only effective after given timestamp here: usePool.ts#createdAfterTimestamp
     // see useDisabledJoinPool.ts#nonAllowedWeightedPoolAfterTimestamp for logic.
     AllowList: [
-      '0x1a239aab16b9625c45d80744a4341f8de2200e1a000200000000000000000004', // tCELO-tREFI
-      '0x4433f250f4952055784b48fb0df74d0aa1a5126a000200000000000000000003', // tCELO-tcUSD
-      '0xada3c5d33261c17011a4cf36cf859af1841a2c74000200000000000000000002', // tCELO-tUSDC
       '0x4d58c5766a37be24a78d4571975abf2088dbb9d0000200000000000000000005', // 80CELO-20cUSD
       '0x3d9dea33d347b84db99ce416b363b6eeb68ec199000200000000000000000006', // 50CELO-50cUSD
     ],
@@ -42,11 +43,7 @@ const pools: Pools = {
     '0x1051ec689f101d36271325347c21614edf03e102': 'composableStablePool', // ComposableStable V4
   },
   Stakable: {
-    VotingGaugePools: [
-      '0x1a239aab16b9625c45d80744a4341f8de2200e1a000200000000000000000004', // tCELO-tREFI
-      '0x4433f250f4952055784b48fb0df74d0aa1a5126a000200000000000000000003', // tCELO-tcUSD
-      '0xada3c5d33261c17011a4cf36cf859af1841a2c74000200000000000000000002', // tCELO-tUSDC
-    ],
+    VotingGaugePools: [],
     AllowList: [],
   },
   Metadata: {},
