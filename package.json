@@ -178,6 +178,7 @@
   "license": "MIT",
   "repository": "balancer/frontend-v2",
   "dependencies": {
+    "@divvi/referral-sdk": "^1.0.0",
     "ethers": "^5.7.2",
     "vue3-lottie": "^3.2.0"
   }

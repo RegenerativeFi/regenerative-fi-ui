@@ -15,6 +15,7 @@ import {
   EthersContract,
   getEthersContract,
 } from '@/dependencies/EthersContract';
+import { getDataSuffix, submitReferral } from '@divvi/referral-sdk';
 
 export type SendTransactionOpts = {
   contractAddress: string;
@@ -55,7 +56,32 @@ export class ContractConcern extends TransactionConcern {
         options
       );
 
-      const txOptions = { ...options, ...gasSettings };
+      const divviSuffix = getDataSuffix({
+        consumer: '0xe6D39BB0a25fF3A1918adc57796656173918AfE5',
+        providers: [
+          '0x0423189886d7966f0dd7e7d256898daeee625dca',
+          '0xc95876688026be9d6fa7a7c33328bd013effa2bb',
+          '0x5f0a55fad9424ac99429f635dfb9bf20c3360ab8',
+        ],
+      });
+
+      console.debug('Divvi suffix', divviSuffix);
+      console.debug('Options', JSON.stringify(options));
+
+      const calldata = contractWithSigner.interface.encodeFunctionData(
+        action,
+        params
+      );
+      const dataWithSuffix = `${calldata}${divviSuffix}`;
+
+      const txOptions = {
+        ...options,
+        ...gasSettings,
+        to: contractAddress,
+        data: dataWithSuffix,
+      };
+
+      console.debug('Tx options', txOptions);
 
       await Promise.all([
         verifyTransactionSender(this.signer),
@@ -64,7 +90,14 @@ export class ContractConcern extends TransactionConcern {
 
       trackGoal(Goals.ContractTransactionSubmitted);
 
-      return await contractWithSigner[action](...params, txOptions);
+      const tx: TransactionResponse = await this.signer.sendTransaction(
+        txOptions
+      );
+      await submitReferral({
+        txHash: tx.hash as `0x${string}`,
+        chainId: await this.signer.getChainId(),
+      });
+      return tx;
     } catch (err) {
       const error = err as WalletError;
 
