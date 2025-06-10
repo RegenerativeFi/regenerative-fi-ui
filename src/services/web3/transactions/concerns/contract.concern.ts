@@ -57,11 +57,11 @@ export class ContractConcern extends TransactionConcern {
       );
 
       const divviSuffix = getDataSuffix({
-        consumer: '0xe6D39BB0a25fF3A1918adc57796656173918AfE5',
+        consumer: '0xe86e5053AB3D18F533d4bFbEE79409C218E70b2e',
         providers: [
           '0x0423189886d7966f0dd7e7d256898daeee625dca',
           '0xc95876688026be9d6fa7a7c33328bd013effa2bb',
-          '0x5f0a55fad9424ac99429f635dfb9bf20c3360ab8',
+          '0x7beb0e14f8d2e6f6678cc30d867787b384b19e20',
         ],
       });
 
