@@ -72,7 +72,7 @@
     "@layerzerolabs/scan-client": "^0.0.5",
     "@metamask/detect-provider": "^1.2.0",
     "@popperjs/core": "^2.9.2",
-    "@regenerative/sdk": "^1.1.7",
+    "@regenerative/sdk": "^1.1.8",
     "@regenerative/v2-deployments": "^3.2.2",
     "@sentry/browser": "^7.17.4",
     "@sentry/tracing": "^7.17.4",
