@@ -314,14 +314,8 @@ function symbolFor(titleTokenIndex: number): string {
     class="mt-2"
     block
   >
-    {{ $t('Click') }}
-    <a
-      href="https://github.com/balancer/frontend-v2/wiki/How-tos#add-a-new-pool"
-      target="_blank"
-      class="underline"
-      >{{ $t('here') }}</a
-    >
-    {{ $t('requiresAllowListing2') }}
+    Regenerative reviews all pools with over $1,000 USD in liquidity within 48
+    hours
   </BalAlert>
 </template>
 <style scoped>
