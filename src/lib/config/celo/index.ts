@@ -32,7 +32,7 @@ const config: Config = {
     ],
     aave: '',
     gauge:
-      'https://api.studio.thegraph.com/query/92572/regenerative-gauges-subgraph/1.0.1',
+      'https://api.goldsky.com/api/public/project_cmameg3xd03rh01yxazddhlgj/subgraphs/regenerative-gauges-subgraph/prod/gn',
     blocks:
       'https://gateway.thegraph.com/api/9c9c78167dd5f4b6bfea84de50cc2cb1/subgraphs/id/68pKaceT6yxMc2EgBbptM1rVksY5NDKu2AsTQaP4z3ER',
   },
