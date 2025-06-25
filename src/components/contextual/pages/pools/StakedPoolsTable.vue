@@ -55,6 +55,9 @@ const {
   hasNonPrefGaugesPoolsAddresses,
   userGaugeShares,
 } = useUserStaking();
+
+console.log('stakedShares', stakedShares.value);
+
 const { shouldPokeGauge } = useCrossChainSync();
 
 const { refetchAllUserPools } = useUserPools();
