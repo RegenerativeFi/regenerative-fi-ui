@@ -95,5 +95,32 @@ export function celoVotingPools(): ApiVotingPool[] {
         addedTimestamp: 1741824000,
       },
     },
+    {
+      chain: 'CELO' as GqlChain,
+      id: '0xf7fee07d4410af146795021f01c54af179494cb500000000000000000000000c',
+      address: '0xf7fee07d4410af146795021f01c54af179494cb5',
+      type: GqlPoolMinimalType.Stable,
+      symbol: 'USDGLO-cUSD',
+      tokens: [
+        {
+          address: '0x4F604735c1cF31399C6E711D5962b2B3E0225AD3',
+          weight: null,
+          symbol: 'USDGLO',
+          logoURI: 'https://celoscan.io/token/images/glo_32.png',
+        },
+        {
+          address: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
+          weight: '0.5',
+          symbol: 'cUSD',
+          logoURI: 'https://celoscan.io/token/images/celodollar_32.png',
+        },
+      ],
+      gauge: {
+        address: '0xd9a97B7f2b6C0A366D8F43CCc6f2BC1a834cf065',
+        isKilled: false,
+        relativeWeightCap: null,
+        addedTimestamp: 1741824000,
+      },
+    },
   ];
 }
