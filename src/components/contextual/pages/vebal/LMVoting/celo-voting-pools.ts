@@ -116,7 +116,7 @@ export function celoVotingPools(): ApiVotingPool[] {
         },
       ],
       gauge: {
-        address: '0xd9a97B7f2b6C0A366D8F43CCc6f2BC1a834cf065',
+        address: '0x1ccdd4bc4f97351826e1b1034ec4974fc4e1426c',
         isKilled: false,
         relativeWeightCap: null,
         addedTimestamp: 1741824000,
