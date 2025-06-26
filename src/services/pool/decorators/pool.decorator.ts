@@ -5,6 +5,7 @@ import { Pool } from '@/services/pool/types';
 import { TokenInfoMap } from '@/types/TokenList';
 import PoolService from '../pool.service';
 import { PoolMulticaller } from './pool.multicaller';
+import { configService } from '@/services/config/config.service';
 
 /**
  * @summary Decorates a set of pools with additonal data.
@@ -32,6 +33,18 @@ export class PoolDecorator {
       poolMulticaller.fetch(),
     ]);
 
+    let rewards;
+    if (configService.network.chainId === 42220) {
+      try {
+        const request = await fetch(
+          'https://refi-rewards.regenerativefi.workers.dev/rewards-by-gauge/celo'
+        );
+        rewards = await request.json();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
     const promises = processedPools.map(async pool => {
       const poolService = new this.poolServiceClass(pool);
 
@@ -44,7 +57,9 @@ export class PoolDecorator {
         poolService.setFeesSnapshot(poolSnapshot);
         poolService.setVolumeSnapshot(poolSnapshot);
         await poolService.setTotalLiquidity();
-        await poolService.setAPR();
+        rewards
+          ? await poolService.setAPR(rewards)
+          : await poolService.setAPR();
       }
 
       return poolService.pool;
