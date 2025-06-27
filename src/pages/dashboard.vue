@@ -2,6 +2,7 @@
 import VeReFiBalanceCard from '@/components/contextual/pages/dashboard/VeReFi/VeReFiBalanceCard.vue';
 import VeReFiLockedCard from '@/components/contextual/pages/dashboard/VeReFi/VeReFiLockedCard.vue';
 import ClaimTable from '@/components/contextual/pages/dashboard/DashboardTable/ClaimsTable.vue';
+import RewardsTable from '@/components/contextual/pages/dashboard/DashboardTable/RewardsTable.vue';
 import StakedPoolsTable from '@/components/contextual/pages/pools/StakedPoolsTable.vue';
 import UnstakedLiquidityTable from '@/components/contextual/pages/dashboard/DashboardTable/UnstakedLiquidityTable.vue';
 import { provideUserStaking } from '@/providers/local/user-staking.provider';
@@ -24,7 +25,14 @@ const { ReFiBalance, veBalBalance, veBalTokenInfo, ReFiTokenInfo } = useVeBal();
     </div>
     <div>
       <h2 class="text-xl font-medium leading-5 !mb-4">Claim Rewards</h2>
-      <ClaimTable />
+      <div class="mb-4">
+        <h3 class="text-lg font-medium leading-5 !mb-4">Voter Rewards</h3>
+        <ClaimTable />
+      </div>
+      <div>
+        <h3 class="text-lg font-medium leading-5 !mb-4">Other Incentives</h3>
+        <RewardsTable />
+      </div>
     </div>
     <div>
       <h2 class="text-xl font-medium leading-5">My liquidity</h2>
