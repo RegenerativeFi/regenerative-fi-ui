@@ -47,7 +47,7 @@ const navLinks = [
   },
   {
     label: t('dashboard'),
-    path: `/${networkSlug}/dashboard`,
+    path: '/dashboard',
     goal: Goals.ClickNavPools,
   },
 ];
