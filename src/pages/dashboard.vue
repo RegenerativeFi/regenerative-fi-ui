@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import VeReFiBalanceCard from '@/components/contextual/pages/dashboard/VeReFi/VeReFiBalanceCard.vue';
 import VeReFiLockedCard from '@/components/contextual/pages/dashboard/VeReFi/VeReFiLockedCard.vue';
-import ClaimTable from '@/components/contextual/pages/dashboard/DashboardTable/ClaimsTable.vue';
+// import ClaimTable from '@/components/contextual/pages/dashboard/DashboardTable/ClaimsTable.vue';
 import RewardsTable from '@/components/contextual/pages/dashboard/DashboardTable/RewardsTable.vue';
 import StakedPoolsTable from '@/components/contextual/pages/pools/StakedPoolsTable.vue';
 import UnstakedLiquidityTable from '@/components/contextual/pages/dashboard/DashboardTable/UnstakedLiquidityTable.vue';
@@ -25,12 +25,12 @@ const { ReFiBalance, veBalBalance, veBalTokenInfo, ReFiTokenInfo } = useVeBal();
     </div>
     <div>
       <h2 class="text-xl font-medium leading-5 !mb-4">Claim Rewards</h2>
-      <div class="mb-4">
+      <!-- <div class="mb-4">
         <h3 class="text-lg font-medium leading-5 !mb-4">Voter Rewards</h3>
         <ClaimTable />
-      </div>
+      </div> -->
       <div>
-        <h3 class="text-lg font-medium leading-5 !mb-4">Other Incentives</h3>
+        <h3 class="text-lg font-medium leading-5 !mb-4">Incentives</h3>
         <RewardsTable />
       </div>
     </div>
