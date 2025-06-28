@@ -28,9 +28,6 @@ type Props = {
  * PROPS & EMITS
  */
 const props = defineProps<Props>();
-const emit = defineEmits<{
-  (e: 'risksClicked'): void;
-}>();
 
 /**
  * COMPOSABLES
@@ -119,13 +116,6 @@ const joinDisabled = computed((): boolean => {
           block
           @click="trackGoal(Goals.ClickWithdraw)"
         />
-      </div>
-      <div class="pt-4 text-xs text-secondary">
-        {{ $t('poolTransfer.myPoolBalancesCard.risksDisclaimer') }}
-
-        <a class="font-medium link" @click="emit('risksClicked')">
-          {{ $t('poolTransfer.myPoolBalancesCard.poolsRisks') }} </a
-        >.
       </div>
     </div>
   </div>

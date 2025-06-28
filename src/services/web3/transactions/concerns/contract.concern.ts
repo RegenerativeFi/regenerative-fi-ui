@@ -65,9 +65,6 @@ export class ContractConcern extends TransactionConcern {
         ],
       });
 
-      console.debug('Divvi suffix', divviSuffix);
-      console.debug('Options', JSON.stringify(options));
-
       const calldata = contractWithSigner.interface.encodeFunctionData(
         action,
         params
