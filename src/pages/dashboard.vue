@@ -18,7 +18,7 @@ const { ReFiBalance, veBalBalance, veBalTokenInfo, ReFiTokenInfo } = useVeBal();
   <div
     class="xl:container flex flex-col gap-8 px-4 xl:px-4 xl:mx-auto pt-[30px]"
   >
-    <h2 class="text-xl font-medium leading-5 !mb-4">Manage your VeREFI</h2>
+    <h2 class="text-xl font-medium leading-5 !mb-4">Manage your veREFI</h2>
     <div class="flex flex-row gap-4">
       <VeReFiBalanceCard :tokenInfo="ReFiTokenInfo" :balance="ReFiBalance" />
       <VeReFiLockedCard :tokenInfo="veBalTokenInfo" :balance="veBalBalance" />
