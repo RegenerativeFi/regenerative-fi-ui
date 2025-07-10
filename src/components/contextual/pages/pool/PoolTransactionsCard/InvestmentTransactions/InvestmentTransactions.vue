@@ -45,22 +45,22 @@ const tabs = computed(() => [
   ...(isWalletReady.value
     ? [
         {
-          value: PoolTransactionsTab.USER_ACTIVITY,
-          label: t('poolTransactions.tabs.myInvestments'),
+          value: PoolTransactionsTab.SWAPS,
+          label: t('poolTransactions.tabs.swaps'),
         },
       ]
     : []),
   ...(isWalletReady.value
     ? [
         {
-          value: PoolTransactionsTab.SWAPS,
-          label: t('poolTransactions.tabs.swaps'),
+          value: PoolTransactionsTab.USER_ACTIVITY,
+          label: t('poolTransactions.tabs.myInvestments'),
         },
       ]
     : []),
   {
     value: PoolTransactionsTab.POOL_DETAILS,
-    label: t('poolTransactions.tabs.details'),
+    label: 'Pool details',
   },
 ]);
 
