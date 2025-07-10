@@ -38,10 +38,6 @@ const { isWalletReady } = useWeb3();
  * COMPUTED
  */
 const tabs = computed(() => [
-  {
-    value: PoolTransactionsTab.ALL_ACTIVITY,
-    label: t('poolTransactions.tabs.myTransactions'),
-  },
   ...(isWalletReady.value
     ? [
         {
@@ -58,6 +54,10 @@ const tabs = computed(() => [
         },
       ]
     : []),
+  {
+    value: PoolTransactionsTab.ALL_ACTIVITY,
+    label: t('poolTransactions.tabs.myTransactions'),
+  },
   {
     value: PoolTransactionsTab.POOL_DETAILS,
     label: 'Pool details',
