@@ -28,11 +28,7 @@ const showRestakeModal = ref(false);
 const poolToRestake = ref<Pool | undefined>();
 
 const showProceedModal = ref(false);
-const defaultPoolActions = [
-  PoolAction.Unstake,
-  PoolAction.Add,
-  PoolAction.Vote,
-];
+const defaultPoolActions = [PoolAction.Unstake, PoolAction.Add];
 
 const showPokeAllGaugesModal = ref(false);
 
