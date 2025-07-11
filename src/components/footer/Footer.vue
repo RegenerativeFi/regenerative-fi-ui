@@ -48,25 +48,9 @@ const { networkSlug } = useNetwork();
             <p>
               <router-link
                 class="text-lg font-medium link"
-                :to="{ name: 'claim', params: { networkSlug } }"
-              >
-                {{ $t('claim') }}
-              </router-link>
-            </p>
-            <p>
-              <router-link
-                class="text-lg font-medium link"
                 :to="{ name: 'dashboard', params: { networkSlug } }"
               >
                 Dashboard
-              </router-link>
-            </p>
-            <p>
-              <router-link
-                class="text-lg font-medium link"
-                :to="{ name: 'vebal', params: { networkSlug } }"
-              >
-                {{ $t('vebal') }}
               </router-link>
             </p>
           </div>
