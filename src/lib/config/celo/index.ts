@@ -17,9 +17,10 @@ const config: Config = {
   unknown: false,
   visibleInUI: true,
   testNetwork: false,
-  rpc: `https://forno.celo.org`,
+  rpc: `https://lb.drpc.org/celo/AuajrTfUKUDcljFTxiXAxPPe30q1ZBAR8Kx-EklbR4ac`,
   ws: ``,
-  publicRpc: 'https://forno.celo.org',
+  publicRpc:
+    'https://lb.drpc.org/celo/AuajrTfUKUDcljFTxiXAxPPe30q1ZBAR8Kx-EklbR4ac',
   explorer: 'https://celoscan.io/',
   explorerName: 'Celoscan',
   subgraph:
