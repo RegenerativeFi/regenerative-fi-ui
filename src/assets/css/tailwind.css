@@ -84,17 +84,12 @@
   }
 
   .text-gradient {
-    @apply bg-blue-500;
-
-    background-image: linear-gradient(
-      45deg,
-      theme('colors.sky-400'),
-      theme('colors.refi-primary')
-    );
+    background-image: linear-gradient(45deg, rgb(96 165 250), rgb(37 99 235));
     background-size: 100%;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     -moz-text-fill-color: transparent;
+    color: transparent;
   }
 
   .link {

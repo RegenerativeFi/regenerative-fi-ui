@@ -38,18 +38,6 @@ const { isWalletReady } = useWeb3();
  * COMPUTED
  */
 const tabs = computed(() => [
-  {
-    value: PoolTransactionsTab.ALL_ACTIVITY,
-    label: t('poolTransactions.tabs.myTransactions'),
-  },
-  ...(isWalletReady.value
-    ? [
-        {
-          value: PoolTransactionsTab.USER_ACTIVITY,
-          label: t('poolTransactions.tabs.myInvestments'),
-        },
-      ]
-    : []),
   ...(isWalletReady.value
     ? [
         {
@@ -58,9 +46,21 @@ const tabs = computed(() => [
         },
       ]
     : []),
+  ...(isWalletReady.value
+    ? [
+        {
+          value: PoolTransactionsTab.USER_ACTIVITY,
+          label: t('poolTransactions.tabs.myInvestments'),
+        },
+      ]
+    : []),
+  {
+    value: PoolTransactionsTab.ALL_ACTIVITY,
+    label: t('poolTransactions.tabs.myTransactions'),
+  },
   {
     value: PoolTransactionsTab.POOL_DETAILS,
-    label: t('poolTransactions.tabs.details'),
+    label: 'Pool details',
   },
 ]);
 

@@ -4,7 +4,7 @@ import { TokenListURLMap } from '@/types/TokenList';
 const tokenlists: TokenListURLMap = {
   Balancer: {
     Allowlisted:
-      'https://raw.githubusercontent.com/RegenerativeFi/regenerative-fi-tokenlist/refs/heads/main/regenerative.tokenlist.json',
+      'https://raw.githubusercontent.com/RegenerativeFi/regenerative-token-list/refs/heads/main/celo.testnet.tokenlist.json',
   },
   External: [],
 };

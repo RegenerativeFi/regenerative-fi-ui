@@ -68,7 +68,7 @@ defineProps<Props>();
       </BalCard>
       <BalCard class="w-full" growContent>
         <div class="flex flex-col justify-between items-start w-full h-full">
-          <h4 class="text-base font-medium">Explore regenerative</h4>
+          <h4 class="text-base font-medium">Explore Regenerative</h4>
           <div>
             <p class="text-sm font-normal text-complementary-primary">
               Our platform provides information about the leading ReFi Tokens

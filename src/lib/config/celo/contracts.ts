@@ -13,7 +13,7 @@ const contracts: Contracts = {
   lidoRelayer: '',
   balancerHelpers: celo.BalancerHelpers,
   batchRelayer: celo.BalancerRelayer,
-  gaugeFactory: '0x2a150f61074ccb7a4Ef90Bd27534151c37Ba4D45',
+  gaugeFactory: '0xbe3a536940d5e629f257b5758347f2d47b07362c',
   balancerMinter: '0x28D89a683515409D382cc8C5dda113FAcA594423',
   gaugeController: '0xaa6D84773d993d3d09490a96e244C71592D6b6f1',
   tokenAdmin: '',

@@ -28,11 +28,7 @@ const showRestakeModal = ref(false);
 const poolToRestake = ref<Pool | undefined>();
 
 const showProceedModal = ref(false);
-const defaultPoolActions = [
-  PoolAction.Unstake,
-  PoolAction.Add,
-  PoolAction.Vote,
-];
+const defaultPoolActions = [PoolAction.Unstake, PoolAction.Add];
 
 const showPokeAllGaugesModal = ref(false);
 
@@ -55,6 +51,9 @@ const {
   hasNonPrefGaugesPoolsAddresses,
   userGaugeShares,
 } = useUserStaking();
+
+console.log('stakedShares', stakedShares.value);
+
 const { shouldPokeGauge } = useCrossChainSync();
 
 const { refetchAllUserPools } = useUserPools();
@@ -153,9 +152,9 @@ watch(
 <template>
   <div>
     <BalStack vertical spacing="sm">
-      <h5 class="px-4 xl:px-0">
+      <!-- <h5 class="px-4 xl:px-0">
         {{ $t('staking.stakedPools') }}
-      </h5>
+      </h5> -->
       <PortfolioSyncTip
         :shouldPokePoolsMap="shouldPokePoolsMap"
         @show-proceed-modal="showProceedModal = true"

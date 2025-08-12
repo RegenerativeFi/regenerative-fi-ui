@@ -447,11 +447,18 @@ function onAlertMountChange() {
               <span class="mt-2"
                 >{{ $t('unlistedTokenWarning') }}
                 <a
-                  href="https://github.com/balancer/frontend-v2/wiki/How-tos#add-tokens-to-tokenlist"
+                  href="https://www.regenerative.fi/tokens"
                   target="_blank"
                   class="underline"
-                  >{{ $t('here') }}</a
-                >.
+                  >View all tokens</a
+                >
+                or
+                <a
+                  href="https://tally.so/r/nGLRVz"
+                  target="_blank"
+                  class="underline"
+                  >request a new token listing</a
+                >
               </span>
             </BalStack>
           </BalAlert>

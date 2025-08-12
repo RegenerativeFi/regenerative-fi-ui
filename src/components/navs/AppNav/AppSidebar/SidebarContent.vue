@@ -5,11 +5,9 @@ import { useRouter } from 'vue-router';
 
 import GithubIcon from '@/components/_global/icons/brands/GithubIcon.vue';
 import LinkedinIcon from '@/components/_global/icons/brands/LinkedinIcon.vue';
-import TelegramIcon from '@/components/_global/icons/brands/TelegramIcon.vue';
-import TwitterIcon from '@/components/_global/icons/brands/TwitterIcon.vue';
+import TwitterIcon from '@/components/icons/IconTwitter.vue';
 import AppLogo from '@/components/images/_AppLogo.vue';
 import { version } from '@/composables/useApp';
-import { useAppzi } from '@/composables/useAppzi';
 import useConfig from '@/composables/useConfig';
 import { Goals, trackGoal } from '@/composables/useFathom';
 import useNetwork from '@/composables/useNetwork';
@@ -30,7 +28,6 @@ const { networkConfig } = useConfig();
 const { networkSlug } = useNetwork();
 const { t } = useI18n();
 const router = useRouter();
-const { openNpsModal } = useAppzi();
 const { darkMode, toggleDarkMode } = useDarkMode();
 
 /**
@@ -47,33 +44,27 @@ const navLinks = [
   },
   {
     label: t('dashboard'),
-    path: `/${networkSlug}/dashboard`,
+    path: '/dashboard',
     goal: Goals.ClickNavPools,
   },
 ];
 
 const ecosystemLinks = [
   { label: t('docs'), url: EXTERNAL_LINKS.RegenerativeFI.Docs },
-  { label: t('governance'), url: EXTERNAL_LINKS.RegenerativeFI.Vote },
   { label: t('forum'), url: EXTERNAL_LINKS.RegenerativeFI.Forum },
-  { label: t('support'), url: EXTERNAL_LINKS.RegenerativeFI.Support },
 ];
 
 const socialLinks = {
   TwitterIcon: {
     component: TwitterIcon,
-    url: 'https://twitter.com/BalancerLabs',
-  },
-  DiscordIcon: {
-    component: TelegramIcon,
-    url: 'https://discord.balancer.fi/',
+    url: 'https://x.com/RegenerativeFi',
   },
   GithubIcon: {
-    url: 'https://github.com/balancer/',
+    url: 'https://github.com/RegenerativeFi',
     component: GithubIcon,
   },
   LinkedinIcon: {
-    url: 'https://github.com/balancer/',
+    url: 'https://www.linkedin.com/company/regenerativefi',
     component: LinkedinIcon,
   },
 };
@@ -133,9 +124,6 @@ watch(blockNumber, async () => {
         {{ link.label }}
         <BalIcon name="arrow-up-right" size="sm" class="ml-1 text-secondary" />
       </BalLink>
-      <span class="px-4 pt-1 capitalize" @click="openNpsModal">{{
-        t('feedback')
-      }}</span>
     </div>
 
     <div class="px-4 mt-6">
@@ -156,13 +144,6 @@ watch(blockNumber, async () => {
         external
       >
         <component :is="getSocialComponent(componentName)" />
-      </BalLink>
-      <BalLink
-        href="mailto:contact@balancer.finance"
-        class="social-link"
-        noStyle
-      >
-        <EmailIcon />
       </BalLink>
     </div>
 

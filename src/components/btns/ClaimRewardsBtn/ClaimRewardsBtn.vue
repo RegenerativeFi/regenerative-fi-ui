@@ -60,7 +60,7 @@ function claimTx() {
 
 <template>
   <TxActionBtn
-    :label="t('claimAll')"
+    :label="t('claim')"
     color="gradient"
     size="sm"
     :actionFn="claimTx"

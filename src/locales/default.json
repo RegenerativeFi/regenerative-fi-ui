@@ -824,7 +824,7 @@
     "title": "Pool transactions",
     "tabs": {
       "allTransactions": "Transactions",
-      "myTransactions": "My transactions",
+      "myTransactions": "LP Activities",
       "allInvestments": "All liquidity provision",
       "myInvestments": "My liquidity",
       "swaps": "Swaps",
@@ -960,6 +960,7 @@
   "restoring": "Restoring...",
   "returnToPool": "Return to pool page",
   "returnToPoolCreation": "Return to pool creation",
+  "rewards": "Rewards",
   "saveGas": " to save gas.",
   "searchBy": "Search by name, symbol or address",
   "searchByName": "Search by Name",
@@ -1374,7 +1375,7 @@
   "tokensParen": "Token(s)",
   "tokenPrices": "Token prices",
   "unlistedTokenWarningTitle": "You have added a token that is not included in the Regenerative Tokenlist.",
-  "unlistedTokenWarning": "You will not be able to complete pool creation until it's included. To add a token to our Tokenlist please follow our process described",
+  "unlistedTokenWarning": "You will not be able to complete pool creation until it's included.",
   "tooltips": {
     "addLiquidity": {
       "priceImpact": "Price impact from adding liquidity results when the value of each token added is not proportional to the weights of the pool. Adding non-proportional amounts causes the internal prices of the pool to change, as if you were swapping tokens. The higher the price impact, the worse price you’ll get to enter your position.",

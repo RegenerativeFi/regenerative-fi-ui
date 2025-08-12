@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import useNumbers, { FNumFormats } from '@/composables/useNumbers';
+// import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import { isVeBalPool, totalAprLabel } from '@/composables/usePoolHelpers';
 import { APR_THRESHOLD } from '@/constants/pools';
 import { bnum } from '@/lib/utils';
@@ -30,7 +30,7 @@ const props = defineProps<Props>();
 /**
  * COMPOSABLES
  */
-const { fNum } = useNumbers();
+// const { fNum } = useNumbers();
 const { isWalletReady } = useWeb3();
 
 /**
@@ -107,13 +107,13 @@ const totalLabel = computed((): string =>
         />
 
         <!-- SWAP FEE APR -->
-        <div
+        <!-- <div
           class="flex justify-between items-center mb-1 text-sm font-bold whitespace-nowrap"
           data-testid="swap-fee-apr"
         >
           <span>{{ $t('swapFeeAPR') }}</span>
           {{ fNum(apr?.swapFees || '0', FNumFormats.bp) }}
-        </div>
+        </div> -->
       </div>
     </div>
   </BalTooltip>
