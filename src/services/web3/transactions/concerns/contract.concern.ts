@@ -15,7 +15,10 @@ import {
   EthersContract,
   getEthersContract,
 } from '@/dependencies/EthersContract';
-import { getDataSuffix, submitReferral } from '@divvi/referral-sdk';
+import {
+  getDivviSuffix,
+  reportOnchainReferral,
+} from '@/services/referral/referral';
 
 export type SendTransactionOpts = {
   contractAddress: string;
@@ -56,15 +59,7 @@ export class ContractConcern extends TransactionConcern {
         options
       );
 
-      const divviSuffix = getDataSuffix({
-        consumer: '0xe86e5053AB3D18F533d4bFbEE79409C218E70b2e',
-        providers: [
-          '0x0423189886d7966f0dd7e7d256898daeee625dca',
-          '0xc95876688026be9d6fa7a7c33328bd013effa2bb',
-          '0x7beb0e14f8d2e6f6678cc30d867787b384b19e20',
-        ],
-      });
-
+      const divviSuffix = getDivviSuffix(this.signer._address as `0x${string}`);
       console.debug('Divvi suffix', divviSuffix);
       console.debug('Options', JSON.stringify(options));
 
@@ -93,10 +88,12 @@ export class ContractConcern extends TransactionConcern {
       const tx: TransactionResponse = await this.signer.sendTransaction(
         txOptions
       );
-      await submitReferral({
-        txHash: tx.hash as `0x${string}`,
-        chainId: await this.signer.getChainId(),
-      });
+
+      await reportOnchainReferral(
+        tx.hash as `0x${string}`,
+        await this.signer.getChainId()
+      );
+
       return tx;
     } catch (err) {
       const error = err as WalletError;

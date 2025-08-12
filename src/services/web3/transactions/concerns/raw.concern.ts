@@ -10,6 +10,10 @@ import {
   TransactionResponse,
 } from '@ethersproject/providers';
 import { TransactionConcern } from './transaction.concern';
+import {
+  getDivviSuffix,
+  reportOnchainReferral,
+} from '@/services/referral/referral';
 
 export class RawConcern extends TransactionConcern {
   constructor(private readonly signer: JsonRpcSigner) {
@@ -24,6 +28,9 @@ export class RawConcern extends TransactionConcern {
     try {
       const gasSettings = await this.gas.settings(this.signer, options);
 
+      //HERE
+      const divviSuffix = getDivviSuffix(this.signer._address as `0x${string}`);
+      options.data = `${options.data}${divviSuffix}`;
       const txOptions = { ...options, ...gasSettings };
 
       await Promise.all([
@@ -32,7 +39,9 @@ export class RawConcern extends TransactionConcern {
       ]);
 
       trackGoal(Goals.RawTransactionSubmitted);
-      return await this.signer.sendTransaction(txOptions);
+      const result = await this.signer.sendTransaction(txOptions);
+      reportOnchainReferral(result.hash, await this.signer.getChainId());
+      return result;
     } catch (err) {
       const error = err as WalletError;
       try {
