@@ -166,6 +166,12 @@ const QUERY_KEYS = {
       'protocol',
       { networkId, account },
     ],
+    MerklRewards: (account: Ref<string>, chainId: Ref<number>) => [
+      CLAIMS_ROOT_KEY,
+      'merkl',
+      'rewards',
+      { account, chainId },
+    ],
     GaugePools: (poolIds: Ref<string[]>) => [
       CLAIMS_ROOT_KEY,
       'gaugePools',

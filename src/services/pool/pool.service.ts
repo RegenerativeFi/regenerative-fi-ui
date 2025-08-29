@@ -86,6 +86,10 @@ export default class PoolService {
           total: 0,
           breakdown: {},
         },
+        opportunitiesAprs: {
+          total: 0,
+          breakdown: {},
+        },
         protocolApr: 0,
         min: 0,
         max: 0,
@@ -132,6 +136,7 @@ export default class PoolService {
       const totalTokenAprs = apr.tokenAprs?.total || 0;
       const totalRewardAprs = apr.rewardAprs?.total || 0;
       const totalProtocolApr = apr.protocolApr || 0;
+      const totalOpportunitiesAprs = apr.opportunitiesAprs?.total || 0;
 
       // Add staking APR to the total
       const stakingAprMin = apr.stakingApr?.min || 0;
@@ -142,12 +147,14 @@ export default class PoolService {
         totalTokenAprs +
         totalRewardAprs +
         totalProtocolApr +
+        totalOpportunitiesAprs +
         stakingAprMin;
       apr.max =
         totalSwapFees +
         totalTokenAprs +
         totalRewardAprs +
         totalProtocolApr +
+        totalOpportunitiesAprs +
         stakingAprMax;
     }
 

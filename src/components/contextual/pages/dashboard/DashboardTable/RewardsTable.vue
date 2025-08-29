@@ -4,17 +4,20 @@ import { useI18n } from 'vue-i18n';
 import { ColumnDefinition } from '@/components/_global/BalTable/types';
 import useBreakpoints from '@/composables/useBreakpoints';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
-import { GaugePool, useClaimsData } from '@/composables/useClaimsData';
+import { GaugePool } from '@/composables/useClaimsData';
 import { Gauge } from '@/services/balancer/gauges/types';
-import { isStableLike, isComposableStable } from '@/composables/usePoolHelpers';
+// import { isStableLike, isComposableStable } from '@/composables/usePoolHelpers';
 import { useTokens } from '@/providers/tokens.provider';
 import useWeb3 from '@/services/web3/useWeb3';
 import { bnum } from '@/lib/utils';
 import { formatUnits } from '@ethersproject/units';
 import ClaimRewardsBtn from '@/components/btns/ClaimRewardsBtn/ClaimRewardsBtn.vue';
-import TokenPills from '@/components/tables/PoolsTable/TokenPills/TokenPills.vue';
-import PoolWarningTooltip from '@/components/pool/PoolWarningTooltip.vue';
-import { isSameAddress } from '@/lib/utils';
+// import TokenPills from '@/components/tables/PoolsTable/TokenPills/TokenPills.vue';
+// import PoolWarningTooltip from '@/components/pool/PoolWarningTooltip.vue';
+// import { isSameAddress } from '@/lib/utils';
+// import { PoolType } from '@regenerative/sdk';
+// import axios from 'axios';
+import { useRewardsQuery } from '@/composables/queries/useRewardsQuery';
 
 /**
  * TYPES
@@ -28,6 +31,7 @@ export type RewardRow = {
     value: string;
   }>;
   totalValue: string;
+  rawReward: any;
 };
 
 /**
@@ -35,29 +39,28 @@ export type RewardRow = {
  */
 const { t } = useI18n();
 const { upToLargeBreakpoint } = useBreakpoints();
-const { fNum } = useNumbers();
+const { fNum, toFiat } = useNumbers();
 const { isWalletReady } = useWeb3();
-const { getToken, priceFor } = useTokens();
-
-const { gauges, gaugePools, isLoading: isClaimsLoading } = useClaimsData();
+const { getToken } = useTokens();
+const { data, isLoading } = useRewardsQuery();
 
 /**
  * STATE
  */
 const columns = ref<ColumnDefinition<RewardRow>[]>([
   {
-    name: t('pool'),
-    id: 'pool',
-    accessor: 'pool',
-    Cell: 'poolColumnCell',
+    name: 'Token',
+    id: 'rewards',
+    accessor: 'rewardTokens',
+    Cell: 'rewardsColumnCell',
     align: 'left',
-    width: 200,
+    width: 300,
   },
   {
-    name: t('rewards'),
+    name: 'Amount',
     id: 'rewards',
-    accessor: 'rewards',
-    Cell: 'rewardsColumnCell',
+    accessor: 'rewardTokens',
+    Cell: 'amountColumnCell',
     align: 'left',
     width: 300,
   },
@@ -78,65 +81,74 @@ const columns = ref<ColumnDefinition<RewardRow>[]>([
   },
 ]);
 
-/**
- * COMPUTED
- */
+// -----------------------------------------------------------------------------
+// Computed: proteger accesos y normalizar decimals
+// -----------------------------------------------------------------------------
 const rewardsData = computed((): RewardRow[] => {
-  if (!isWalletReady.value) return [];
+  if (isLoading.value || !data.value) return []; // Asegurarse de que no se procesan datos mientras se cargan
+  console.debug('Rewards data:', data.value);
 
-  // Get gauges with rewards
-  const gaugesWithRewards = gauges.value.filter(
-    gauge => gauge.rewardTokens.length > 0
-  );
+  return data.value
+    .flatMap(rewardGroup => {
+      return rewardGroup.rewards.map(reward => {
+        // Si no hay token en el payload, ignorar esa entrada
+        if (!reward || !reward.token) {
+          console.warn('Skipping reward without token:', reward);
+          return null;
+        }
 
-  return gaugesWithRewards.reduce<RewardRow[]>((arr, gauge) => {
-    const pool = gaugePools.value.find(pool => pool.id === gauge.poolId);
+        const campaignIds = [
+          '0xf97a2f60bd9dfeba18fc289a6a56067342e01ba4217600ada8d5b783572dc63d',
+          '0x8e1a502a0c6a70f62886bb573388d00ad86858e1fe0c7c4b53e3e2813aae663c',
+        ];
 
-    if (!pool) return arr;
+        // Guardar que breakdowns exista y tenga elementos antes de acceder
+        if (!reward.breakdowns || reward.breakdowns.length === 0) return null;
+        const campaignId = reward.breakdowns[0]?.campaignId;
+        if (!campaignIds.includes(campaignId)) {
+          return null;
+        }
 
-    // Calculate total reward value
-    const totalRewardValue = Object.values(gauge.claimableRewards).reduce(
-      (acc, reward) => acc.plus(reward),
-      bnum(0)
-    );
+        // Calcular la cantidad pendiente (amount - claimed) usando bnum para evitar BigInt
+        const remainingRawBN = bnum(String(reward.amount)).minus(
+          bnum(String(reward.claimed))
+        );
+        if (remainingRawBN.lte(0)) return null;
 
-    if (totalRewardValue.lte(0)) return arr;
+        // Preferir información de token del provider, si existe; si no, usar la del payload
+        const tokenInfo = getToken(reward.token.address) || reward.token;
 
-    // Format reward tokens
-    const rewardTokens = Object.entries(gauge.claimableRewards).map(
-      ([tokenAddress, amount]) => {
-        const token = getToken(tokenAddress);
-        // Convert from wei to human readable format
-        const formattedAmount = formatUnits(amount, token?.decimals || 18);
-        // Calculate value using the formatted amount
-        const value = bnum(formattedAmount)
-          .times(priceFor(tokenAddress))
-          .toString();
+        // Normalizar amount usando decimals del token (asegurar number)
+        const decimals = Number(reward.token?.decimals ?? 18);
+        const remainingRaw = remainingRawBN.toString();
+        const amount = formatUnits(remainingRaw || '0', decimals); // string
+
+        // Calcular valor en fiat usando helper del repo (usar dirección conocida)
+        const tokenAddress = tokenInfo?.address || reward.token.address || '';
+        const valueStr = toFiat(amount, tokenAddress);
 
         return {
-          token,
-          amount: formattedAmount,
-          value,
+          gauge: {} as Gauge,
+          pool: {} as GaugePool,
+          rewardTokens: [
+            {
+              token: tokenInfo,
+              amount: amount, // dejar sin formatear aquí; la tabla usa fNum para mostrar
+              value: valueStr,
+            },
+          ],
+          // Guardar totalValue como string numérica sin formatear; el accessor lo formatea
+          totalValue: valueStr,
+          rawReward: reward,
         };
-      }
-    );
-
-    arr.push({
-      gauge,
-      pool,
-      rewardTokens,
-      totalValue: rewardTokens
-        .reduce((sum, token) => bnum(sum).plus(token.value), bnum(0))
-        .toString(),
-    });
-
-    return arr;
-  }, []);
+      });
+    })
+    .filter((r): r is RewardRow => r !== null);
 });
 
 const totalValue = computed((): string =>
   rewardsData.value
-    .reduce((acc, row) => acc.plus(row.totalValue), bnum(0))
+    .reduce((acc, row) => acc.plus(bnum(row.totalValue)), bnum(0))
     .toString()
 );
 
@@ -156,11 +168,11 @@ const noRewardsLabel = computed(() => {
       :columns="columns"
       :data="rewardsData"
       :noResultsLabel="noRewardsLabel"
-      :isLoading="isClaimsLoading"
+      :isLoading="isLoading"
       skeletonClass="h-24"
       :square="upToLargeBreakpoint"
     >
-      <template #poolColumnCell="{ pool }">
+      <!-- <template #poolColumnCell="{ pool }">
         <div class="flex items-center py-4 px-6">
           <div class="text-left">
             <TokenPills
@@ -176,7 +188,7 @@ const noRewardsLabel = computed(() => {
             <PoolWarningTooltip :pool="pool" />
           </div>
         </div>
-      </template>
+      </template> -->
 
       <template #rewardsColumnCell="{ rewardTokens }">
         <div class="py-4 px-6">
@@ -187,8 +199,21 @@ const noRewardsLabel = computed(() => {
           >
             <BalAsset :address="reward.token.address" :size="24" class="mr-2" />
             <span class="text-sm">
-              {{ fNum(reward.amount, FNumFormats.token) }}
               {{ reward.token.symbol }}
+            </span>
+          </div>
+        </div>
+      </template>
+
+      <template #amountColumnCell="{ rewardTokens }">
+        <div class="py-4 px-6">
+          <div
+            v-for="reward in rewardTokens"
+            :key="reward.token.address"
+            class="flex items-center mb-2 last:mb-0"
+          >
+            <span class="text-sm">
+              {{ fNum(reward.amount, FNumFormats.token) }}
             </span>
           </div>
         </div>
@@ -200,9 +225,16 @@ const noRewardsLabel = computed(() => {
         </div>
       </template>
 
-      <template #claimColumnCell="{ gauge, totalValue: rowTotalValue }">
+      <template
+        #claimColumnCell="{ gauge, totalValue: rowTotalValue, rawReward }"
+      >
         <div class="py-4 px-6">
-          <ClaimRewardsBtn :gauge="gauge" :fiatValue="rowTotalValue" />
+          <ClaimRewardsBtn
+            :gauge="gauge"
+            :fiatValue="rowTotalValue"
+            rewardType="Merkl"
+            :rewards="[rawReward]"
+          />
         </div>
       </template>
     </BalTable>

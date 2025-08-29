@@ -13,6 +13,7 @@ import YieldBreakdown from './components/YieldBreakdown.vue';
 import { AprBreakdown } from '@regenerative/sdk';
 import { hasStakingRewards } from '@/composables/useAPR';
 import useWeb3 from '@/services/web3/useWeb3';
+import OpportunitiesBreakdown from './components/OpportunitiesBreakdown.vue';
 
 /**
  * TYPES
@@ -104,6 +105,12 @@ const totalLabel = computed((): string =>
           :yieldAPR="apr?.tokenAprs"
           :pool="pool"
           class="mb-3"
+        />
+
+        <OpportunitiesBreakdown
+          v-if="apr?.opportunitiesAprs"
+          :pool="pool"
+          :poolApr="apr"
         />
 
         <!-- SWAP FEE APR -->
