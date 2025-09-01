@@ -66,7 +66,11 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
       const { data } = await MerklApi('https://api.merkl.xyz')
         .v4.users({ address: account.value })
         .rewards.get({
-          query: { chainId: [String(chainId.value)], breakdownPage: 0 },
+          query: {
+            chainId: [String(chainId.value)],
+            breakdownPage: 0,
+            reloadChainId: 42220,
+          },
         });
       console.debug({ data });
       return data;
