@@ -67,7 +67,7 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
         .v4.users({ address: account.value })
         .rewards.get({
           query: {
-            chainId: [String(chainId.value)],
+            chainId: ['42220'],
             breakdownPage: 0,
             reloadChainId: 42220,
           },
