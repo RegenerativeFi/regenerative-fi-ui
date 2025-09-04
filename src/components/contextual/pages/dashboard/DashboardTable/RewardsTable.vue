@@ -97,17 +97,8 @@ const rewardsData = computed((): RewardRow[] => {
           return null;
         }
 
-        const campaignIds = [
-          '0xf97a2f60bd9dfeba18fc289a6a56067342e01ba4217600ada8d5b783572dc63d',
-          '0x8e1a502a0c6a70f62886bb573388d00ad86858e1fe0c7c4b53e3e2813aae663c',
-        ];
-
         // Guardar que breakdowns exista y tenga elementos antes de acceder
         if (!reward.breakdowns || reward.breakdowns.length === 0) return null;
-        const campaignId = reward.breakdowns[0]?.campaignId;
-        if (!campaignIds.includes(campaignId)) {
-          return null;
-        }
 
         // Calcular la cantidad pendiente (amount - claimed) usando bnum para evitar BigInt
         const remainingRawBN = bnum(String(reward.amount)).minus(

@@ -2,6 +2,7 @@ import { MerklApi } from '@merkl/api';
 import { useQuery, UseQueryOptions } from '@tanstack/vue-query';
 import QUERY_KEYS from '@/constants/queryKeys';
 import useWeb3 from '@/services/web3/useWeb3';
+import { computed, reactive } from 'vue';
 
 // Module-level (shared) state kept for backwards compatibility if needed
 type QueryResponse =
@@ -73,7 +74,44 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
           },
         });
       console.debug({ data });
-      return data;
+
+      if (!data) return null;
+
+      // Obtener todas las campañas activas en una sola llamada
+      const { data: campaignsData } = await MerklApi(
+        'https://api.merkl.xyz'
+      ).v4.campaigns.get({
+        query: {
+          chainId: chainId.value,
+          mainProtocolId: 'balancer',
+        },
+      });
+      console.debug({ campaignsData });
+
+      // Crear un Set de campaignIds válidos
+      const validCampaignIds = new Set<string>();
+      if (campaignsData) {
+        campaignsData.forEach((campaign: any) => {
+          if (campaign.campaignId) {
+            validCampaignIds.add(campaign.campaignId);
+          }
+        });
+      }
+
+      // Filtrar rewards basados en campaignIds válidos
+      const filteredData = data.map(chainData => ({
+        ...chainData,
+        rewards: chainData.rewards.filter(reward => {
+          if (!reward.breakdowns || reward.breakdowns.length === 0)
+            return false;
+          const campaignId = reward.breakdowns[0]?.campaignId;
+          return campaignId && validCampaignIds.has(campaignId);
+        }),
+      }));
+
+      console.debug({ filteredData });
+
+      return filteredData;
     } catch (err) {
       console.error('Merkl rewards query failed', err);
       throw err;
