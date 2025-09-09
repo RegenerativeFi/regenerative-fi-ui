@@ -44,7 +44,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <Col3Layout offsetGutters mobileHideGutters class="mt-8">
+    <Col3Layout mobileHideGutters class="mt-8">
       <template #gutterLeft>
         <MyWallet />
       </template>
@@ -70,7 +70,7 @@ onMounted(() => {
 
       <template #gutterRight>
         <!-- <PairPriceGraph /> -->
-        <BridgeLink v-if="hasBridge" class="mt-4" />
+        <BridgeLink v-if="hasBridge" />
       </template>
     </Col3Layout>
   </div>
