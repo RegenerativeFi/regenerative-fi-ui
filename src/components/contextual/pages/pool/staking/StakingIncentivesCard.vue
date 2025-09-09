@@ -11,7 +11,7 @@ import { Pool } from '@/services/pool/types';
 import StakePreviewModal from './StakePreviewModal.vue';
 import { usePoolStaking } from '@/providers/local/pool-staking.provider';
 
-import { deprecatedDetails } from '@/composables/usePoolHelpers';
+// import { deprecatedDetails } from '@/composables/usePoolHelpers';
 import { usePoolWarning } from '@/composables/usePoolWarning';
 import { StakeAction } from './composables/useStakePreview';
 import StakingCardSyncAlert from '../../vebal/cross-chain-boost/StakingCardSyncAlert.vue';
@@ -45,7 +45,7 @@ const {
   isRefetchingStakedShares,
   stakedShares,
   hasNonPrefGaugeBalance,
-  preferentialGaugeAddress,
+  // preferentialGaugeAddress,
 } = usePoolStaking();
 const { isAffected } = usePoolWarning(poolId);
 const { networkId } = useNetwork();
@@ -67,14 +67,14 @@ const fiatValueOfUnstakedShares = computed(() => {
     .toString();
 });
 
-const isStakeDisabled = computed(() => {
-  return (
-    !!deprecatedDetails(props.pool.id) ||
-    fiatValueOfUnstakedShares.value === '0' ||
-    hasNonPrefGaugeBalance.value ||
-    !preferentialGaugeAddress.value
-  );
-});
+// const isStakeDisabled = computed(() => {
+//   return (
+//     !!deprecatedDetails(props.pool.id) ||
+//     fiatValueOfUnstakedShares.value === '0' ||
+//     hasNonPrefGaugeBalance.value ||
+//     !preferentialGaugeAddress.value
+//   );
+// });
 
 /**
  * METHODS
@@ -97,7 +97,7 @@ function handlePreviewClose() {
 </script>
 
 <template>
-  <div>
+  <div v-if="fiatValueOfStakedShares !== '0'">
     <AnimatePresence :isVisible="!isLoadingStakingData">
       <div class="relative">
         <BalAccordion
@@ -196,6 +196,7 @@ function handlePreviewClose() {
                   <BalBtn
                     color="gradient"
                     size="sm"
+                    :disabled="true"
                     @click="emit('setRestakeVisibility', true)"
                   >
                     {{ $t('restake') }}
@@ -216,7 +217,7 @@ function handlePreviewClose() {
                   <BalBtn
                     color="gradient"
                     size="sm"
-                    :disabled="isStakeDisabled"
+                    :disabled="true"
                     @click="showStakePreview"
                   >
                     {{ $t('stake') }}

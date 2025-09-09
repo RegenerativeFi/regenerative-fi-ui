@@ -463,12 +463,16 @@ function goToPoolPage(id: string) {
           @click:remove="removeLiquidity(pool.id)"
           @click:vote="emit('triggerVote')"
           @click:migrate-gauge="goToPoolPage(pool.id)"
+          @click:unstake="pool => emit('triggerUnstake', pool)"
+          @click:stake="pool => emit('triggerStake', pool)"
           @click:poke="pool => emit('triggerCheckpoint', pool)"
         />
         <PoolsTableActionsCell
           v-else
           :pool="pool"
           :poolsType="poolsType"
+          @click:stake="pool => emit('triggerStake', pool)"
+          @click:unstake="pool => emit('triggerUnstake', pool)"
           @click:migrate="pool => navigateToPoolMigration(pool)"
         />
       </template>

@@ -15,7 +15,7 @@ import { Pool } from '@/services/pool/types';
 import { TransactionActionInfo } from '@/types/transactions';
 import { useJoinPool } from '@/providers/local/join-pool.provider';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
-// import { usePoolStaking } from '@/providers/local/pool-staking.provider';
+import { usePoolStaking } from '@/providers/local/pool-staking.provider';
 import useWeb3 from '@/services/web3/useWeb3';
 import useNetwork from '@/composables/useNetwork';
 import FeedbackCard from '@/components/cards/FeedbackCard.vue';
@@ -44,7 +44,7 @@ const { t } = useI18n();
 const { fNum } = useNumbers();
 const { addTransaction } = useTransactions();
 const { lockablePoolId } = useVeBal();
-// const { isStakablePool } = usePoolStaking();
+const { isStakablePool } = usePoolStaking();
 const { isMismatchedNetwork } = useWeb3();
 const { poolWeightsLabel } = usePoolHelpers(toRef(props, 'pool'));
 const {
@@ -165,7 +165,7 @@ onUnmounted(() => {
             $t('lockToGetVeBAL')
           }}
         </BalBtn>
-        <!-- <BalBtn
+        <BalBtn
           v-else-if="isStakablePool"
           color="gradient"
           block
@@ -175,7 +175,7 @@ onUnmounted(() => {
           <StarsIcon class="mr-2 h-5 text-orange-300" />{{
             $t('stakeToGetExtra')
           }}
-        </BalBtn> -->
+        </BalBtn>
 
         <BalBtn
           tag="router-link"

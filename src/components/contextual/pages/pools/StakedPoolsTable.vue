@@ -28,7 +28,7 @@ const showRestakeModal = ref(false);
 const poolToRestake = ref<Pool | undefined>();
 
 const showProceedModal = ref(false);
-const defaultPoolActions = [PoolAction.Add];
+const defaultPoolActions = [PoolAction.Unstake, PoolAction.Add];
 
 const showPokeAllGaugesModal = ref(false);
 
@@ -150,78 +150,81 @@ watch(
 </script>
 
 <template>
-  <div>
-    <BalStack vertical spacing="sm">
-      <!-- <h5 class="px-4 xl:px-0">
+  <template v-if="stakedPools.length > 0">
+    <h4 class="text-lg font-medium leading-5 !mt-6 !mb-4">Staked pools</h4>
+    <div>
+      <BalStack vertical spacing="sm">
+        <!-- <h5 class="px-4 xl:px-0">
         {{ $t('staking.stakedPools') }}
       </h5> -->
-      <PortfolioSyncTip
-        :shouldPokePoolsMap="shouldPokePoolsMap"
-        @show-proceed-modal="showProceedModal = true"
-        @show-poke-all-gauge-modal="showPokeAllGaugesModal = true"
+        <PortfolioSyncTip
+          :shouldPokePoolsMap="shouldPokePoolsMap"
+          @show-proceed-modal="showProceedModal = true"
+          @show-poke-all-gauge-modal="showPokeAllGaugesModal = true"
+        />
+        <PoolsTable
+          :key="poolsToRenderKey"
+          :data="stakedPools"
+          :shares="stakedShares"
+          :boosts="poolBoostsMap"
+          poolsType="staked"
+          :noPoolsLabel="noPoolsLabel"
+          :hiddenColumns="hiddenColumns"
+          sortColumn="myBalance"
+          :isLoading="isWalletReady && isLoading"
+          showPoolShares
+          showActions
+          showStakeActions
+          :showBoost="isPoolBoostsEnabled"
+          :defaultPoolActions="defaultPoolActions"
+          :shouldPokePoolsMap="shouldPokePoolsMap"
+          :hasNonPrefGaugesPoolsAddresses="hasNonPrefGaugesPoolsAddresses"
+          @trigger-unstake="handleUnstake"
+          @trigger-restake="handleRestake"
+          @trigger-vote="showProceedModal = true"
+          @trigger-checkpoint="handleCheckpoint"
+        />
+      </BalStack>
+
+      <!-- Unstake modal -->
+      <StakePreviewModal
+        v-if="poolToUnstake"
+        :pool="poolToUnstake"
+        :isVisible="showUnstakeModal"
+        action="unstake"
+        @close="handleModalClose"
+        @success="handleUnstakeSuccess"
       />
-      <PoolsTable
-        :key="poolsToRenderKey"
-        :data="stakedPools"
-        :shares="stakedShares"
-        :boosts="poolBoostsMap"
-        poolsType="staked"
-        :noPoolsLabel="noPoolsLabel"
-        :hiddenColumns="hiddenColumns"
-        sortColumn="myBalance"
-        :isLoading="isWalletReady && isLoading"
-        showPoolShares
-        showActions
-        showStakeActions
-        :showBoost="isPoolBoostsEnabled"
-        :defaultPoolActions="defaultPoolActions"
-        :shouldPokePoolsMap="shouldPokePoolsMap"
-        :hasNonPrefGaugesPoolsAddresses="hasNonPrefGaugesPoolsAddresses"
-        @trigger-unstake="handleUnstake"
-        @trigger-restake="handleRestake"
-        @trigger-vote="showProceedModal = true"
-        @trigger-checkpoint="handleCheckpoint"
+
+      <!-- Restake modal -->
+      <StakePreviewModal
+        v-if="poolToRestake"
+        :pool="poolToRestake"
+        :isVisible="showRestakeModal"
+        action="restake"
+        @close="handleModalClose"
+        @success="handleUnstakeSuccess"
       />
-    </BalStack>
 
-    <!-- Unstake modal -->
-    <StakePreviewModal
-      v-if="poolToUnstake"
-      :pool="poolToUnstake"
-      :isVisible="showUnstakeModal"
-      action="unstake"
-      @close="handleModalClose"
-      @success="handleUnstakeSuccess"
-    />
+      <ProceedToSyncModal
+        :isVisible="showProceedModal"
+        @close="showProceedModal = false"
+      />
 
-    <!-- Restake modal -->
-    <StakePreviewModal
-      v-if="poolToRestake"
-      :pool="poolToRestake"
-      :isVisible="showRestakeModal"
-      action="restake"
-      @close="handleModalClose"
-      @success="handleUnstakeSuccess"
-    />
+      <CheckpointAllGaugesModal
+        :shouldPokePoolsMap="shouldPokePoolsMap"
+        :isVisible="showPokeAllGaugesModal"
+        @close="showPokeAllGaugesModal = false"
+        @success="resetShouldPokePoolsMap"
+      />
 
-    <ProceedToSyncModal
-      :isVisible="showProceedModal"
-      @close="showProceedModal = false"
-    />
-
-    <CheckpointAllGaugesModal
-      :shouldPokePoolsMap="shouldPokePoolsMap"
-      :isVisible="showPokeAllGaugesModal"
-      @close="showPokeAllGaugesModal = false"
-      @success="resetShouldPokePoolsMap"
-    />
-
-    <CheckpointGaugeModal
-      v-if="poolToCheckpoint"
-      :poolAddress="poolToCheckpoint.address"
-      :isVisible="showCheckpointModal"
-      @close="showCheckpointModal = false"
-      @success="onSuccessCheckpoint"
-    />
-  </div>
+      <CheckpointGaugeModal
+        v-if="poolToCheckpoint"
+        :poolAddress="poolToCheckpoint.address"
+        :isVisible="showCheckpointModal"
+        @close="showCheckpointModal = false"
+        @success="onSuccessCheckpoint"
+      />
+    </div>
+  </template>
 </template>
