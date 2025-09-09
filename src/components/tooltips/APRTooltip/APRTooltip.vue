@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { computed } from 'vue';
 
 // import useNumbers, { FNumFormats } from '@/composables/useNumbers';
@@ -55,73 +55,9 @@ const totalLabel = computed((): string =>
     ? totalAprLabel(apr.value, props.pool.boost, isWalletReady.value)
     : '0'
 );
-</script>
+</script> -->
+<script setup lang="ts"></script>
 
 <template v-slot:aprCell="pool">
-  <BalTooltip v-if="validAPR" width="64" noPad>
-    <template #activator>
-      <div class="ml-1">
-        <StarsIcon
-          v-if="hasYieldAPR || hasStakingRewards(apr) || hasVebalAPR"
-          :gradFrom="hasVebalAPR ? 'purple' : 'yellow'"
-          class="-mr-1 h-4"
-          v-bind="$attrs"
-        />
-        <BalIcon
-          v-else
-          name="info"
-          size="sm"
-          class="text-gray-400 dark:text-gray-500"
-          v-bind="$attrs"
-        />
-      </div>
-    </template>
-    <div class="text-sm divide-y dark:divide-gray-900">
-      <div
-        class="px-3 pt-3 pb-1 bg-gray-50 dark:bg-gray-800 rounded-t"
-        data-testid="total-apr"
-      >
-        <div class="text-secondary">
-          {{ $t('totalAPR') }}
-        </div>
-        <div class="text-lg font-bold normal-nums tracking-tighter">
-          {{ totalLabel }}
-        </div>
-      </div>
-      <div class="p-3 text-left">
-        <!-- VeBal APR -->
-        <VeBalBreakdown
-          v-if="hasVebalAPR"
-          :apr="apr?.protocolApr || 0"
-          class="mb-3"
-        />
-
-        <!-- STAKING APR BREAKDOWN -->
-        <StakingBreakdown :pool="pool" :poolApr="apr" class="mb-3" />
-
-        <!-- YIELD APR BREAKDOWN -->
-        <YieldBreakdown
-          v-if="apr?.tokenAprs && hasYieldAPR"
-          :yieldAPR="apr?.tokenAprs"
-          :pool="pool"
-          class="mb-3"
-        />
-
-        <OpportunitiesBreakdown
-          v-if="apr?.opportunitiesAprs"
-          :pool="pool"
-          :poolApr="apr"
-        />
-
-        <!-- SWAP FEE APR -->
-        <!-- <div
-          class="flex justify-between items-center mb-1 text-sm font-bold whitespace-nowrap"
-          data-testid="swap-fee-apr"
-        >
-          <span>{{ $t('swapFeeAPR') }}</span>
-          {{ fNum(apr?.swapFees || '0', FNumFormats.bp) }}
-        </div> -->
-      </div>
-    </div>
-  </BalTooltip>
+  <div></div>
 </template>

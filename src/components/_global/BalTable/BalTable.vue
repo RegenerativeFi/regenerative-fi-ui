@@ -40,6 +40,8 @@ type Props = {
   square?: boolean;
   isPaginated?: boolean;
   noResultsLabel?: string;
+  // Si true, renderiza `noResultsLabel` como HTML con v-html
+  noResultsIsHtml?: boolean;
   link?: {
     to: string;
     getParams: (data: any) => Record<string, string>;
@@ -56,6 +58,7 @@ const props = withDefaults(defineProps<Props>(), {
   square: false,
   isPaginated: false,
   noResultsLabel: '',
+  noResultsIsHtml: false,
   link: null,
   href: null,
   initialState: () => ({
@@ -303,7 +306,11 @@ watch([() => props.data, () => props.isLoading], ([newData]) => {
         v-else-if="!isLoading && !tableData.length"
         class="flex justify-start items-center p-6 max-w-full h-24 bg-white dark:bg-gray-850 row-bg text-secondary"
       >
-        {{ noResultsLabel || $t('noResults') }}
+        <div
+          v-if="props.noResultsIsHtml"
+          v-html="props.noResultsLabel || $t('noResults')"
+        ></div>
+        <div v-else>{{ props.noResultsLabel || $t('noResults') }}</div>
       </div>
       <table v-else class="w-full whitespace-normal table-fixed">
         <colgroup>

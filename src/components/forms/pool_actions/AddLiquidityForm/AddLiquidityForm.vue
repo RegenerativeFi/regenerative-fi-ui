@@ -5,8 +5,8 @@ import WrapStEthLink from '@/components/contextual/pages/pool/add-liquidity/Wrap
 import StakePreviewModal from '@/components/contextual/pages/pool/staking/StakePreviewModal.vue';
 import TokenInput from '@/components/inputs/TokenInput/TokenInput.vue';
 import { tokenWeight, usePoolHelpers } from '@/composables/usePoolHelpers';
-import { LOW_LIQUIDITY_THRESHOLD } from '@/constants/poolLiquidity';
-import { bnum, includesAddress, isSameAddress } from '@/lib/utils';
+// import { LOW_LIQUIDITY_THRESHOLD } from '@/constants/poolLiquidity';
+import { includesAddress, isSameAddress } from '@/lib/utils';
 import { isRequired } from '@/lib/utils/validations';
 import { Pool } from '@/services/pool/types';
 import useWeb3 from '@/services/web3/useWeb3';
@@ -73,9 +73,9 @@ const forceProportionalInputs = computed(
   (): boolean => managedPoolWithSwappingHalted.value
 );
 
-const poolHasLowLiquidity = computed((): boolean =>
-  bnum(props.pool.totalLiquidity).lt(LOW_LIQUIDITY_THRESHOLD)
-);
+// const poolHasLowLiquidity = computed((): boolean =>
+//   bnum(props.pool.totalLiquidity).lt(LOW_LIQUIDITY_THRESHOLD)
+// );
 
 const excludedTokens = computed((): string[] => {
   const tokens = [props.pool.address];
@@ -183,13 +183,13 @@ watch(
       class="mb-5"
     />
 
-    <BalAlert
+    <!-- <BalAlert
       v-if="poolHasLowLiquidity"
       type="warning"
       :title="$t('investment.warning.lowLiquidity.title')"
       :description="$t('investment.warning.lowLiquidity.description')"
       class="mb-5"
-    />
+    /> -->
 
     <TokenInput
       v-for="amountIn in amountsIn"

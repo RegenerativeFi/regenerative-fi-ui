@@ -7,7 +7,7 @@ export const EXTERNAL_LINKS = {
     BugBounty: 'https://immunefi.com/bounty/balancer/',
     Docs: 'https://docs.regenerative.fi',
     Support: 'mailto:support@regenerative.fi',
-    Forum: 'https://forum.regenerative.fi',
+    Forum: 'https://hub.regencoordination.xyz/c/refi-dao/regenerativefi/32',
     Tokens: 'https://www.regenerative.fi/tokens',
     Grants: 'http://grants.balancer.community/',
     Placeholder: 'https://placeholder.vc/',

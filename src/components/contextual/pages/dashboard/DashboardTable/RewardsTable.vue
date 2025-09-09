@@ -144,7 +144,10 @@ const totalValue = computed((): string =>
 );
 
 const noRewardsLabel = computed(() => {
-  return isWalletReady.value ? t('noRewardsToClaim') : t('connectYourWallet');
+  if (isWalletReady.value) {
+    return 'No Incentives ready to claim. <p>Explore opportunities in the <a class="underline" href="/pools">Pools</a> page or via <a class="underline" href="https://app.merkl.xyz" target="_blank" rel="noopener noreferrer">Merkl</a>.</p>';
+  }
+  return t('connectYourWallet');
 });
 </script>
 
@@ -159,6 +162,7 @@ const noRewardsLabel = computed(() => {
       :columns="columns"
       :data="rewardsData"
       :noResultsLabel="noRewardsLabel"
+      :noResultsIsHtml="true"
       :isLoading="isLoading"
       skeletonClass="h-24"
       :square="upToLargeBreakpoint"

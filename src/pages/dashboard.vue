@@ -3,7 +3,7 @@ import VeReFiBalanceCard from '@/components/contextual/pages/dashboard/VeReFi/Ve
 import VeReFiLockedCard from '@/components/contextual/pages/dashboard/VeReFi/VeReFiLockedCard.vue';
 // import ClaimTable from '@/components/contextual/pages/dashboard/DashboardTable/ClaimsTable.vue';
 import RewardsTable from '@/components/contextual/pages/dashboard/DashboardTable/RewardsTable.vue';
-import StakedPoolsTable from '@/components/contextual/pages/pools/StakedPoolsTable.vue';
+// import StakedPoolsTable from '@/components/contextual/pages/pools/StakedPoolsTable.vue';
 import UnstakedLiquidityTable from '@/components/contextual/pages/dashboard/DashboardTable/UnstakedLiquidityTable.vue';
 import { provideUserStaking } from '@/providers/local/user-staking.provider';
 import { providerUserPools } from '@/providers/local/user-pools.provider';
@@ -24,22 +24,20 @@ const { ReFiBalance, veBalBalance, veBalTokenInfo, ReFiTokenInfo } = useVeBal();
       <VeReFiLockedCard :tokenInfo="veBalTokenInfo" :balance="veBalBalance" />
     </div>
     <div>
-      <h2 class="text-xl font-medium leading-5 !mb-4">Claim Rewards</h2>
+      <h2 class="text-xl font-medium leading-5 !mb-4">Claimable Incentives</h2>
       <!-- <div class="mb-4">
         <h3 class="text-lg font-medium leading-5 !mb-4">Voter Rewards</h3>
         <ClaimTable />
       </div> -->
       <div>
-        <h3 class="text-lg font-medium leading-5 !mb-4">Incentives</h3>
         <RewardsTable />
       </div>
     </div>
     <div>
-      <h2 class="text-xl font-medium leading-5">My liquidity</h2>
-      <h4 class="text-lg font-medium leading-5 !mt-6 !mb-4">Unstaked pools</h4>
+      <h2 class="text-xl font-medium leading-5 !mb-4">My liquidity</h2>
       <UnstakedLiquidityTable />
-      <h4 class="text-lg font-medium leading-5 !mt-6 !mb-4">Staked pools</h4>
-      <StakedPoolsTable />
+      <!-- <h4 class="text-lg font-medium leading-5 !mt-6 !mb-4">Staked pools</h4>
+      <StakedPoolsTable /> -->
     </div>
   </div>
 </template>

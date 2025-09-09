@@ -188,7 +188,7 @@ const columns = computed<ColumnDefinition<Pool>[]>(() => [
     cellClassName: 'font-numeric',
   },
   {
-    name: props.showPoolShares ? t('myApr') : t('apr'),
+    name: t('apr'),
     Cell: 'aprCell',
     accessor: pool => pool?.apr?.min.toString() || '0',
     align: 'right',
@@ -461,8 +461,6 @@ function goToPoolPage(id: string) {
           "
           @click:add="addLiquidity(pool.id)"
           @click:remove="removeLiquidity(pool.id)"
-          @click:unstake="pool => emit('triggerUnstake', pool)"
-          @click:stake="pool => emit('triggerStake', pool)"
           @click:vote="emit('triggerVote')"
           @click:migrate-gauge="goToPoolPage(pool.id)"
           @click:poke="pool => emit('triggerCheckpoint', pool)"
@@ -471,8 +469,6 @@ function goToPoolPage(id: string) {
           v-else
           :pool="pool"
           :poolsType="poolsType"
-          @click:stake="pool => emit('triggerStake', pool)"
-          @click:unstake="pool => emit('triggerUnstake', pool)"
           @click:migrate="pool => navigateToPoolMigration(pool)"
         />
       </template>

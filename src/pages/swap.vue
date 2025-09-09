@@ -69,7 +69,7 @@ onMounted(() => {
       </div>
 
       <template #gutterRight>
-        <PairPriceGraph />
+        <!-- <PairPriceGraph /> -->
         <BridgeLink v-if="hasBridge" class="mt-4" />
       </template>
     </Col3Layout>

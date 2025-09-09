@@ -7,7 +7,7 @@ import {
   MyPoolBalancesCard,
   PoolCompositionCard,
 } from '@/components/contextual/pages/pool';
-import StakingIncentivesCard from '@/components/contextual/pages/pool/staking/StakingIncentivesCard.vue';
+// import StakingIncentivesCard from '@/components/contextual/pages/pool/staking/StakingIncentivesCard.vue';
 import PoolLockingCard from '@/components/contextual/pages/pool/PoolLockingCard/PoolLockingCard.vue';
 import ApyVisionPoolLink from '@/components/links/ApyVisionPoolLink.vue';
 import PoolPageHeader from '@/components/pool/PoolPageHeader.vue';
@@ -271,12 +271,12 @@ watch(
           </div>
 
           <BalLoadingBlock v-if="loadingPool" class="h-40 pool-actions-card" />
-          <StakingIncentivesCard
+          <!-- <StakingIncentivesCard
             v-if="isStakablePool && !loadingPool && pool && isWalletReady"
             :pool="pool"
             class="staking-incentives"
             @set-restake-visibility="setRestakeVisibility"
-          />
+          /> -->
           <CultivateLiquidityCard
             v-if="isStakablePool && !loadingPool && pool && isWalletReady"
             :pool="pool"
