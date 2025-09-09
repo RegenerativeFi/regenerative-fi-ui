@@ -1,10 +1,30 @@
 <script lang="ts" setup>
-import usePoolsVolumeQuery from '@/composables/queries/usePoolsVolumeQuery';
 import useNumbers from '@/composables/useNumbers';
+import usePools from '@/composables/pools/usePools';
+import { bnum } from '@/lib/utils';
+import { computed } from 'vue';
 
-const { data: poolsVolumes, isLoading: isPoolsVolumesLoading } =
-  usePoolsVolumeQuery();
 const { toFiatLabel } = useNumbers();
+
+// Obtener pools ya decoradas mediante usePools (usa los repositorios/decoradores)
+const { pools, isLoading: isPoolsVolumesLoading } = usePools({});
+
+const totalLiquidity = computed(() => {
+  const list = pools.value || [];
+  return list
+    .map((p: any) => bnum(p.totalLiquidity || '0'))
+    .reduce((acc: any, v: any) => acc.plus(v), bnum(0))
+    .toString();
+});
+
+const totalVolume = computed(() => {
+  const list = pools.value || [];
+  return list
+    .map((p: any) => bnum(p.totalSwapVolume || '0'))
+    .reduce((acc: any, v: any) => acc.plus(v), bnum(0))
+    .toString();
+});
+
 type Props = {
   tokensAmount: number;
 };
@@ -30,7 +50,7 @@ defineProps<Props>();
                 TVL: ~$ --
               </h4>
               <h4 v-else class="w-full text-base font-medium whitespace-nowrap">
-                TVL: ~{{ toFiatLabel(poolsVolumes?.totalLiquidity) }}
+                TVL: ~{{ toFiatLabel(totalLiquidity) }}
               </h4>
             </div>
             <div
@@ -43,7 +63,7 @@ defineProps<Props>();
                 Volume: ~$ --
               </h4>
               <h4 v-else class="w-full text-base font-medium whitespace-nowrap">
-                Volume: ~{{ toFiatLabel(poolsVolumes?.totalVolume) }}
+                Volume: ~{{ toFiatLabel(totalVolume) }}
               </h4>
             </div>
           </div>
