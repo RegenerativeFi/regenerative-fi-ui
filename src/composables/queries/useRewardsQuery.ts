@@ -82,7 +82,7 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
         'https://api.merkl.xyz'
       ).v4.campaigns.get({
         query: {
-          chainId: chainId.value,
+          chainId: 42220,
           mainProtocolId: 'balancer',
         },
       });
