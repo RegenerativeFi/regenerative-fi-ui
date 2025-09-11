@@ -7,7 +7,7 @@ import { computed } from 'vue';
 const { networkId } = useNetwork();
 
 const bridgeUrl = computed((): string => {
-  return configService.network.bridgeUrl;
+  return 'https://superbridge.app/?fromChainId=1&toChainId=42220';
 });
 
 const label = computed((): string => {
@@ -20,7 +20,7 @@ const label = computed((): string => {
     :href="bridgeUrl"
     external
     noStyle
-    class="flex items-center p-4 text-sm dark:bg-gray-850 rounded-lg border dark:border-0"
+    class="flex items-center p-4 text-sm bg-white dark:bg-gray-850 rounded-lg border dark:border-0"
   >
     <img
       :src="buildNetworkIconURL(networkId)"

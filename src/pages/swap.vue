@@ -44,7 +44,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <Col3Layout mobileHideGutters class="mt-8">
+    <Col3Layout mobileHideGutters class="mt-20">
       <template #gutterLeft>
         <MyWallet />
       </template>
