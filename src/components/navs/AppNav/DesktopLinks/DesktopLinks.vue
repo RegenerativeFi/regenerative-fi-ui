@@ -63,6 +63,12 @@ function isActive(page: string): boolean {
     >
       Faucet
     </DesktopLinkItem>
+    <DesktopLinkItem
+      :to="{ name: 'vaults', params: { networkSlug } }"
+      :active="isActive('vaults')"
+    >
+      Vaults
+    </DesktopLinkItem>
     <!-- <DesktopLinkItem
       :to="{ name: 'portfolio', params: { networkSlug } }"
       :active="isActive('portfolio')"
