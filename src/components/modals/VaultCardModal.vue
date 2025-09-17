@@ -1,5 +1,302 @@
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue';
+import { ethers } from 'ethers';
+import BalModal from '@/components/_global/BalModal/BalModal.vue';
+import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
+import BalActionSteps from '@/components/_global/BalActionSteps/BalActionSteps.vue';
+import ConfirmationIndicator from '@/components/web3/ConfirmationIndicator.vue';
+import useWeb3 from '@/services/web3/useWeb3';
+import useStCelo from '@/composables/vaults/stCelo';
+import { useTxState } from '@/composables/useTxState';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { TransactionActionInfo } from '@/types/transactions';
+import useTokenApprovalActions from '@/composables/approvals/useTokenApprovalActions';
+import { ApprovalAction } from '@/composables/approvals/types';
+import useTransactions from '@/composables/useTransactions';
+
+const props = withDefaults(
+  defineProps<{
+    show: boolean;
+    action: 'deposit' | 'withdraw';
+    vault?: any;
+    available?: string | number;
+    title?: string;
+    contractAddress?: string;
+  }>(),
+  { available: '0' }
+);
+
+const emit = defineEmits<{
+  (
+    e: 'confirm',
+    payload: { action: 'deposit' | 'withdraw'; amount: number }
+  ): void;
+  (e: 'success', receipt: TransactionReceipt): void;
+  (e: 'close'): void;
+}>();
+
+const depositAmount = ref('');
+const loading = ref(false);
+const withdrawPercent = ref('');
+const selectedPercent = ref<number | null>(null);
+const showFireworks = ref(false);
+
+const { getProvider, account } = useWeb3();
+const { getTokenApprovalActions } = useTokenApprovalActions();
+const { txState } = useTxState();
+const { addTransaction } = useTransactions();
+
+const DEFAULT_DECIMALS = 18;
+
+const approvalActions = ref<TransactionActionInfo[]>([]);
+const stCeloComposable = ref<any>(null);
+
+const displayedAvailable = computed(() => {
+  if (Number(props.available) > 0) return String(props.available);
+  if (
+    stCeloComposable.value &&
+    stCeloComposable.value.vault &&
+    stCeloComposable.value.vault.available
+  ) {
+    return String(stCeloComposable.value.vault.available);
+  }
+  return '0';
+});
+
+const actions = computed(() => {
+  if (props.action !== 'deposit') return [];
+  return [
+    ...approvalActions.value,
+    {
+      label: 'Deposit',
+      loadingLabel: 'Depositing',
+      confirmingLabel: 'Confirming',
+      action: submit,
+      stepTooltip: 'Deposit stCELO into vault',
+    },
+  ];
+});
+
+const formattedFiat = computed(() => {
+  const amt = Number(depositAmount.value) || 0;
+  return (amt * 1).toFixed(2);
+});
+
+const availableNum = computed(() => Number(displayedAvailable.value) || 0);
+
+const withdrawAmount = computed(() => {
+  const p = Number(selectedPercent.value ?? withdrawPercent.value) || 0;
+  return (availableNum.value * p) / 100;
+});
+
+const formattedWithdrawAmount = computed(() => {
+  return new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 5,
+  }).format(withdrawAmount.value);
+});
+
+const canDeposit = computed(() => {
+  const v = Number(depositAmount.value);
+  return v > 0 && v <= Number(displayedAvailable.value);
+});
+
+const canWithdraw = computed(
+  () => withdrawAmount.value > 0 && withdrawAmount.value <= availableNum.value
+);
+
+async function submit() {
+  txState.init = true;
+  try {
+    await setApprovalActions();
+    txState.confirming = true;
+
+    const tokenAddr =
+      props.contractAddress || (props.vault && props.vault.contractAddress);
+    const vaultAddr = '0x794163F6f73dA948D1392cedE445e851e9681cEc';
+    const prov = getProvider();
+    const signer = (prov as any).getSigner();
+    const vaultWithSigner = new ethers.Contract(
+      vaultAddr,
+      ['function deposit(uint256)'],
+      signer
+    );
+    const tokenWithSigner = new ethers.Contract(
+      tokenAddr,
+      ['function decimals() view returns (uint8)'],
+      signer
+    );
+    let decimals = DEFAULT_DECIMALS;
+    try {
+      decimals = Number(await tokenWithSigner.decimals());
+    } catch (e) {
+      // ignore if decimals fails
+    }
+    const amountBn = ethers.utils.parseUnits(
+      String(depositAmount.value || '0'),
+      decimals
+    );
+    const tx = await vaultWithSigner.deposit(amountBn);
+    addTransaction({
+      id: tx.hash,
+      type: 'tx',
+      action: 'invest',
+      summary: `Deposit ${depositAmount.value} stCELO`,
+      // details: {
+
+      // },
+    });
+    return tx;
+  } catch (error) {
+    txState.confirming = false;
+    throw new Error('Failed to submit transaction.', {
+      cause: error,
+    });
+  } finally {
+    txState.init = false;
+  }
+}
+
+function onDepositInput(e: Event) {
+  depositAmount.value = (e.target as HTMLInputElement).value;
+}
+
+function setMaxDeposit() {
+  depositAmount.value = displayedAvailable.value;
+}
+
+function selectPercent(p: number) {
+  selectedPercent.value = p;
+  withdrawPercent.value = '';
+}
+
+function onWithdrawPercentInput(e: Event) {
+  selectedPercent.value = null;
+  withdrawPercent.value = (e.target as HTMLInputElement).value;
+}
+
+function handleClose() {
+  showFireworks.value = false;
+  emit('close');
+}
+
+function confirmWithdraw() {
+  if (!canWithdraw.value) return;
+  loading.value = true;
+  setTimeout(() => {
+    emit('confirm', {
+      action: 'withdraw',
+      amount: Number(withdrawAmount.value),
+    });
+    loading.value = false;
+    emit('close');
+  }, 5000);
+}
+
+function onStepsSuccess(receipt: TransactionReceipt, confirmedAt?: string) {
+  showFireworks.value = true;
+  txState.receipt = receipt;
+  txState.confirmedAt = confirmedAt || new Date().toISOString();
+  txState.confirmed = true;
+  txState.confirming = false;
+  loading.value = false;
+  // update local available from composable if present
+  try {
+    if (props.contractAddress) {
+      const st = useStCelo(props.contractAddress);
+      st.fetchOnchainBalance(
+        props.contractAddress,
+        undefined,
+        getProvider ? getProvider() : undefined
+      );
+    }
+  } catch (e) {
+    console.error('Failed to fetch balances', e);
+  }
+  emit('success', receipt);
+  // emit('close'); // Remove auto-close to show confirmation
+}
+
+function onStepsFailed() {
+  txState.confirming = false;
+  loading.value = false;
+}
+
+async function setApprovalActions() {
+  if (!account.value) return;
+  const tokenAddr =
+    props.contractAddress || (props.vault && props.vault.contractAddress);
+  if (!tokenAddr) return;
+  const amt = Number(depositAmount.value);
+  if (amt <= 0) return;
+
+  const tokenApprovalActions = await getTokenApprovalActions({
+    amountsToApprove: [
+      {
+        address: tokenAddr,
+        amount: amt.toString(),
+      },
+    ],
+    spender:
+      props.vault?.contractAddress ||
+      '0x794163F6f73dA948D1392cedE445e851e9681cEc',
+    actionType: ApprovalAction.Locking,
+    forceMax: false,
+  });
+
+  approvalActions.value = tokenApprovalActions;
+}
+
+onMounted(async () => {
+  const tokenAddr =
+    props.contractAddress || (props.vault && props.vault.contractAddress);
+  if (!tokenAddr) return;
+
+  if (account.value) {
+    if (props.action === 'deposit') {
+      await setApprovalActions();
+    }
+    stCeloComposable.value = useStCelo(tokenAddr);
+    try {
+      await stCeloComposable.value.fetchOnchainBalance(
+        tokenAddr,
+        account.value,
+        getProvider ? getProvider() : undefined
+      );
+    } catch (e) {
+      console.error('Failed to fetch balances', e);
+    }
+  } else {
+    const stop = watch(account, async newAccount => {
+      if (newAccount) {
+        if (props.action === 'deposit') {
+          await setApprovalActions();
+        }
+        stCeloComposable.value = useStCelo(tokenAddr);
+        try {
+          await stCeloComposable.value.fetchOnchainBalance(
+            tokenAddr,
+            newAccount,
+            getProvider ? getProvider() : undefined
+          );
+        } catch (e) {
+          console.error('Failed to fetch balances', e);
+        }
+        stop();
+      }
+    });
+  }
+});
+
+watch(depositAmount, async () => {
+  if (props.action === 'deposit' && account.value) {
+    await setApprovalActions();
+  }
+});
+</script>
+
 <template>
-  <BalModal :show="show" @close="$emit('close')">
+  <BalModal :show="show" :fireworks="showFireworks" @close="handleClose">
     <template #header>
       <div class="flex gap-3 items-center">
         <div class="flex justify-center items-center w-10 h-10 rounded-full">
@@ -47,7 +344,8 @@
             <div>${{ formattedFiat }}</div>
             <div class="flex gap-2 items-center">
               <div>
-                Available: <span class="font-medium">{{ available }}</span>
+                Available:
+                <span class="font-medium">{{ displayedAvailable }}</span>
               </div>
               <button
                 class="text-sm font-medium underline"
@@ -132,25 +430,10 @@
           </div>
         </div>
       </template>
-
       <div class="mt-4"><hr class="border-t border-gray-200" /></div>
     </div>
 
     <template #footer>
-      <div v-if="action === 'deposit'" class="flex flex-col gap-3 w-full">
-        <BalBtn
-          :disabled="!canDeposit || loading"
-          :label="loading ? 'Processing...' : 'Deposit'"
-          :color="canDeposit ? 'gradient' : 'gray'"
-          class="w-full h-14 text-lg font-semibold rounded-lg"
-          @click="confirm"
-        />
-
-        <div class="text-sm text-center text-gray-500">
-          Low on CELO? <a class="underline" href="#">Top up balance</a>
-        </div>
-      </div>
-
       <div v-if="action === 'withdraw'" class="flex flex-row gap-3 w-full">
         <BalBtn
           outline
@@ -168,125 +451,29 @@
         />
       </div>
     </template>
+
+    <template v-if="action === 'deposit'">
+      <transition>
+        <BalActionSteps
+          v-if="!txState.confirmed || !txState.receipt"
+          :actions="actions"
+          primaryActionType="invest"
+          :disabled="!canDeposit || loading"
+          class="mt-4"
+          @success="onStepsSuccess"
+          @failed="onStepsFailed"
+        />
+        <div v-else class="mt-4">
+          <ConfirmationIndicator :txReceipt="txState.receipt" />
+          <BalBtn
+            class="flex-1 mt-4 w-full"
+            label="Close"
+            color="gradient"
+            :disabled="loading"
+            @click="$emit('close')"
+          />
+        </div>
+      </transition>
+    </template>
   </BalModal>
 </template>
-
-<script>
-import BalModal from '@/components/_global/BalModal/BalModal.vue';
-import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
-
-export default {
-  name: 'VaultCardModal',
-  components: {
-    BalModal,
-    BalBtn,
-  },
-  props: {
-    show: { type: Boolean, required: true },
-    action: { type: String, required: true }, // 'deposit' | 'withdraw'
-    vault: { type: Object, required: false },
-    available: { type: [Number, String], required: false, default: '0' },
-    title: { type: String, required: false },
-  },
-  emits: ['confirm', 'close'],
-  data() {
-    return {
-      depositAmount: '',
-      loading: false,
-      // withdraw state
-      withdrawPercent: '',
-      selectedPercent: null,
-    };
-  },
-  computed: {
-    formattedDeposit() {
-      const num = Number(this.vault?.deposit) || 0;
-      return new Intl.NumberFormat(undefined, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 6,
-      }).format(num);
-    },
-    formattedApy() {
-      const n = Number(this.vault?.apy) || 0;
-      return n % 1 === 0 ? String(n) : n.toFixed(1);
-    },
-    formattedFiat() {
-      const amt = Number(this.depositAmount) || 0;
-      return (amt * 1).toFixed(2);
-    },
-    // cantidad a retirar calculada desde available * percent
-    availableNum() {
-      return Number(this.available) || 0;
-    },
-    withdrawAmount() {
-      const p = Number(this.selectedPercent || this.withdrawPercent) || 0;
-      return (this.availableNum * p) / 100;
-    },
-    formattedWithdrawAmount() {
-      return new Intl.NumberFormat(undefined, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 6,
-      }).format(this.withdrawAmount);
-    },
-    canDeposit() {
-      const v = Number(this.depositAmount);
-      return v > 0 && v <= Number(this.available);
-    },
-    canWithdraw() {
-      return (
-        this.withdrawAmount > 0 && this.withdrawAmount <= this.availableNum
-      );
-    },
-  },
-  methods: {
-    onDepositInput(e) {
-      this.depositAmount = e.target.value;
-    },
-    setMaxDeposit() {
-      this.depositAmount = String(this.available);
-    },
-    confirm() {
-      if (this.action === 'deposit') {
-        if (!this.canDeposit) return;
-        // Simular transacción: mostrar loader durante 5 segundos
-        this.loading = true;
-        // pequeña protección: evitar dobles clicks
-        setTimeout(() => {
-          this.$emit('confirm', {
-            action: 'deposit',
-            amount: Number(this.depositAmount),
-          });
-          this.loading = false;
-          this.$emit('close');
-        }, 5000);
-      } else {
-        this.$emit('confirm', {
-          action: 'withdraw',
-          amount: Number(this.vault?.deposit) || 0,
-        });
-        this.$emit('close');
-      }
-    },
-    selectPercent(p) {
-      this.selectedPercent = p;
-      this.withdrawPercent = '';
-    },
-    onWithdrawPercentInput(e) {
-      this.selectedPercent = null;
-      this.withdrawPercent = e.target.value;
-    },
-    confirmWithdraw() {
-      if (!this.canWithdraw) return;
-      this.loading = true;
-      setTimeout(() => {
-        this.$emit('confirm', {
-          action: 'withdraw',
-          amount: Number(this.withdrawAmount),
-        });
-        this.loading = false;
-        this.$emit('close');
-      }, 5000);
-    },
-  },
-};
-</script>

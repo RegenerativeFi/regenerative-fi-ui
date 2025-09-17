@@ -73,24 +73,29 @@
     :show="showWithdraw"
     action="withdraw"
     :vault="{ title, apy, deposit, icon }"
-    :available="available"
+    :available="localAvailable || available"
+    :contractAddress="contractAddress"
     @close="closeWithdraw"
-    @confirm="handleModalConfirm"
+    @success="handleModalSuccess"
   />
 
   <VaultCardModal
     :show="showDeposit"
     action="deposit"
     :vault="{ title, apy, deposit, icon }"
-    :available="available"
+    :available="localAvailable || available"
+    :contractAddress="contractAddress"
     @close="closeDeposit"
-    @confirm="handleModalConfirm"
+    @success="handleModalSuccess"
   />
 </template>
 
 <script>
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import VaultCardModal from '@/components/modals/VaultCardModal.vue';
+import { watch } from 'vue';
+import useWeb3 from '@/services/web3/useWeb3';
+import useStCelo from '@/composables/vaults/stCelo';
 
 export default {
   name: 'VaultCard',
@@ -102,8 +107,11 @@ export default {
     title: { type: String, required: false },
     apy: { type: [Number, String], required: false },
     deposit: { type: [Number, String], required: false },
+    available: { type: [Number, String], required: false },
     icon: { type: String, required: false },
     placeholder: { type: Boolean, default: false },
+    // address del contrato ERC20 para leer balanceOf
+    contractAddress: { type: String, required: false },
   },
   emits: ['withdraw', 'deposit'],
   data() {
@@ -111,16 +119,20 @@ export default {
       showWithdraw: false,
       showDeposit: false,
       depositAmount: '',
-      // ejemplo: disponible en wallet (valor largo para mockup)
-      available: '9.000000982027831',
+      // ejemplo: disponible en wallet (valor largo para mockup) --- if not provided via prop
+      // available prop will override this data when present
+      localAvailable: undefined,
+      // referencia al composable
+      stCeloComposable: null,
     };
   },
+
   computed: {
     formattedDeposit() {
       const num = Number(this.deposit) || 0;
       return new Intl.NumberFormat(undefined, {
         minimumFractionDigits: 0,
-        maximumFractionDigits: 6,
+        maximumFractionDigits: 5,
       }).format(num);
     },
     formattedFiat() {
@@ -136,6 +148,55 @@ export default {
       const v = Number(this.depositAmount);
       return v > 0 && v <= Number(this.available);
     },
+  },
+
+  mounted() {
+    // Si se pasa una contractAddress, obtener la cuenta desde useWeb3 y leer balance on-chain
+    if (!this.contractAddress) return;
+    const { account, getProvider } = useWeb3();
+
+    const doFetch = async userAddress => {
+      if (!userAddress) return;
+      try {
+        const st = useStCelo();
+        this.stCeloComposable = st;
+        const provider = getProvider ? getProvider() : undefined;
+        const val = await st.fetchOnchainBalance(
+          this.contractAddress,
+          userAddress,
+          provider
+        );
+        // val puede ser un objeto { stBalance, tokenSupply, vaultSupply }
+        if (val && typeof val === 'object') {
+          if (val.stBalance !== undefined) {
+            this.localAvailable = String(val.stBalance);
+          } else if (st && st.vault && st.vault.available) {
+            this.localAvailable = String(st.vault.available);
+          } else {
+            this.localAvailable = String(val);
+          }
+        } else {
+          this.localAvailable = String(val);
+        }
+      } catch (e) {
+        // noop
+      }
+    };
+
+    // si ya hay cuenta conecta la leemos
+    if (account && account.value) {
+      void doFetch(account.value);
+    }
+
+    // observar cambios en la cuenta y ejecutar sólo la primera vez que aparece
+    if (account) {
+      const stop = watch(account, val => {
+        if (val) {
+          void doFetch(val);
+          stop();
+        }
+      });
+    }
   },
   methods: {
     openWithdrawModal() {
@@ -156,15 +217,19 @@ export default {
       this.depositAmount = '';
     },
     // manejar confirmación desde VaultCardModal
-    handleModalConfirm(payload) {
-      // payload: { action: 'deposit'|'withdraw', amount }
-      if (!payload || !payload.action) return;
-      if (payload.action === 'deposit') {
-        this.$emit('deposit', payload.amount);
-        this.closeDeposit();
-      } else if (payload.action === 'withdraw') {
-        this.$emit('withdraw', payload.amount);
-        this.closeWithdraw();
+    handleModalSuccess() {
+      // El modal ya manejó la transacción y muestra la confirmación
+      // No cerrar el modal aquí, dejar que el usuario lo cierre manualmente
+      // Opcionalmente, refrescar datos si es necesario
+      if (this.stCeloComposable) {
+        try {
+          // Sincronizar available con el composable
+          this.localAvailable = String(
+            this.stCeloComposable.vault.available || 0
+          );
+        } catch (e) {
+          // ignorar errores
+        }
       }
     },
     onDepositInput(e) {
@@ -174,7 +239,7 @@ export default {
       this.depositAmount = val;
     },
     setMaxDeposit() {
-      this.depositAmount = String(this.available);
+      this.depositAmount = String(this.localAvailable || this.available || '');
     },
     confirmDeposit() {
       if (!this.canDeposit) return;
