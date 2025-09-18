@@ -39,11 +39,10 @@
             :title="vaults[0].title"
             :apy="vaults[0].apy"
             :deposit="vaults[0].deposit"
+            :depositRaw="vaults[0].depositRaw"
             :available="vaults[0].available"
             :icon="vaults[0].icon"
             :contractAddress="vaults[0].contractAddress"
-            @withdraw="onWithdraw(vaults[0], 0)"
-            @deposit="onDeposit(vaults[0], 0)"
           />
           <!-- Si no hay vaults, dejar el espacio en blanco -->
           <div
@@ -71,37 +70,25 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import VaultCard from '@/components/VaultCard.vue';
 import { useVaults } from '@/composables/vaults/index';
 import { onMounted } from 'vue';
 import useWeb3 from '@/services/web3/useWeb3';
 
-export default {
-  components: { VaultCard },
-  setup() {
-    const { vaults, isLoading, fetchBalances } = useVaults();
-    const { account, getProvider } = useWeb3();
+const { vaults, isLoading, fetchBalances } = useVaults();
+const { account, getProvider } = useWeb3();
 
-    onMounted(async () => {
-      // si existe una vault con contractAddress, fetch balance for connected account
-      if (vaults.length > 0 && vaults[0].contractAddress && account.value) {
-        await fetchBalances(
-          vaults[0].contractAddress,
-          account.value,
-          getProvider ? getProvider() : undefined
-        );
-      }
-    });
+console.debug('vaults', vaults);
 
-    function onWithdraw(slot, idx) {
-      console.log('withdraw', idx, slot);
-    }
-    function onDeposit(slot, idx) {
-      console.log('deposit', idx, slot);
-    }
-
-    return { vaults, isLoading, onWithdraw, onDeposit };
-  },
-};
+onMounted(async () => {
+  // si existe una vault con contractAddress, fetch balance for connected account
+  if (vaults.length > 0 && vaults[0].contractAddress && account.value) {
+    await fetchBalances(
+      vaults[0].contractAddress,
+      account.value,
+      getProvider ? getProvider() : undefined
+    );
+  }
+});
 </script>

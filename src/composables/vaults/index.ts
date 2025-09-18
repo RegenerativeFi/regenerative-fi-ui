@@ -27,21 +27,9 @@ export function useVaults() {
     }
   }
 
-  async function deposit(vaultId: string, amount: number) {
-    if (vaultId === stCelo.id) return await stCelo.deposit(amount);
-    return { success: false };
-  }
-
-  async function withdraw(vaultId: string, amount: number) {
-    if (vaultId === stCelo.id) return await stCelo.withdraw(amount);
-    return { success: false };
-  }
-
   return {
     vaults,
     isLoading,
     fetchBalances,
-    deposit,
-    withdraw,
   };
 }
