@@ -128,6 +128,7 @@ export default function useStCelo(
 
   const queryFn = () =>
     fetchOnchainBalance(resolvedContractAddress.value, account.value);
+
   const { refetch, isFetching, isError } = useQuery(queryKey.value, queryFn, {
     enabled: computed(() => !!resolvedContractAddress.value && !!account.value),
     refetchOnWindowFocus: false,

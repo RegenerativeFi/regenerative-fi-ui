@@ -76,6 +76,7 @@
     :availableRaw="depositRaw"
     :contractAddress="contractAddress"
     @close="closeWithdraw"
+    @success="handleSucess"
   />
 
   <VaultDepositModal
@@ -84,6 +85,7 @@
     :available="available"
     :contractAddress="contractAddress"
     @close="closeDeposit"
+    @success="handleSucess"
   />
 </template>
 
@@ -103,6 +105,9 @@ const props = defineProps<{
   placeholder?: boolean;
   contractAddress: string;
 }>();
+const emit = defineEmits<{
+  (e: 'success', contractAddress?: string): void;
+}>();
 
 const showWithdraw = ref(false);
 const showDeposit = ref(false);
@@ -120,6 +125,11 @@ const formattedApy = computed(() => {
   const n = Number(props.apy) || 0;
   return n % 1 === 0 ? String(n) : n.toFixed(1);
 });
+
+const handleSucess = () => {
+  // emit contract address so parent can refetch only this vault
+  emit('success', props.contractAddress);
+};
 
 const openWithdrawModal = () => {
   showWithdraw.value = true;

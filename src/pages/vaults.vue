@@ -43,6 +43,7 @@
             :available="vaults[0].available"
             :icon="vaults[0].icon"
             :contractAddress="vaults[0].contractAddress"
+            @success="handleSucess"
           />
           <!-- Si no hay vaults, dejar el espacio en blanco -->
           <div
@@ -76,10 +77,19 @@ import { useVaults } from '@/composables/vaults/index';
 import { onMounted } from 'vue';
 import useWeb3 from '@/services/web3/useWeb3';
 
-const { vaults, isLoading, fetchBalances } = useVaults();
+const { vaults, isLoading, fetchBalances, refetchVault } = useVaults();
 const { account, getProvider } = useWeb3();
 
 console.debug('vaults', vaults);
+
+const handleSucess = async (contractAddress?: string) => {
+  // refetch only the vault that changed
+  if (contractAddress) {
+    await refetchVault(contractAddress);
+    return;
+  }
+  await refetchVault(vaults[0]?.contractAddress);
+};
 
 onMounted(async () => {
   // si existe una vault con contractAddress, fetch balance for connected account

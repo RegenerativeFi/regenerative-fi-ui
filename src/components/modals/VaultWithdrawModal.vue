@@ -30,7 +30,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'success', receipt: TransactionReceipt): void;
+  (e: 'success'): void;
   (e: 'close'): void;
 }>();
 
@@ -178,6 +178,8 @@ async function submitWithdraw() {
 async function submitSwap() {
   return swapping.swap(() => {
     swapping.resetAmounts();
+
+    emit('success');
     emit('close');
   });
 }
@@ -204,20 +206,6 @@ function onStepsSuccess(receipt: TransactionReceipt, confirmedAt?: string) {
   txState.confirmed = true;
   txState.confirming = false;
   loading.value = false;
-  // update local available from composable if present
-  try {
-    if (props.contractAddress) {
-      const st = useStCelo(props.contractAddress);
-      st.fetchOnchainBalance(
-        props.contractAddress,
-        undefined,
-        getProvider ? getProvider() : undefined
-      );
-    }
-  } catch (e) {
-    console.error('Failed to fetch balances', e);
-  }
-  emit('success', receipt);
 }
 
 function onStepsFailed() {

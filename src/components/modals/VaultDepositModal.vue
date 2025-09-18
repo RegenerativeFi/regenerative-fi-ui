@@ -113,19 +113,6 @@ function onStepsSuccess(receipt: TransactionReceipt, confirmedAt?: string) {
   txState.confirmed = true;
   txState.confirming = false;
   loading.value = false;
-  // update local available from composable if present
-  try {
-    if (props.contractAddress) {
-      const st = useStCelo(props.contractAddress);
-      st.fetchOnchainBalance(
-        props.contractAddress,
-        undefined,
-        getProvider ? getProvider() : undefined
-      );
-    }
-  } catch (e) {
-    console.error('Failed to fetch balances', e);
-  }
   emit('success', receipt);
 }
 
