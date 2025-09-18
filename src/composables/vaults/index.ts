@@ -7,45 +7,43 @@ export function useVaults() {
   const vaults = reactive([stCelo.vault]);
   const isLoading = ref(false);
 
-  // map contractAddress => composable instance
   const composables = new Map<string, ReturnType<typeof useStCelo>>();
-  // register default composable
   composables.set(stCelo.vault.contractAddress, stCelo);
 
   function getOrCreateComposable(contractAddress?: string) {
     if (!contractAddress) return stCelo;
     const existing = composables.get(contractAddress);
     if (existing) return existing;
-    const c = useStCelo(contractAddress);
-    composables.set(contractAddress, c);
-    // register vault ref in the shared array so UI can bind to it
-    vaults.push(c.vault);
-    return c;
+
+    // This part is tricky without a generic factory.
+    // For now, we only support stCelo.
+    if (contractAddress === stCelo.vault.contractAddress) {
+      const c = useStCelo();
+      composables.set(contractAddress, c);
+      if (!vaults.some(v => v.id === c.vault.id)) {
+        vaults.push(c.vault);
+      }
+      return c;
+    }
+    // In the future, a factory would decide which vault composable to create.
+    throw new Error(
+      `Vault with contract address ${contractAddress} not supported.`
+    );
   }
 
-  async function fetchBalances(
-    contractAddress?: string,
-    userAddress?: string,
-    provider?: any
-  ) {
+  async function fetchBalances(contractAddress?: string, userAddress?: string) {
     if (!contractAddress || !userAddress) return null;
     isLoading.value = true;
     try {
       const composable = getOrCreateComposable(contractAddress);
-      const val = await composable.fetchOnchainBalance(
-        contractAddress,
-        userAddress,
-        provider
-      );
-      // val already applied to composable.vault.available inside fetchOnchainBalance
-      return val;
+      // The new useVault refetches on its own, so we just trigger it.
+      await composable.refetch();
     } finally {
       isLoading.value = false;
     }
   }
 
   async function refetchAll() {
-    // refetch all known vault composables
     const promises: Promise<any>[] = [];
     composables.forEach(c => promises.push(c.refetch()));
     await Promise.all(promises);
@@ -63,5 +61,6 @@ export function useVaults() {
     fetchBalances,
     refetchAll,
     refetchVault,
+    getComposable: getOrCreateComposable,
   };
 }

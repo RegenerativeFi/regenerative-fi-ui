@@ -75,6 +75,7 @@
     :available="deposit"
     :availableRaw="depositRaw"
     :contractAddress="contractAddress"
+    :vaultComposable="vaultComposable"
     @close="closeWithdraw"
     @success="handleSucess"
   />
@@ -84,6 +85,7 @@
     :vault="{ title, apy, deposit, icon }"
     :available="available"
     :contractAddress="contractAddress"
+    :vaultComposable="vaultComposable"
     @close="closeDeposit"
     @success="handleSucess"
   />
@@ -104,6 +106,7 @@ const props = defineProps<{
   icon?: string;
   placeholder?: boolean;
   contractAddress: string;
+  vaultComposable?: any;
 }>();
 const emit = defineEmits<{
   (e: 'success', contractAddress?: string): void;

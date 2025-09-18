@@ -20,6 +20,7 @@ const props = withDefaults(
     available?: string | number;
     title?: string;
     contractAddress: string;
+    vaultComposable?: any;
   }>(),
   { available: '0' }
 );
@@ -33,18 +34,18 @@ const depositAmount = ref('');
 const loading = ref(false);
 const showFireworks = ref(false);
 
-const { getProvider, account } = useWeb3();
+const { account } = useWeb3();
 const { getTokenApprovalActions } = useTokenApprovalActions();
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
 
 const approvalActions = ref<TransactionActionInfo[]>([]);
-const stCeloComposable = useStCelo(props.contractAddress);
+const stCeloComposable = computed(() => props.vaultComposable || useStCelo());
 
 const displayedAvailable = computed(() => {
   if (Number(props.available) > 0) return String(props.available);
 
-  return String(stCeloComposable.vault.available);
+  return String(stCeloComposable.value.vault.available);
 });
 
 const actions = computed(() => [
@@ -74,7 +75,9 @@ async function submit() {
     await setApprovalActions();
     txState.confirming = true;
 
-    const tx = await stCeloComposable.depositTx(Number(depositAmount.value));
+    const tx = await stCeloComposable.value.depositTx(
+      Number(depositAmount.value)
+    );
     addTransaction({
       id: tx.hash,
       type: 'tx',
@@ -114,6 +117,9 @@ function onStepsSuccess(receipt: TransactionReceipt, confirmedAt?: string) {
   txState.confirming = false;
   loading.value = false;
   emit('success', receipt);
+
+  // The new useVault refetches on its own, so we just trigger it.
+  stCeloComposable.value.refetch();
 }
 
 function onStepsFailed() {
@@ -154,11 +160,7 @@ onMounted(async () => {
   if (account.value) {
     await setApprovalActions();
     try {
-      await stCeloComposable.fetchOnchainBalance(
-        tokenAddr,
-        account.value,
-        getProvider ? getProvider() : undefined
-      );
+      await stCeloComposable.value.refetch();
     } catch (e) {
       console.error('Failed to fetch balances', e);
     }

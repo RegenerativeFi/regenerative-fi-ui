@@ -25,6 +25,7 @@ const props = withDefaults(
     availableRaw?: string;
     itle?: string;
     contractAddress: string;
+    vaultComposable?: any;
   }>(),
   { available: '0' }
 );
@@ -39,11 +40,11 @@ const withdrawPercent = ref('');
 const selectedPercent = ref<number | null>(null);
 const showFireworks = ref(false);
 
-const { getProvider, account } = useWeb3();
+const { account } = useWeb3();
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
 const { networkConfig } = useNetwork();
-const stCeloComposable = useStCelo(props.contractAddress);
+const stCeloComposable = computed(() => props.vaultComposable || useStCelo());
 const { getTokenApprovalActions } = useTokenApprovalActions();
 const tokenApprovalActions = ref<TransactionActionInfo[]>([]);
 const {
@@ -152,7 +153,7 @@ async function submitWithdraw() {
   try {
     txState.confirming = true;
 
-    const tx = await stCeloComposable.withdrawTx(
+    const tx = await stCeloComposable.value.withdrawTx(
       rawWithdrawAmount.value.toString()
     );
     addTransaction({
@@ -225,11 +226,7 @@ onMounted(async () => {
 
   if (account.value) {
     try {
-      await stCeloComposable.fetchOnchainBalance(
-        tokenAddr,
-        account.value,
-        getProvider ? getProvider() : undefined
-      );
+      await stCeloComposable.value.refetch();
 
       // initialize approval actions for the current amount (may be 0)
       await setTokenApprovalActions();
