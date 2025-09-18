@@ -7,11 +7,11 @@ export interface Vault {
   id: string;
   title: string;
   apy: number;
-  deposit: number; // CELO-equivalent (what we want to show as 'deposit')
-  available: string; // stCELO balance (string for precision)
+  deposit: number;
+  available: string;
   icon?: string;
   contractAddress?: string;
-  supplyBalance?: string; // optional: raw CELO-equivalent as string
+  supplyBalance?: string;
 }
 
 export default function useStCelo(
@@ -25,7 +25,7 @@ export default function useStCelo(
     'function decimals() view returns (uint8)',
   ];
   const MANAGER_ABI = ['function toCelo(uint256) view returns (uint256)'];
-  const VAULT_ADDRESS = '0x794163F6f73dA948D1392cedE445e851e9681cEc'; // rStCelo (vault)
+  const VAULT_ADDRESS = '0x794163F6f73dA948D1392cedE445e851e9681cEc';
 
   const vault = reactive<Vault>({
     id,
@@ -48,33 +48,34 @@ export default function useStCelo(
     );
   });
 
-  function getProviderSafe(): ethers.providers.Provider {
+  const getProviderSafe = (): ethers.providers.Provider => {
     try {
-      const p = getProvider ? getProvider() : undefined;
-      if (p) return p as unknown as ethers.providers.Provider;
-    } catch (e) {
-      // fallthrough
+      const p = getProvider?.();
+      if (p) return p as ethers.providers.Provider;
+    } catch (error) {
+      console.error('Error getting provider:', error);
+      u;
     }
     return ethers.getDefaultProvider();
-  }
+  };
 
-  async function readBalances(
+  const getSigner = () => {
+    const prov = getProviderSafe();
+    if ((prov as any).getSigner && account.value) {
+      return (prov as any).getSigner(account.value);
+    }
+    throw new Error('No signer available. Connect wallet.');
+  };
+
+  const readBalances = async (
     addr: string,
     user: string,
     provider?: ethers.providers.Provider
-  ) {
+  ) => {
     const prov = provider || getProviderSafe();
-    const token = new ethers.Contract(addr, ERC20_ABI, prov as any);
-    const manager = new ethers.Contract(
-      MANAGER_ADDRESS,
-      MANAGER_ABI,
-      prov as any
-    );
-    const vaultContract = new ethers.Contract(
-      VAULT_ADDRESS,
-      ERC20_ABI,
-      prov as any
-    );
+    const token = new ethers.Contract(addr, ERC20_ABI, prov);
+    const manager = new ethers.Contract(MANAGER_ADDRESS, MANAGER_ABI, prov);
+    const vaultContract = new ethers.Contract(VAULT_ADDRESS, ERC20_ABI, prov);
 
     const [rawTokenBalance, rawVaultBalance] = await Promise.all([
       token.balanceOf(user),
@@ -83,33 +84,31 @@ export default function useStCelo(
 
     let decimals = DEFAULT_DECIMALS;
     try {
-      const d = await token.decimals();
-      decimals = Number(d);
-    } catch (e) {
-      // keep default
+      decimals = Number(await token.decimals());
+    } catch (error) {
+      console.error('Error getting token decimals:', error);
     }
 
     const stBalance = ethers.utils.formatUnits(rawTokenBalance, decimals);
-
-    // supplyBalance for token (stCELO -> CELO) and vault (rStCelo -> CELO)
     let tokenSupply = stBalance;
     let vaultSupply = ethers.utils.formatUnits(rawVaultBalance, decimals);
+
     try {
       const rawTokenSupply = await manager.toCelo(rawTokenBalance);
       tokenSupply = ethers.utils.formatUnits(rawTokenSupply, decimals);
-    } catch (e) {
-      // fallback to stBalance
+    } catch (error) {
+      console.error('Error getting token supply:', error);
     }
 
     try {
       const rawVaultSupply = await manager.toCelo(rawVaultBalance);
       vaultSupply = ethers.utils.formatUnits(rawVaultSupply, decimals);
-    } catch (e) {
-      // fallback to raw vault token units
+    } catch (error) {
+      console.error('Error getting vault supply:', error);
     }
 
     return { stBalance, tokenSupply, vaultSupply, decimals };
-  }
+  };
 
   const queryKey = computed(() => [
     'vaults',
@@ -124,198 +123,126 @@ export default function useStCelo(
       addr,
       account.value
     );
-    // available = user's stCELO balance
-    vault.available = String(stBalance);
-    // supplyBalance = CELO-equivalent of the user's balance in the vault (rStCelo)
-    vault.supplyBalance = String(vaultSupply);
-    // deposit shown in UI should be the CELO-equivalent held in the vault
-    vault.deposit = Number(parseFloat(vaultSupply));
+    vault.available = stBalance;
+    vault.supplyBalance = vaultSupply;
+    vault.deposit = Number(vaultSupply);
     return { stBalance, tokenSupply, vaultSupply };
   };
 
-  const { refetch, isFetching, isError } = useQuery(
-    queryKey.value as any,
-    queryFn,
-    {
-      enabled: computed(
-        () => !!resolvedContractAddress.value && !!account.value
-      ),
-      refetchOnWindowFocus: false,
-      staleTime: 1000 * 30,
-    }
-  );
+  const { refetch, isFetching, isError } = useQuery(queryKey.value, queryFn, {
+    enabled: computed(() => !!resolvedContractAddress.value && !!account.value),
+    refetchOnWindowFocus: false,
+    staleTime: 30_000,
+  });
 
-  async function fetchOnchainBalance(
+  const fetchOnchainBalance = async (
     contractAddr?: string,
     userAddress?: string,
     provider?: ethers.providers.Provider
-  ) {
+  ) => {
     const addr = contractAddr || resolvedContractAddress.value;
     const user = userAddress || account.value;
-    if (!addr || !user)
-      throw new Error('contractAddress and userAddress are required');
-    const { stBalance, tokenSupply, vaultSupply } = await readBalances(
-      addr,
-      user,
-      provider
+    if (!addr || !user) throw new Error('Missing addresses');
+    const balances = await readBalances(addr, user, provider);
+    vault.available = balances.stBalance;
+    vault.supplyBalance = balances.vaultSupply;
+    vault.deposit = Number(balances.vaultSupply);
+    return balances;
+  };
+
+  const updateLocalState = (amount: number, isDeposit: boolean) => {
+    const aNum = Number(vault.available);
+    if (isDeposit) {
+      vault.deposit += amount;
+      vault.available = String(Math.max(0, aNum - amount));
+    } else {
+      vault.deposit = Math.max(0, vault.deposit - amount);
+      vault.available = String(aNum + amount);
+    }
+  };
+
+  const executeTx = async (
+    amount: number,
+    isDeposit: boolean,
+    tokenAddr: string,
+    vaultAddr: string
+  ) => {
+    const signer = getSigner();
+    const tokenContract = new ethers.Contract(
+      tokenAddr,
+      [
+        'function approve(address,uint256) returns (bool)',
+        'function decimals() view returns (uint8)',
+      ],
+      signer
     );
-    vault.available = String(stBalance);
-    vault.supplyBalance = String(vaultSupply);
-    vault.deposit = Number(parseFloat(vaultSupply));
-    return { stBalance, tokenSupply, vaultSupply };
-  }
+    const vaultContract = new ethers.Contract(
+      vaultAddr,
+      ['function deposit(uint256)', 'function withdraw(uint256)'],
+      signer
+    );
 
-  async function deposit(amount: number) {
-    // Simular transacción: esperar 5s
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    vault.deposit = Number((vault.deposit + amount).toFixed(6));
-    const aNum = Number(vault.available) || 0;
-    const newAvailable = Math.max(0, aNum - amount);
-    vault.available = String(Number(newAvailable.toFixed(6)));
-    return { success: true };
-  }
+    let decimals = DEFAULT_DECIMALS;
+    try {
+      decimals = Number(await tokenContract.decimals());
+    } catch (error) {
+      console.error('Error getting token decimals:', error);
+    }
 
-  async function withdraw(amount: number) {
-    // Simular transacción: esperar 5s
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    vault.deposit = Number(Math.max(0, vault.deposit - amount).toFixed(6));
-    const aNum = Number(vault.available) || 0;
-    const newAvailable = aNum + amount;
-    vault.available = String(Number(newAvailable.toFixed(6)));
-    return { success: true };
-  }
+    const amountBn = ethers.utils.parseUnits(String(amount), decimals);
 
-  // Placeholder TX functions intended to be called from UI modals.
-  // These update local vault state immediately and act as thin adapters
-  // to the simulated deposit/withdraw above. Later these should perform
-  // the real on-chain transactions.
-  function depositTx(amount: number) {
-    // update state immediately (no artificial delay)
-    // keep quick local update for optimistic UI, then try actual on-chain flow
-    vault.deposit = Number((vault.deposit + amount).toFixed(6));
-    const aNum = Number(vault.available) || 0;
-    const newAvailable = Math.max(0, aNum - amount);
-    vault.available = String(Number(newAvailable.toFixed(6)));
+    if (isDeposit) {
+      const approveTx = await tokenContract.approve(vaultAddr, amountBn);
+      await approveTx.wait();
+      const tx = await vaultContract.deposit(amountBn);
+      return await tx.wait();
+    } else {
+      const tx = await vaultContract.withdraw(amountBn);
+      return await tx.wait();
+    }
+  };
 
-    // Try to perform on-chain approve + deposit. Return a promise that resolves when done.
+  const depositTx = (amount: number) => {
+    updateLocalState(amount, true);
     return (async () => {
-      const tokenAddr = resolvedContractAddress.value;
-      const vaultAddr = '0x794163F6f73dA948D1392cedE445e851e9681cEc';
-      if (!tokenAddr) return { success: false, error: 'token address missing' };
-
-      const prov = getProviderSafe();
-      // Need a signer to send txs
-      let signer: any | undefined;
       try {
-        if ((prov as any).getSigner) {
-          signer = (prov as any).getSigner(account.value);
-        }
-      } catch (e) {
-        // ignore
-      }
-
-      if (!signer) {
-        return {
-          success: false,
-          error: 'No signer available. Connect wallet.',
-        };
-      }
-
-      try {
-        const tokenWithSigner = new ethers.Contract(
-          tokenAddr,
-          [
-            'function approve(address,uint256) returns (bool)',
-            'function decimals() view returns (uint8)',
-          ],
-          signer
-        );
-        const vaultWithSigner = new ethers.Contract(
-          vaultAddr,
-          ['function deposit(uint256)'],
-          signer
-        );
-
-        // read decimals
-        let decimals = DEFAULT_DECIMALS;
-        try {
-          const d = await tokenWithSigner.decimals();
-          decimals = Number(d);
-        } catch (e) {
-          // fallback
-        }
-
-        const amountBn = ethers.utils.parseUnits(String(amount), decimals);
-
-        // approve
-        console.debug(
-          'Sending approve',
-          tokenAddr,
-          vaultAddr,
-          amountBn.toString()
-        );
-        const approveTx = await tokenWithSigner.approve(vaultAddr, amountBn);
-        console.debug('Approve tx sent', approveTx.hash);
-        await approveTx.wait();
-        console.debug('Approve confirmed');
-
-        // deposit
-        console.debug(
-          'Sending deposit to vault',
-          vaultAddr,
-          amountBn.toString()
-        );
-        const depositTx = await vaultWithSigner.deposit(amountBn);
-        console.debug('Deposit tx sent', depositTx.hash);
-        const receipt = await depositTx.wait();
-        console.debug('Deposit confirmed', receipt.transactionHash);
-
-        // refresh on-chain balances to keep state consistent
-        try {
-          await fetchOnchainBalance(tokenAddr, account.value, prov);
-        } catch (e) {
-          // ignore refresh errors
-        }
-
+        const tokenAddr = resolvedContractAddress.value;
+        const vaultAddr = VAULT_ADDRESS;
+        if (!tokenAddr) throw new Error('Token address missing');
+        const receipt = await executeTx(amount, true, tokenAddr, vaultAddr);
+        await fetchOnchainBalance();
         return { success: true, receipt };
       } catch (e: any) {
-        console.error('depositTx failed', e);
-        // revert optimistic local update on failure: refetch from chain
-        try {
-          await fetchOnchainBalance(tokenAddr, account.value, prov);
-        } catch (_) {
-          // ignore fetch errors
-        }
-        return { success: false, error: e?.message || String(e) };
+        await fetchOnchainBalance();
+        return { success: false, error: e.message };
       }
     })();
-  }
+  };
 
-  function withdrawTx(amount: number) {
-    // update state immediately (no artificial delay)
-    vault.deposit = Number(Math.max(0, vault.deposit - amount).toFixed(6));
-    const aNum = Number(vault.available) || 0;
-    const newAvailable = aNum + amount;
-    vault.available = String(Number(newAvailable.toFixed(6)));
-    return Promise.resolve({ success: true });
-  }
-
-  function getVault() {
-    return vault;
-  }
+  const withdrawTx = (amount: number) => {
+    updateLocalState(amount, false);
+    return (async () => {
+      try {
+        const tokenAddr = resolvedContractAddress.value;
+        const vaultAddr = VAULT_ADDRESS;
+        if (!tokenAddr) throw new Error('Token address missing');
+        const receipt = await executeTx(amount, false, tokenAddr, vaultAddr);
+        await fetchOnchainBalance();
+        return { success: true, receipt };
+      } catch (e: any) {
+        await fetchOnchainBalance();
+        return { success: false, error: e.message };
+      }
+    })();
+  };
 
   return {
-    id,
     vault,
-    deposit,
-    withdraw,
-    // new tx-facing placeholders
     depositTx,
     withdrawTx,
     fetchOnchainBalance,
     refetch,
     isLoading: isFetching,
     isError,
-    getVault,
   };
 }
