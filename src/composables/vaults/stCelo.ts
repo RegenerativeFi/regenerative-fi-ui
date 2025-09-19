@@ -16,7 +16,7 @@ export default function useStCelo() {
     supplyBalance: '0',
   });
 
-  const strategy = createStCeloStrategy(vaultState);
+  const strategy = createStCeloStrategy();
 
   return useVault('stCelo', vaultState.value, strategy);
 }

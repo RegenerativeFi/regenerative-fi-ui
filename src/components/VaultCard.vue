@@ -125,8 +125,7 @@ const formattedDeposit = computed(() => {
 });
 
 const formattedApy = computed(() => {
-  const n = Number(props.apy) || 0;
-  return n % 1 === 0 ? String(n) : n.toFixed(1);
+  return Number(props.apy) || 0;
 });
 
 const handleSucess = () => {

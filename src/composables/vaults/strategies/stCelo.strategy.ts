@@ -4,6 +4,7 @@ import { VaultStrategy } from '../types';
 const DEFAULT_DECIMALS = 18;
 const MANAGER_ADDRESS = '0x0239b96D10a434a56CC9E09383077A0490cF9398';
 const VAULT_ADDRESS = '0x794163F6f73dA948D1392cedE445e851e9681cEc';
+const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
 
 const ERC20_ABI = [
   'function balanceOf(address) view returns (uint256)',
@@ -13,27 +14,27 @@ const MANAGER_ABI = ['function toCelo(uint256) view returns (uint256)'];
 
 async function readBalances(
   getProvider: () => ethers.providers.Provider,
-  userAddress: string,
-  assetAddress: string
+  userAddress: string
 ) {
   const provider = getProvider();
-  const token = new ethers.Contract(assetAddress, ERC20_ABI, provider);
+  const celoToken = new ethers.Contract(CELO_ADDRESS, ERC20_ABI, provider);
   const manager = new ethers.Contract(MANAGER_ADDRESS, MANAGER_ABI, provider);
   const vaultContract = new ethers.Contract(VAULT_ADDRESS, ERC20_ABI, provider);
 
-  const [rawTokenBalance, rawVaultBalance] = await Promise.all([
-    token.balanceOf(userAddress),
+  const [rawVaultBalance, rawCeloTokenBalance] = await Promise.all([
     vaultContract.balanceOf(userAddress),
+    celoToken.balanceOf(userAddress),
   ]);
 
   let decimals = DEFAULT_DECIMALS;
   try {
-    decimals = await token.decimals();
+    decimals = await celoToken.decimals();
   } catch {
     // fallback
   }
 
-  const stBalance = ethers.utils.formatUnits(rawTokenBalance, decimals);
+  // const stBalance = ethers.utils.formatUnits(rawTokenBalance, decimals);
+  const celoBalance = ethers.utils.formatUnits(rawCeloTokenBalance, decimals);
   const vaultRaw = rawVaultBalance.toString();
 
   let vaultSupply = vaultRaw;
@@ -45,7 +46,7 @@ async function readBalances(
   }
 
   return {
-    available: stBalance,
+    available: celoBalance,
     deposit: vaultSupply,
     depositRaw: vaultRaw,
   };
