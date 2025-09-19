@@ -3,7 +3,7 @@ import { VaultStrategy } from '../types';
 
 const DEFAULT_DECIMALS = 18;
 const MANAGER_ADDRESS = '0x0239b96D10a434a56CC9E09383077A0490cF9398';
-const VAULT_ADDRESS = '0x794163F6f73dA948D1392cedE445e851e9681cEc';
+const VAULT_ADDRESS = '0x1b8c73e2aB2FB34ADA2dFaCD1F59bEAb76B6C410';
 const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
 
 const ERC20_ABI = [
@@ -65,7 +65,7 @@ async function deposit(
   );
   const vaultContract = new ethers.Contract(
     VAULT_ADDRESS,
-    ['function deposit(uint256)'],
+    ['function deposit() payable'],
     signer
   );
 
@@ -77,7 +77,7 @@ async function deposit(
   }
 
   const amountBn = ethers.utils.parseUnits(String(amount), decimals);
-  return await vaultContract.deposit(amountBn);
+  return await vaultContract.deposit({ value: amountBn });
 }
 
 async function withdraw(

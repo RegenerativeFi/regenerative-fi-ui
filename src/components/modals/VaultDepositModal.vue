@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import BalModal from '@/components/_global/BalModal/BalModal.vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import BalActionSteps from '@/components/_global/BalActionSteps/BalActionSteps.vue';
@@ -8,9 +8,6 @@ import useWeb3 from '@/services/web3/useWeb3';
 import useStCelo from '@/composables/vaults/stCelo';
 import { useTxState } from '@/composables/useTxState';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
-import { TransactionActionInfo } from '@/types/transactions';
-import useTokenApprovalActions from '@/composables/approvals/useTokenApprovalActions';
-import { ApprovalAction } from '@/composables/approvals/types';
 import useTransactions from '@/composables/useTransactions';
 
 const props = withDefaults(
@@ -35,11 +32,9 @@ const loading = ref(false);
 const showFireworks = ref(false);
 
 const { account } = useWeb3();
-const { getTokenApprovalActions } = useTokenApprovalActions();
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
 
-const approvalActions = ref<TransactionActionInfo[]>([]);
 const stCeloComposable = computed(() => props.vaultComposable || useStCelo());
 
 const displayedAvailable = computed(() => {
@@ -49,7 +44,6 @@ const displayedAvailable = computed(() => {
 });
 
 const actions = computed(() => [
-  ...approvalActions.value,
   {
     label: 'Deposit',
     loadingLabel: 'Depositing',
@@ -72,7 +66,6 @@ const canDeposit = computed(() => {
 async function submit() {
   txState.init = true;
   try {
-    await setApprovalActions();
     txState.confirming = true;
 
     const tx = await stCeloComposable.value.depositTx(
@@ -106,6 +99,7 @@ function setMaxDeposit() {
 
 function handleClose() {
   showFireworks.value = false;
+  depositAmount.value = '';
   emit('close');
 }
 
@@ -127,49 +121,17 @@ function onStepsFailed() {
   loading.value = false;
 }
 
-async function setApprovalActions() {
-  if (!account.value) return;
-  const tokenAddr =
-    props.contractAddress || (props.vault && props.vault.contractAddress);
-  if (!tokenAddr) return;
-  const amt = Number(depositAmount.value);
-  if (amt <= 0) return;
-
-  const tokenApprovalActions = await getTokenApprovalActions({
-    amountsToApprove: [
-      {
-        address: tokenAddr,
-        amount: amt.toString(),
-      },
-    ],
-    spender:
-      props.vault?.contractAddress ||
-      '0x794163F6f73dA948D1392cedE445e851e9681cEc',
-    actionType: ApprovalAction.Locking,
-    forceMax: false,
-  });
-
-  approvalActions.value = tokenApprovalActions;
-}
-
 onMounted(async () => {
   const tokenAddr =
     props.contractAddress || (props.vault && props.vault.contractAddress);
   if (!tokenAddr) return;
 
   if (account.value) {
-    await setApprovalActions();
     try {
       await stCeloComposable.value.refetch();
     } catch (e) {
       console.error('Failed to fetch balances', e);
     }
-  }
-});
-
-watch(depositAmount, async () => {
-  if (account.value) {
-    await setApprovalActions();
   }
 });
 </script>
