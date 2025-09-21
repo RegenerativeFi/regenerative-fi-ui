@@ -34,4 +34,8 @@ export interface VaultStrategy {
     assetAddress: string,
     amount: string
   ) => Promise<ethers.ContractTransaction>;
+  getApy: (
+    getProvider: () => ethers.providers.Provider,
+    assetAddress: string
+  ) => Promise<number>;
 }

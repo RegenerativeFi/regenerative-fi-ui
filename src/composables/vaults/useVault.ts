@@ -10,6 +10,8 @@ export function useVault(
   initialState: Partial<Vault>,
   strategy: VaultStrategy
 ) {
+  const baseApy = initialState.apy || 0;
+
   const vault = reactive<Vault>({
     id,
     title: '',
@@ -57,8 +59,13 @@ export function useVault(
     );
     Object.assign(vault, balances);
     if (vault.tokenAddress) {
-      vault.price = priceFor(vault.tokenAddress);
+      vault.price = priceFor(vault.tokenAddress) || 0;
     }
+    const dynamicApy = await strategy.getApy(
+      getProviderSafe,
+      vault.contractAddress
+    );
+    vault.apy = baseApy + dynamicApy;
     return balances;
   };
 

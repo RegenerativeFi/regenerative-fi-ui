@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { VaultStrategy } from '../types';
+import { MerklApi } from '@merkl/api';
 
 const DEFAULT_DECIMALS = 18;
 const MANAGER_ADDRESS = '0x0239b96D10a434a56CC9E09383077A0490cF9398';
@@ -94,10 +95,25 @@ async function withdraw(
   return await vaultContract.withdraw(amount);
 }
 
+async function getApy(): Promise<number> {
+  const { status, data } = await MerklApi(
+    'https://api.merkl.xyz'
+  ).v4.campaigns.get({
+    query: {
+      mainParameter: VAULT_ADDRESS,
+    },
+  });
+  if (status !== 200) throw 'Failed to fetch APY dat';
+  console.debug('APY data:', data);
+
+  return data?.reduce((acc, curr) => acc + (curr.apr || 0), 0) || 0;
+}
+
 export function createStCeloStrategy(): VaultStrategy {
   return {
     readBalances,
     deposit,
     withdraw,
+    getApy,
   };
 }
