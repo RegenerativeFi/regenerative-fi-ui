@@ -5,7 +5,6 @@ import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import BalActionSteps from '@/components/_global/BalActionSteps/BalActionSteps.vue';
 import ConfirmationIndicator from '@/components/web3/ConfirmationIndicator.vue';
 import useWeb3 from '@/services/web3/useWeb3';
-import useStCelo from '@/composables/vaults/stCelo';
 import { useTxState } from '@/composables/useTxState';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import useTransactions from '@/composables/useTransactions';
@@ -35,12 +34,14 @@ const { account } = useWeb3();
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
 
-const stCeloComposable = computed(() => props.vaultComposable || useStCelo());
+const stCeloComposable = computed(() => {
+  return props.vaultComposable;
+});
 
 const displayedAvailable = computed(() => {
   if (Number(props.available) > 0) return String(props.available);
 
-  return String(stCeloComposable.value.vault.available);
+  return String(stCeloComposable.value?.vault?.available || '0');
 });
 
 const actions = computed(() => [
@@ -68,14 +69,19 @@ async function submit() {
   try {
     txState.confirming = true;
 
-    const tx = await stCeloComposable.value.depositTx(
+    const tx = await stCeloComposable.value?.depositTx?.(
       Number(depositAmount.value)
     );
+
+    if (!tx) {
+      throw new Error('Failed to get transaction from composable');
+    }
+
     addTransaction({
       id: tx.hash,
       type: 'tx',
       action: 'invest',
-      summary: `Deposit ${depositAmount.value} stCELO`,
+      summary: `Deposit ${depositAmount.value} CELO`,
     });
     return tx;
   } catch (error) {
@@ -100,6 +106,9 @@ function setMaxDeposit() {
 function handleClose() {
   showFireworks.value = false;
   depositAmount.value = '';
+  txState.confirmed = false;
+  txState.receipt = undefined;
+  txState.confirming = false;
   emit('close');
 }
 
@@ -113,7 +122,9 @@ function onStepsSuccess(receipt: TransactionReceipt, confirmedAt?: string) {
   emit('success', receipt);
 
   // The new useVault refetches on its own, so we just trigger it.
-  stCeloComposable.value.refetch();
+  if (stCeloComposable.value?.refetch) {
+    stCeloComposable.value.refetch();
+  }
 }
 
 function onStepsFailed() {
@@ -128,7 +139,9 @@ onMounted(async () => {
 
   if (account.value) {
     try {
-      await stCeloComposable.value.refetch();
+      if (stCeloComposable.value?.refetch) {
+        await stCeloComposable.value.refetch();
+      }
     } catch (e) {
       console.error('Failed to fetch balances', e);
     }
@@ -149,70 +162,107 @@ onMounted(async () => {
       </div>
     </template>
 
-    <div>
-      <label class="block mb-3 text-sm">Deposit</label>
-
-      <div class="p-4 bg-white rounded-lg border border-gray-200">
-        <div class="flex justify-between items-start">
-          <input
-            v-model="depositAmount"
-            type="number"
-            min="0"
-            step="any"
-            :disabled="loading"
-            placeholder="0.00"
-            class="w-full text-4xl font-semibold leading-tight placeholder-gray-300 bg-transparent outline-none"
-            @input="onDepositInput"
-          />
-
-          <div class="flex flex-col items-end ml-4">
-            <div
-              class="flex gap-3 items-center py-2 px-3 bg-gray-50 rounded-lg border border-gray-100"
-            >
-              <div
-                class="flex justify-center items-center w-8 h-8 bg-white rounded-full"
-              >
-                <img :src="vault?.icon" alt="token" class="w-6 h-6" />
-              </div>
-              <div class="font-medium">CELO</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center text-sm text-gray-500">
-          <div>${{ formattedFiat }}</div>
-          <div class="flex gap-2 items-center">
-            <div>
-              Available:
-              <span class="font-medium">{{ displayedAvailable }}</span>
-            </div>
-            <button
-              class="text-sm font-medium underline"
-              :disabled="loading"
-              @click.prevent="setMaxDeposit"
-            >
-              MAX
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="mt-4"><hr class="border-t border-gray-200" /></div>
-    </div>
-
     <transition>
-      <BalActionSteps
-        v-if="!txState.confirmed || !txState.receipt"
-        :actions="actions"
-        primaryActionType="invest"
-        :disabled="!canDeposit || loading"
-        class="mt-4"
-        @success="onStepsSuccess"
-        @failed="onStepsFailed"
-      />
+      <div v-if="!txState.confirmed || !txState.receipt">
+        <div>
+          <label class="block mb-3 text-sm">Deposit</label>
+
+          <div class="p-4 bg-white rounded-lg border border-gray-200">
+            <div class="flex justify-between items-start">
+              <input
+                v-model="depositAmount"
+                type="number"
+                min="0"
+                step="any"
+                :disabled="loading"
+                placeholder="0.00"
+                class="w-full text-4xl font-semibold leading-tight placeholder-gray-300 bg-transparent outline-none"
+                @input="onDepositInput"
+              />
+
+              <div class="flex flex-col items-end ml-4">
+                <div
+                  class="flex gap-3 items-center py-2 px-3 bg-gray-50 rounded-lg border border-gray-100"
+                >
+                  <div
+                    class="flex justify-center items-center w-8 h-8 bg-white rounded-full"
+                  >
+                    <img :src="vault?.icon" alt="token" class="w-6 h-6" />
+                  </div>
+                  <div class="font-medium">CELO</div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="flex justify-between items-center text-sm text-gray-500"
+            >
+              <div>${{ formattedFiat }}</div>
+              <div class="flex gap-2 items-center">
+                <div>
+                  Available:
+                  <span class="font-medium">{{ displayedAvailable }}</span>
+                </div>
+                <button
+                  class="text-sm font-medium underline"
+                  :disabled="loading"
+                  @click.prevent="setMaxDeposit"
+                >
+                  MAX
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4"><hr class="border-t border-gray-200" /></div>
+        </div>
+
+        <BalActionSteps
+          :actions="actions"
+          primaryActionType="invest"
+          :disabled="!canDeposit || loading"
+          class="mt-4"
+          @success="onStepsSuccess"
+          @failed="onStepsFailed"
+        />
+      </div>
       <div v-else class="mt-4">
-        <ConfirmationIndicator :txReceipt="txState.receipt" />
+        <!-- Success State with better UI -->
+        <div class="text-center">
+          <!-- Success Title -->
+          <h3 class="mb-2 text-2xl font-bold text-gray-900">
+            Deposit Successful!
+          </h3>
+
+          <!-- Deposit Amount -->
+          <p class="mb-6 text-lg text-gray-600">
+            You added
+            <span class="font-semibold text-gray-900"
+              >{{ depositAmount }} CELO</span
+            >
+            to the CELO vault.
+          </p>
+
+          <!-- Updated Balance Card -->
+          <div
+            class="p-4 mb-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200"
+          >
+            <p class="mb-1 text-sm text-gray-600">Updated Vault Balance</p>
+            <div class="flex gap-2 justify-center items-center">
+              <img :src="vault?.icon" alt="token" class="w-6 h-6" />
+              <span class="text-2xl font-bold text-gray-900">{{
+                stCeloComposable?.vault?.deposit
+                  ? Number(stCeloComposable.vault.deposit).toFixed(5)
+                  : '0.00000'
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Transaction Details -->
+          <ConfirmationIndicator :txReceipt="txState.receipt" />
+        </div>
+
         <BalBtn
-          class="flex-1 mt-4 w-full"
+          class="flex-1 mt-6 w-full"
           label="Close"
           color="gradient"
           :disabled="loading"
