@@ -10,6 +10,8 @@ export interface Vault {
   icon?: string;
   contractAddress: string;
   supplyBalance?: string;
+  tokenAddress?: string;
+  price?: number;
 }
 
 export interface VaultStrategy {

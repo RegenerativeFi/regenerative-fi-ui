@@ -14,7 +14,11 @@
             <p class="text-xl font-medium">
               ${{
                 vaults
-                  .reduce((acc, vault) => acc + Number(vault.deposit), 0)
+                  .reduce(
+                    (acc, vault) =>
+                      acc + Number(vault.deposit) * (vault.price || 0),
+                    0
+                  )
                   .toFixed(2)
               }}
             </p>

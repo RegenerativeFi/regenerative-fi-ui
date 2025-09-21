@@ -2,6 +2,7 @@ import { reactive, computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { ethers } from 'ethers';
 import useWeb3 from '@/services/web3/useWeb3';
+import { useTokens } from '@/providers/tokens.provider';
 import { Vault, VaultStrategy } from './types';
 
 export function useVault(
@@ -21,6 +22,7 @@ export function useVault(
   });
 
   const { account, getProvider } = useWeb3();
+  const { priceFor } = useTokens();
 
   const getProviderSafe = (): ethers.providers.Provider => {
     try {
@@ -54,6 +56,9 @@ export function useVault(
       vault.contractAddress
     );
     Object.assign(vault, balances);
+    if (vault.tokenAddress) {
+      vault.price = priceFor(vault.tokenAddress);
+    }
     return balances;
   };
 

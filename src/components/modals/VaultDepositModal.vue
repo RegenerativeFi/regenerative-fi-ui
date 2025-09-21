@@ -8,6 +8,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 import { useTxState } from '@/composables/useTxState';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import useTransactions from '@/composables/useTransactions';
+import useNumbers from '@/composables/useNumbers';
 
 const props = withDefaults(
   defineProps<{
@@ -33,15 +34,18 @@ const showFireworks = ref(false);
 const { account } = useWeb3();
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
+const { toFiat } = useNumbers();
 
 const stCeloComposable = computed(() => {
   return props.vaultComposable;
 });
 
 const displayedAvailable = computed(() => {
-  if (Number(props.available) > 0) return String(props.available);
-
-  return String(stCeloComposable.value?.vault?.available || '0');
+  let val =
+    Number(props.available) > 0
+      ? Number(props.available)
+      : Number(stCeloComposable.value?.vault?.available || '0');
+  return val.toLocaleString('en-US', { maximumFractionDigits: 5 });
 });
 
 const actions = computed(() => [
@@ -56,7 +60,12 @@ const actions = computed(() => [
 
 const formattedFiat = computed(() => {
   const amt = Number(depositAmount.value) || 0;
-  return (amt * 1).toFixed(2);
+  const tokenAddress = stCeloComposable.value?.vault?.tokenAddress;
+  if (tokenAddress) {
+    const fiat = toFiat(amt, tokenAddress);
+    return Number(fiat).toLocaleString('en-US', { maximumFractionDigits: 2 });
+  }
+  return (amt * 1).toFixed(2); // fallback
 });
 
 const canDeposit = computed(() => {
