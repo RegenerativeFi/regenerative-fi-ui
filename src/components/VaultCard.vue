@@ -12,7 +12,7 @@
 
         <div v-if="!placeholder" class="flex items-center">
           <div
-            class="flex gap-1 items-center py-2 px-4 text-sm bg-gray-100 rounded-lg"
+            class="flex gap-1 items-center py-2 px-4 text-sm bg-gray-100 dark:bg-gray-800 rounded-lg"
           >
             <span class="font-medium">APY:</span>
             <span class="font-semibold">{{ formattedApy }}%</span>
@@ -24,7 +24,9 @@
       </div>
     </template>
     <!-- Header divider (extend to card edges compensating internal padding) -->
-    <div class="-mx-6"><hr class="border-t border-gray-200" /></div>
+    <div class="-mx-6">
+      <hr class="border-t border-gray-200 dark:border-gray-700" />
+    </div>
 
     <div>
       <div
@@ -36,7 +38,7 @@
 
       <div v-else class="mt-4">
         <div
-          class="p-6 text-center rounded-xl border-2 border-dashed border-teal-200 bg-teal-50"
+          class="p-6 text-center rounded-xl border-2 border-dashed border-teal-200 bg-teal-50 dark:bg-teal-900/20 dark:border-teal-800"
         >
           <div class="text-sm text-gray-500">My Deposit</div>
           <div class="flex gap-3 justify-center items-center mt-3">
@@ -46,13 +48,14 @@
         </div>
 
         <!-- Footer divider (extend to card edges compensating internal padding) -->
-        <div class="my-6 -mx-6"><hr class="border-t border-gray-200" /></div>
+        <hr class="my-6 -mx-6 border-t border-gray-200 dark:border-gray-700" />
 
         <div class="grid grid-cols-2 gap-4">
           <!-- Abrir modal en lugar de emitir directamente -->
           <BalBtn
             label="Withdraw"
             outline
+            color="blue"
             class="w-full h-12"
             @click="openWithdrawModal"
           />

@@ -176,7 +176,9 @@ onMounted(async () => {
         <div>
           <label class="block mb-3 text-sm">Deposit</label>
 
-          <div class="p-4 bg-white rounded-lg border border-gray-200">
+          <div
+            class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+          >
             <div class="flex justify-between items-start">
               <input
                 v-model="depositAmount"
@@ -191,10 +193,10 @@ onMounted(async () => {
 
               <div class="flex flex-col items-end ml-4">
                 <div
-                  class="flex gap-3 items-center py-2 px-3 bg-gray-50 rounded-lg border border-gray-100"
+                  class="flex gap-3 items-center py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700"
                 >
                   <div
-                    class="flex justify-center items-center w-8 h-8 bg-white rounded-full"
+                    class="flex justify-center items-center w-8 h-8 bg-white dark:bg-gray-800 rounded-full"
                   >
                     <img :src="vault?.icon" alt="token" class="w-6 h-6" />
                   </div>
@@ -222,7 +224,9 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <div class="mt-4"><hr class="border-t border-gray-200" /></div>
+          <div class="mt-4">
+            <hr class="border-t border-gray-200 dark:border-gray-700" />
+          </div>
         </div>
 
         <BalActionSteps
@@ -238,14 +242,14 @@ onMounted(async () => {
         <!-- Success State with better UI -->
         <div class="text-center">
           <!-- Success Title -->
-          <h3 class="mb-2 text-2xl font-bold text-gray-900">
+          <h3 class="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
             Deposit Successful!
           </h3>
 
           <!-- Deposit Amount -->
-          <p class="mb-6 text-lg text-gray-600">
+          <p class="mb-6 text-lg text-gray-600 dark:text-gray-400">
             You added
-            <span class="font-semibold text-gray-900"
+            <span class="font-semibold text-gray-900 dark:text-gray-100"
               >{{ depositAmount }} CELO</span
             >
             to the CELO vault.
@@ -253,16 +257,19 @@ onMounted(async () => {
 
           <!-- Updated Balance Card -->
           <div
-            class="p-4 mb-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200"
+            class="p-4 mb-6 bg-gradient-to-r from-blue-50 dark:from-gray-800 to-green-50 dark:to-gray-900 rounded-lg border border-blue-200 dark:border-gray-700"
           >
             <p class="mb-1 text-sm text-gray-600">Updated Vault Balance</p>
             <div class="flex gap-2 justify-center items-center">
               <img :src="vault?.icon" alt="token" class="w-6 h-6" />
-              <span class="text-2xl font-bold text-gray-900">{{
-                stCeloComposable?.vault?.deposit
-                  ? Number(stCeloComposable.vault.deposit).toFixed(5)
-                  : '0.00000'
-              }}</span>
+              <span
+                class="text-2xl font-bold text-gray-900 dark:text-gray-100"
+                >{{
+                  stCeloComposable?.vault?.deposit
+                    ? Number(stCeloComposable.vault.deposit).toFixed(5)
+                    : '0.00000'
+                }}</span
+              >
             </div>
           </div>
 

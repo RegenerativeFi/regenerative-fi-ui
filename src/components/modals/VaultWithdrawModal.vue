@@ -256,28 +256,28 @@ onMounted(async () => {
       <div class="grid grid-cols-5 gap-3 mb-2">
         <button
           type="button"
-          class="flex col-span-1 justify-center items-center h-12 font-semibold bg-gray-50 rounded-xl"
+          class="flex col-span-1 justify-center items-center h-12 font-semibold bg-gray-50 dark:bg-gray-800 rounded-xl"
           @click.prevent="selectPercent(10)"
         >
           10%
         </button>
         <button
           type="button"
-          class="flex col-span-1 justify-center items-center h-12 font-semibold bg-gray-50 rounded-xl"
+          class="flex col-span-1 justify-center items-center h-12 font-semibold bg-gray-50 dark:bg-gray-800 rounded-xl"
           @click.prevent="selectPercent(25)"
         >
           25%
         </button>
         <button
           type="button"
-          class="flex col-span-1 justify-center items-center h-12 font-semibold bg-gray-50 rounded-xl"
+          class="flex col-span-1 justify-center items-center h-12 font-semibold bg-gray-50 dark:bg-gray-800 rounded-xl"
           @click.prevent="selectPercent(50)"
         >
           50%
         </button>
         <button
           type="button"
-          class="flex col-span-1 justify-center items-center h-12 font-semibold bg-gray-50 rounded-xl"
+          class="flex col-span-1 justify-center items-center h-12 font-semibold bg-gray-50 dark:bg-gray-800 rounded-xl"
           @click.prevent="selectPercent(100)"
         >
           100%
@@ -285,7 +285,7 @@ onMounted(async () => {
 
         <div class="col-span-1">
           <div
-            class="flex justify-end items-center px-2 h-12 rounded-lg border"
+            class="flex justify-end items-center px-2 h-12 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
           >
             <input
               v-model="withdrawPercent"
@@ -308,7 +308,7 @@ onMounted(async () => {
       </div>
 
       <div
-        class="py-2 text-center bg-pill-light rounded-lg border border-pool-tvl border-dashed"
+        class="py-2 text-center bg-pill-light dark:bg-gray-800 rounded-lg border border-pool-tvl border-dashed"
       >
         <div class="flex gap-3 justify-between px-4">
           <div class="text-xl font-semibold text-refi-text">
@@ -320,7 +320,7 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-      <div class="mt-4"><hr class="border-t border-gray-200" /></div>
+      <hr class="mt-4 border-t border-gray-200 dark:border-gray-700" />
     </div>
 
     <transition>
