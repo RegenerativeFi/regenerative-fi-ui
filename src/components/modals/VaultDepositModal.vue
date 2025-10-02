@@ -275,7 +275,7 @@ onMounted(async () => {
           label="Close"
           color="gradient"
           :disabled="loading"
-          @click="$emit('close')"
+          @click="handleClose"
         />
       </div>
     </transition>
