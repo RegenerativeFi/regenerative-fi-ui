@@ -11,13 +11,13 @@ import { useTokens } from '@/providers/tokens.provider';
 import useWeb3 from '@/services/web3/useWeb3';
 import { bnum } from '@/lib/utils';
 import { formatUnits } from '@ethersproject/units';
-import ClaimRewardsBtn from '@/components/btns/ClaimRewardsBtn/ClaimRewardsBtn.vue';
 // import TokenPills from '@/components/tables/PoolsTable/TokenPills/TokenPills.vue';
 // import PoolWarningTooltip from '@/components/pool/PoolWarningTooltip.vue';
 // import { isSameAddress } from '@/lib/utils';
 // import { PoolType } from '@regenerative/sdk';
 // import axios from 'axios';
 import { useRewardsQuery } from '@/composables/queries/useRewardsQuery';
+import ClaimMerklRewardsBtn from '@/components/btns/ClaimMerklRewardsBtn/ClaimMerklRewardsBtn.vue';
 
 /**
  * TYPES
@@ -71,13 +71,6 @@ const columns = ref<ColumnDefinition<RewardRow>[]>([
     width: 150,
     totalsCell: 'totalValueCell',
     accessor: ({ totalValue }) => fNum(totalValue, FNumFormats.fiat),
-  },
-  {
-    name: '',
-    id: 'claim',
-    accessor: 'claim',
-    Cell: 'claimColumnCell',
-    width: 150,
   },
 ]);
 
@@ -215,20 +208,13 @@ const noRewardsLabel = computed(() => {
       </template>
 
       <template #totalValueCell>
-        <div class="flex justify-end">
-          {{ fNum(totalValue, FNumFormats.fiat) }}
-        </div>
-      </template>
-
-      <template
-        #claimColumnCell="{ gauge, totalValue: rowTotalValue, rawReward }"
-      >
-        <div class="py-4 px-6">
-          <ClaimRewardsBtn
-            :gauge="gauge"
-            :fiatValue="rowTotalValue"
-            rewardType="Merkl"
-            :rewards="[rawReward]"
+        <div class="flex flex-row gap-6 justify-end items-center">
+          <div class="flex justify-end">
+            {{ fNum(totalValue, FNumFormats.fiat) }}
+          </div>
+          <ClaimMerklRewardsBtn
+            :fiatValue="totalValue"
+            :rewards="[...rewardsData.map(r => r.rawReward)]"
           />
         </div>
       </template>
