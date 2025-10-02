@@ -3,6 +3,7 @@ import { useQuery, UseQueryOptions } from '@tanstack/vue-query';
 import QUERY_KEYS from '@/constants/queryKeys';
 import useWeb3 from '@/services/web3/useWeb3';
 import { computed, reactive } from 'vue';
+import { VAULT_ADDRESS } from '../vaults/strategies/stCelo.strategy';
 
 // Module-level (shared) state kept for backwards compatibility if needed
 type QueryResponse =
@@ -70,14 +71,16 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
           query: {
             chainId: ['42220'],
             breakdownPage: 0,
+            claimableOnly: true,
             reloadChainId: 42220,
           },
         });
+
+      console.debug('Merkl rewards data fetched');
       console.debug({ data });
 
       if (!data) return null;
 
-      // Obtener todas las campañas activas en una sola llamada
       const { data: campaignsData } = await MerklApi(
         'https://api.merkl.xyz'
       ).v4.campaigns.get({
@@ -86,12 +89,29 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
           mainProtocolId: 'balancer',
         },
       });
-      console.debug({ campaignsData });
+
+      const { data: vaultsCampaignsData } = await MerklApi(
+        'https://api.merkl.xyz'
+      ).v4.campaigns.get({
+        query: {
+          mainParameter: VAULT_ADDRESS,
+        },
+      });
+
+      console.debug({ campaignsData, vaultsCampaignsData });
 
       // Crear un Set de campaignIds válidos
       const validCampaignIds = new Set<string>();
       if (campaignsData) {
         campaignsData.forEach((campaign: any) => {
+          if (campaign.campaignId) {
+            validCampaignIds.add(campaign.campaignId);
+          }
+        });
+      }
+
+      if (vaultsCampaignsData) {
+        vaultsCampaignsData.forEach((campaign: any) => {
           if (campaign.campaignId) {
             validCampaignIds.add(campaign.campaignId);
           }
@@ -104,8 +124,11 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
         rewards: chainData.rewards.filter(reward => {
           if (!reward.breakdowns || reward.breakdowns.length === 0)
             return false;
-          const campaignId = reward.breakdowns[0]?.campaignId;
-          return campaignId && validCampaignIds.has(campaignId);
+          const campaignsIds = reward.breakdowns.map(b => b.campaignId);
+          return (
+            campaignsIds.length > 0 &&
+            campaignsIds.some(id => validCampaignIds.has(id))
+          );
         }),
       }));
 
