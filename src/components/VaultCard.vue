@@ -50,20 +50,21 @@
         <!-- Footer divider (extend to card edges compensating internal padding) -->
         <hr class="my-6 -mx-6 border-t border-gray-200 dark:border-gray-700" />
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-row gap-4 items-center">
           <!-- Abrir modal en lugar de emitir directamente -->
           <BalBtn
+            v-if="Number(deposit) > 0"
             label="Withdraw"
             outline
             color="blue"
-            class="w-full h-12"
+            class="flex-1 w-full h-12"
             @click="openWithdrawModal"
           />
 
           <BalBtn
             label="Deposit"
             color="gradient"
-            class="w-full h-12"
+            class="flex-1 w-full h-12"
             @click="openDepositModal"
           />
         </div>
