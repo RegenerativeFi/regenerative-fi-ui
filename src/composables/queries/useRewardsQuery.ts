@@ -86,7 +86,7 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
       ).v4.campaigns.get({
         query: {
           chainId: 42220,
-          mainProtocolId: 'balancer',
+          mainProtocolId: 'regenerative',
         },
       });
 
@@ -97,8 +97,6 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
           mainParameter: VAULT_ADDRESS,
         },
       });
-
-      console.debug({ campaignsData, vaultsCampaignsData });
 
       // Crear un Set de campaignIds válidos
       const validCampaignIds = new Set<string>();
@@ -131,8 +129,6 @@ export function useRewardsQuery(options: UseQueryOptions = {}) {
           );
         }),
       }));
-
-      console.debug({ filteredData });
 
       return filteredData;
     } catch (err) {
