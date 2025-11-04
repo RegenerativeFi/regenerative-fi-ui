@@ -1,17 +1,19 @@
 <template>
-  <div class="xl:container flex flex-col gap-8 px-4 xl:mx-auto pt-[30px]">
-    <div class="flex flex-row gap-4">
-      <BalCard class="flex-1 p-4 card-gap">
+  <div
+    class="xl:container flex flex-col gap-4 sm:gap-8 px-3 sm:px-4 pt-5 xl:mx-auto sm:pt-[30px]"
+  >
+    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+      <BalCard class="flex-1 p-3 sm:p-4 card-gap">
         <template #header>
           <div class="flex flex-row flex-1 justify-between items-center">
-            <h4 class="text-base font-normal text-[#7B7B7B]">
+            <h4 class="text-sm sm:text-base font-normal text-[#7B7B7B]">
               Your Vaults Deposits
             </h4>
           </div>
         </template>
         <div>
           <div class="flex flex-row gap-2 items-center">
-            <p class="text-xl font-medium">
+            <p class="text-lg sm:text-xl font-medium">
               ${{
                 vaults
                   .reduce(
@@ -26,15 +28,17 @@
         </div>
       </BalCard>
 
-      <BalCard class="flex-1 p-4 card-gap">
+      <BalCard class="flex-1 p-3 sm:p-4 card-gap">
         <template #header>
           <div class="flex flex-row flex-1 justify-between items-center">
-            <h4 class="text-base font-normal text-[#7B7B7B]">Average APY</h4>
+            <h4 class="text-sm sm:text-base font-normal text-[#7B7B7B]">
+              Average APY
+            </h4>
           </div>
         </template>
         <div>
           <div class="flex flex-row gap-2 items-center">
-            <p class="text-xl font-medium">
+            <p class="text-lg sm:text-xl font-medium">
               {{
                 vaults.reduce((acc, vault) => acc + vault.apy, 0) /
                 vaults.length
@@ -45,9 +49,11 @@
       </BalCard>
     </div>
     <div>
-      <h2 class="text-xl font-medium leading-5">Regenerative Vaults</h2>
+      <h2 class="text-lg sm:text-xl font-medium leading-5">
+        Regenerative Vaults
+      </h2>
     </div>
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       <!-- Primera columna: la única VaultCard real -->
       <div>
         <template v-if="!isLoading">
@@ -74,7 +80,9 @@
 
         <template v-else>
           <!-- skeleton simple mientras carga -->
-          <div class="p-6 h-40 bg-gray-100 rounded animate-pulse"></div>
+          <div
+            class="p-6 h-40 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"
+          ></div>
         </template>
       </div>
 

@@ -238,7 +238,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <BalModal :show="show" :fireworks="showFireworks" @close="handleClose">
+  <BalModal
+    :show="show"
+    :fitContent="true"
+    :fireworks="showFireworks"
+    @close="handleClose"
+  >
     <template #header>
       <div class="flex gap-3 items-center">
         <div class="flex justify-center items-center w-10 h-10 rounded-full">

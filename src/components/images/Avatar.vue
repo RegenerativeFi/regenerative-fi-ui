@@ -56,9 +56,12 @@ onMounted(() => (isMounted.value = true));
     :style="{
       width: `${size}px`,
       height: `${size}px`,
+      minWidth: `${size}px`,
+      minHeight: `${size}px`,
       background: 'white',
+      objectFit: 'cover',
     }"
-    class="inline-block leading-none rounded-full shadow-sm"
+    class="inline-block flex-shrink-0 leading-none rounded-full shadow-sm aspect-square"
     @error="error = true"
   />
   <div

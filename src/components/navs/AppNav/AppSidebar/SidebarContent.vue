@@ -43,6 +43,10 @@ const navLinks = [
     goal: Goals.ClickNavPools,
   },
   {
+    label: 'Vaults',
+    path: '/vaults',
+  },
+  {
     label: t('dashboard'),
     path: '/dashboard',
     goal: Goals.ClickNavPools,

@@ -1,5 +1,6 @@
 import '@/assets/css/tailwind.css';
 import '@/assets/css/index.css';
+import '@/assets/css/fixes.css';
 import 'vue3-virtual-scroller/dist/vue3-virtual-scroller.css';
 
 import { createApp } from 'vue';

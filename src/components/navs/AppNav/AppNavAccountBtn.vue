@@ -13,11 +13,11 @@ const { isLoadingProfile, profile, account } = useWeb3();
 
 const avatarSize = computed(() => {
   if (bp.value === 'sm') {
-    return 35;
+    return 28;
   } else if (['md', 'lg'].includes(bp.value)) {
-    return 40;
+    return 32;
   } else {
-    return 20;
+    return 24;
   }
 });
 </script>
@@ -58,5 +58,3 @@ const avatarSize = computed(() => {
     <AppNavSettings />
   </BalPopover>
 </template>
-
-
