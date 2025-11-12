@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import BalModal from '@/components/_global/BalModal/BalModal.vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import BalActionSteps from '@/components/_global/BalActionSteps/BalActionSteps.vue';
+import BalAlert from '@/components/_global/BalAlert/BalAlert.vue';
 import ConfirmationIndicator from '@/components/web3/ConfirmationIndicator.vue';
 import useWeb3 from '@/services/web3/useWeb3';
 import useStCelo from '@/composables/vaults/stCelo';
@@ -16,6 +17,7 @@ import useNetwork from '@/composables/useNetwork';
 import { ApprovalAction } from '@/composables/approvals/types';
 import { useSwapState } from '@/composables/swap/useSwapState';
 import { ethers } from 'ethers';
+import { useTokens } from '@/providers/tokens.provider';
 
 const props = withDefaults(
   defineProps<{
@@ -44,6 +46,7 @@ const { account } = useWeb3();
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
 const { networkConfig } = useNetwork();
+const { priceFor } = useTokens();
 const stCeloComposable = computed(() => props.vaultComposable || useStCelo());
 const { getTokenApprovalActions } = useTokenApprovalActions();
 const tokenApprovalActions = ref<TransactionActionInfo[]>([]);
@@ -145,7 +148,8 @@ const canWithdraw = computed(
     rawWithdrawAmount.value.gt(0) &&
     rawWithdrawAmount.value.lte(
       ethers.BigNumber.from(props.availableRaw || '0')
-    )
+    ) &&
+    (!showSlippageAlert.value || acknowledgedSlippage.value)
 );
 
 async function submitWithdraw() {
@@ -235,15 +239,61 @@ onMounted(async () => {
     }
   }
 });
+
+const slippageThreshold = 3; // 3% threshold
+const showSlippageAlert = ref(false);
+const acknowledgedSlippage = ref(false);
+
+watch(
+  [tokenInAmount, tokenOutAmount],
+  async ([newTokenInAmount, newTokenOutAmount]) => {
+    const providedRatio =
+      newTokenOutAmount && newTokenInAmount > '0'
+        ? parseFloat(newTokenOutAmount) / parseFloat(newTokenInAmount)
+        : 0;
+    const ratioDifference = await calculateRatioDifferenceStCeloCelo(
+      providedRatio
+    );
+
+    if (ratioDifference !== null && ratioDifference > slippageThreshold) {
+      showSlippageAlert.value = true;
+    } else {
+      showSlippageAlert.value = false;
+      acknowledgedSlippage.value = false;
+    }
+  }
+);
+
+async function calculateRatioDifferenceStCeloCelo(
+  providedRatio: number
+): Promise<number | null> {
+  try {
+    const priceStCelo = priceFor(props.contractAddress);
+    const priceCelo = priceFor('0x471EcE3750Da237f93B8E339c536989b8978a438');
+
+    if (priceStCelo > 0 && priceCelo > 0) {
+      const marketRatio = priceStCelo / priceCelo;
+
+      if (marketRatio < providedRatio) {
+        return 1;
+      }
+
+      const absoluteDifference = Math.abs(providedRatio - marketRatio);
+      const relativeDifference = (absoluteDifference / marketRatio) * 100;
+
+      return relativeDifference;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error calculating ratio difference for stCELO/CELO:', error);
+    return null;
+  }
+}
 </script>
 
 <template>
-  <BalModal
-    :show="show"
-    :fitContent="true"
-    :fireworks="showFireworks"
-    @close="handleClose"
-  >
+  <BalModal :show="show" :fireworks="showFireworks" @close="handleClose">
     <template #header>
       <div class="flex gap-3 items-center">
         <div class="flex justify-center items-center w-10 h-10 rounded-full">
@@ -329,25 +379,60 @@ onMounted(async () => {
     </div>
 
     <transition>
-      <BalActionSteps
-        v-if="!txState.confirmed || !txState.receipt"
-        :actions="actions"
-        primaryActionType="withdraw"
-        :disabled="!canWithdraw || loading"
-        class="mt-4"
-        @success="onStepsSuccess"
-        @failed="onStepsFailed"
-      />
-      <div v-else class="mt-4">
-        <ConfirmationIndicator :txReceipt="txState.receipt" />
-        <BalBtn
-          class="flex-1 mt-4 w-full"
-          label="Close"
-          color="gradient"
-          :disabled="loading"
-          @click="$emit('close')"
-        />
-      </div>
+      <BalAlert
+        v-if="showSlippageAlert"
+        type="warning"
+        size="md"
+        block
+        title="High demand detected"
+        class="p-4 mb-4"
+      >
+        <div class="flex flex-col gap-4 text-sm">
+          <p class="text-gray-700 dark:text-gray-300">
+            Current demand may cause significant slippage on your withdrawal.
+            You can:
+          </p>
+          <ul
+            class="ml-1 space-y-2 list-disc list-inside text-gray-700 dark:text-gray-300"
+          >
+            <li>Continue anyway</li>
+            <li>Withdraw less to reduce slippage</li>
+            <li>Wait for lower demand to receive more CELO</li>
+          </ul>
+          <label
+            class="flex gap-3 items-center mt-3 cursor-pointer select-none"
+          >
+            <input
+              v-model="acknowledgedSlippage"
+              type="checkbox"
+              class="rounded"
+            />
+            <span class="font-medium text-gray-700 dark:text-gray-300">
+              I acknowledge the slippage and want to proceed
+            </span>
+          </label>
+        </div>
+      </BalAlert>
     </transition>
+
+    <BalActionSteps
+      v-if="!txState.confirmed || !txState.receipt"
+      :actions="actions"
+      primaryActionType="withdraw"
+      :disabled="!canWithdraw || loading"
+      class="mt-4"
+      @success="onStepsSuccess"
+      @failed="onStepsFailed"
+    />
+    <div v-else class="mt-4">
+      <ConfirmationIndicator :txReceipt="txState.receipt" />
+      <BalBtn
+        class="flex-1 mt-4 w-full"
+        label="Close"
+        color="gradient"
+        :disabled="loading"
+        @click="$emit('close')"
+      />
+    </div>
   </BalModal>
 </template>

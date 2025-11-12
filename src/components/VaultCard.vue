@@ -53,22 +53,14 @@
         <div class="flex flex-row gap-4 items-center">
           <!-- Abrir modal en lugar de emitir directamente -->
 
-          <BalTooltip
-            class="flex-1"
-            text="Withdrawals for this vault are currently paused, will be available again soon."
-          >
-            <template #activator>
-              <BalBtn
-                v-if="Number(deposit) > 0"
-                label="Withdraw"
-                outline
-                color="blue"
-                disabled
-                class="flex-1 w-full h-12"
-                @click="openWithdrawModal"
-              />
-            </template>
-          </BalTooltip>
+          <BalBtn
+            v-if="Number(deposit) > 0"
+            label="Withdraw"
+            outline
+            color="blue"
+            class="flex-1 w-full h-12"
+            @click="openWithdrawModal"
+          />
 
           <BalBtn
             label="Deposit"
@@ -109,7 +101,6 @@ import { ref, computed } from 'vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import VaultDepositModal from '@/components/modals/VaultDepositModal.vue';
 import VaultWithdrawModal from '@/components/modals/VaultWithdrawModal.vue';
-import BalTooltip from './_global/BalTooltip/BalTooltip.vue';
 
 const props = defineProps<{
   title?: string;
