@@ -40,12 +40,16 @@ const stCeloComposable = computed(() => {
   return props.vaultComposable;
 });
 
+const availableAmount = computed(() => {
+  return Number(props.available) > 0
+    ? Number(props.available)
+    : Number(stCeloComposable.value?.vault?.available || '0');
+});
+
 const displayedAvailable = computed(() => {
-  let val =
-    Number(props.available) > 0
-      ? Number(props.available)
-      : Number(stCeloComposable.value?.vault?.available || '0');
-  return val.toLocaleString('en-US', { maximumFractionDigits: 5 });
+  return availableAmount.value.toLocaleString('en-US', {
+    maximumFractionDigits: 5,
+  });
 });
 
 const actions = computed(() => [
@@ -70,7 +74,7 @@ const formattedFiat = computed(() => {
 
 const canDeposit = computed(() => {
   const v = Number(depositAmount.value);
-  return v > 0 && v <= Number(displayedAvailable.value);
+  return v > 0 && v <= availableAmount.value;
 });
 
 async function submit() {
@@ -109,7 +113,7 @@ function onDepositInput(e: Event) {
 }
 
 function setMaxDeposit() {
-  depositAmount.value = displayedAvailable.value;
+  depositAmount.value = String(availableAmount.value);
 }
 
 function handleClose() {
