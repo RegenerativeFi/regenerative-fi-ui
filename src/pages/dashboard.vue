@@ -34,7 +34,7 @@ const { ReFiBalance, veBalBalance, veBalTokenInfo, ReFiTokenInfo } = useVeBal();
       </div>
     </div>
     <div>
-      <h2 class="text-xl font-medium leading-5 !mb-4">My liquidity</h2>
+      <h2 class="text-xl font-medium leading-5 !mb-4">My Deposits</h2>
       <UnstakedLiquidityTable />
       <StakedPoolsTable />
     </div>

@@ -63,6 +63,7 @@ type Props = {
   defaultPoolActions?: PoolAction[];
   shouldPokePoolsMap?: Record<string, string>;
   hasNonPrefGaugesPoolsAddresses?: string[];
+  vaults?: Record<string, any>;
 };
 
 /**
@@ -92,6 +93,8 @@ const emit = defineEmits<{
   (e: 'triggerUnstake', value: Pool): void;
   (e: 'triggerCheckpoint', value: Pool): void;
   (e: 'onColumnSort', value: string): void;
+  (e: 'triggerVaultDeposit', value: Pool): void;
+  (e: 'triggerVaultWithdraw', value: Pool): void;
 }>();
 /**
  * COMPOSABLES
@@ -131,6 +134,14 @@ const columns = computed<ColumnDefinition<Pool>[]>(() => [
     width: props.hiddenColumns.length >= 2 ? wideCompositionWidth.value : 350,
   },
   {
+    name: 'Type',
+    id: 'type',
+    accessor: pool => (pool.poolType === 'vault' ? 'Vault' : 'Pool'),
+    Cell: 'typeCell',
+    align: 'right',
+    width: 150,
+  },
+  {
     name: t('myBoost'),
     accessor: pool => `${bnum(boostFor(pool)).toFixed(3)}x`,
     align: 'right',
@@ -151,7 +162,11 @@ const columns = computed<ColumnDefinition<Pool>[]>(() => [
     align: 'right',
     id: 'myBalance',
     hidden: !props.showPoolShares,
-    sortKey: pool => Number(balanceValue(pool)),
+    sortKey: pool => {
+      const value = balanceValue(pool);
+      const numValue = Number(value);
+      return isNaN(numValue) ? 0 : numValue;
+    },
     width: 160,
     cellClassName: 'font-numeric',
   },
@@ -237,10 +252,33 @@ const visibleColumns = computed(() =>
   columns.value.filter(column => !props.hiddenColumns.includes(column.id))
 );
 
+const tableData = computed(() => {
+  const rows = [...(props.data || [])];
+
+  if (props.vaults) {
+    Object.values(props.vaults).forEach(vault => {
+      rows.push({
+        id: vault.id || `vault-${Math.random()}`,
+        address: vault.address || '',
+        poolType: 'vault',
+        title: vault.title,
+        icon: vault.icon,
+        ...vault,
+      } as any);
+    });
+  }
+
+  return rows;
+});
+
 /**
  * METHODS
  */
 function handleRowClick(pool: Pool, inNewTab?: boolean) {
+  // No navegar si es un vault
+  if ((pool as any).poolType === 'vault') {
+    return;
+  }
   trackGoal(Goals.ClickPoolsTableRow);
   const route = router.resolve({
     name: 'pool',
@@ -261,6 +299,18 @@ function navigateToPoolMigration(pool: Pool) {
 }
 
 function balanceValue(pool: Pool): string {
+  if ((pool as any).poolType === 'vault') {
+    // Para vaults, usar el deposit convertido a precio
+    console.debug(
+      'balanceValue vault',
+      pool.id,
+      (pool as any).deposit,
+      (pool as any).price
+    );
+    const deposit = Number((pool as any).deposit) || 0;
+    const price = Number((pool as any).price) || 0;
+    return (deposit * price).toFixed(2);
+  }
   const bpt = props?.shares?.[pool.id] || '0';
   return fiatValueOf(pool, bpt);
 }
@@ -270,6 +320,11 @@ function boostFor(pool: Pool): string {
 }
 
 function aprLabelFor(pool: Pool): string {
+  if ((pool as any).poolType === 'vault') {
+    // Para vaults, usar el apy directamente
+    const apy = Number((pool as any).apy) || 0;
+    return `${apy}%`;
+  }
   const poolAPRs = pool?.apr;
   if (!poolAPRs) return '0';
 
@@ -324,7 +379,7 @@ function goToPoolPage(id: string) {
   >
     <BalTable
       :columns="visibleColumns"
-      :data="data"
+      :data="tableData"
       :noResultsLabel="noPoolsLabel"
       :isLoading="isLoading"
       :isLoadingMore="isLoadingMore"
@@ -364,6 +419,13 @@ function goToPoolPage(id: string) {
       <template #iconColumnCell="pool">
         <div v-if="!isLoading" class="py-4 px-6" :data-testid="pool?.id">
           <BalAssetSet
+            v-if="pool.poolType === 'vault'"
+            :addresses="[pool.tokens[0].address]"
+            :width="100"
+            :size="isMobile ? 28 : 32"
+          />
+          <BalAssetSet
+            v-else
             :addresses="iconAddresses(pool)"
             :width="100"
             :size="isMobile ? 28 : 32"
@@ -372,7 +434,23 @@ function goToPoolPage(id: string) {
       </template>
       <template #poolNameCell="pool">
         <div v-if="!isLoading" class="flex items-center py-4 px-6">
-          <div v-if="poolMetadata(pool.id)?.name" class="pr-2 text-left">
+          <div v-if="pool.poolType === 'vault'" class="text-left">
+            <BalTooltip
+              disabled
+              class="mr-2 last:mr-0 leading-normal cursor-pointer"
+              textAlign="left"
+              :delayMs="50"
+            >
+              <template #activator>
+                <div :class="['pill']">
+                  <span>
+                    {{ pool.title || 'Vault' }}
+                  </span>
+                </div>
+              </template>
+            </BalTooltip>
+          </div>
+          <div v-else-if="poolMetadata(pool.id)?.name" class="pr-2 text-left">
             {{ poolMetadata(pool.id)?.name }}
           </div>
           <div v-else>
@@ -383,7 +461,12 @@ function goToPoolPage(id: string) {
               :pickedTokens="selectedTokens"
             />
           </div>
-          <PoolsTableExtraInfo :pool="pool" />
+          <PoolsTableExtraInfo v-if="pool.poolType !== 'vault'" :pool="pool" />
+        </div>
+      </template>
+      <template #typeCell="pool">
+        <div class="py-4 px-6 text-right capitalize">
+          {{ (pool as any).poolType === 'vault' ? 'Vault' : 'Pool' }}
         </div>
       </template>
       <template #volumeCell="pool">
@@ -413,13 +496,16 @@ function goToPoolPage(id: string) {
           :class="[
             'flex justify-end py-4 px-6 -mt-1 font-numeric text-right',
             {
-              'text-gray-300 dark:text-gray-600 line-through': isLBP(
+              'text-gray-300 dark:text-gray-600 line-through': !((pool as any).poolType === 'vault') && isLBP(
                 pool.poolType
               ),
             },
           ]"
         >
-          <span v-if="!pool?.apr || shouldHideAprs(pool.id)">-</span>
+          <span v-if="(pool as any).poolType === 'vault'">
+            {{ aprLabelFor(pool) }}
+          </span>
+          <span v-else-if="!pool?.apr || shouldHideAprs(pool.id)">-</span>
           <template v-else>
             {{ aprLabelFor(pool) }}
             <BalTooltip
@@ -452,7 +538,17 @@ function goToPoolPage(id: string) {
       </template>
       <template #actionsCell="pool">
         <PoolsTableActionSelector
-          v-if="defaultPoolActions"
+          v-if="(pool as any).poolType === 'vault'"
+          :defaultPoolActions="[PoolAction.Add, PoolAction.Remove]"
+          :pool="pool"
+          :showPokeAction="false"
+          :showMigrateGaugeAction="false"
+          :isVault="true"
+          @click:add="emit('triggerVaultDeposit', pool)"
+          @click:remove="emit('triggerVaultWithdraw', pool)"
+        />
+        <PoolsTableActionSelector
+          v-else-if="defaultPoolActions"
           :defaultPoolActions="defaultPoolActions"
           :pool="pool"
           :showPokeAction="Boolean(shouldPokePoolsMap?.[pool.address]) || false"
@@ -479,3 +575,9 @@ function goToPoolPage(id: string) {
     </BalTable>
   </BalCard>
 </template>
+
+<style scoped>
+.pill {
+  @apply flex items-center px-2 my-1 py-1 rounded-lg bg-pill-light dark:bg-gray-700 relative max-h-10 items-center;
+}
+</style>

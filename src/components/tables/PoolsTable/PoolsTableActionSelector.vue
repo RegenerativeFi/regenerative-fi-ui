@@ -16,11 +16,13 @@ type Props = {
   defaultPoolActions: PoolAction[];
   showPokeAction?: boolean;
   showMigrateGaugeAction?: boolean;
+  isVault?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
   showPokeAction: false,
   showMigrateGaugeAction: false,
+  isVault: false,
 });
 defineEmits<{
   (e: 'click:add', value: Pool): void;
@@ -44,6 +46,16 @@ function getActionIcon(action: string) {
     `/src/assets/images/icons/pool-actions/${action}.svg`,
     import.meta.url
   ).href;
+}
+
+function getActionLabel(action: PoolAction): string {
+  // For vaults, map Add -> Deposit and Remove -> Withdraw
+  if (props.isVault) {
+    if (action === PoolAction.Add) return 'Deposit';
+    if (action === PoolAction.Remove) return 'Withdraw';
+  }
+  // For pools, use the default translation key
+  return action;
 }
 
 function isActionDisabled(action: PoolAction) {
@@ -127,10 +139,15 @@ onClickOutside(clickOutsideTarget, handleClickOutside);
             alt=""
             class="p-0.5 rounded-full w-[20px]"
           />
-          <div class="pr-5 pl-2">{{ $t(`poolActions.${action}`) }}</div>
+          <div class="pr-5 pl-2">
+            {{
+              props.isVault
+                ? getActionLabel(action)
+                : $t(`poolActions.${action}`)
+            }}
+          </div>
         </li>
       </template>
     </ul>
   </div>
 </template>
-

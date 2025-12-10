@@ -241,6 +241,7 @@ export function orderedPoolTokens(
   pool: Pool,
   tokens: PoolToken[]
 ): PoolToken[] {
+  console.debug('orderedPoolTokens', pool.id, pool.poolType, tokens);
   if (isDeep(pool)) {
     const leafs = tokenTreeLeafs(tokens);
     const flatTokens = flatTokenTree(pool);
