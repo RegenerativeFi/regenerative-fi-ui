@@ -40,8 +40,11 @@
           <div class="flex flex-row gap-2 items-center">
             <p class="text-lg sm:text-xl font-medium">
               {{
-                vaults.reduce((acc, vault) => acc + vault.apy, 0) /
-                vaults.length
+                vaults.reduce(
+                  (acc, vault) =>
+                    acc + vault.apy.reduce((sum, comp) => sum + comp.value, 0),
+                  0
+                ) / vaults.length
               }}%
             </p>
           </div>
@@ -65,6 +68,7 @@
             :depositRaw="vaults[0].depositRaw"
             :available="vaults[0].available"
             :icon="vaults[0].icon"
+            :depositTokenIcon="vaults[0].depositTokenIcon"
             :contractAddress="vaults[0].contractAddress"
             :vaultComposable="getComposable(vaults[0].contractAddress)"
             @success="handleSucess"

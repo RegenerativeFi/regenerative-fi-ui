@@ -3,7 +3,6 @@ import { VaultStrategy } from '../types';
 import { MerklApi } from '@merkl/api';
 
 const DEFAULT_DECIMALS = 18;
-const MANAGER_ADDRESS = '0x0239b96D10a434a56CC9E09383077A0490cF9398';
 export const VAULT_ADDRESS = '0x1b8c73e2aB2FB34ADA2dFaCD1F59bEAb76B6C410';
 const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
 
@@ -11,7 +10,6 @@ const ERC20_ABI = [
   'function balanceOf(address) view returns (uint256)',
   'function decimals() view returns (uint8)',
 ];
-const MANAGER_ABI = ['function toCelo(uint256) view returns (uint256)'];
 
 async function readBalances(
   getProvider: () => ethers.providers.Provider,
@@ -19,7 +17,6 @@ async function readBalances(
 ) {
   const provider = getProvider();
   const celoToken = new ethers.Contract(CELO_ADDRESS, ERC20_ABI, provider);
-  const manager = new ethers.Contract(MANAGER_ADDRESS, MANAGER_ABI, provider);
   const vaultContract = new ethers.Contract(VAULT_ADDRESS, ERC20_ABI, provider);
 
   const [rawVaultBalance, rawCeloTokenBalance] = await Promise.all([
@@ -34,21 +31,13 @@ async function readBalances(
     // fallback
   }
 
-  // const stBalance = ethers.utils.formatUnits(rawTokenBalance, decimals);
   const celoBalance = ethers.utils.formatUnits(rawCeloTokenBalance, decimals);
   const vaultRaw = rawVaultBalance.toString();
-
-  let vaultSupply = vaultRaw;
-  try {
-    const rawVaultSupply = await manager.toCelo(rawVaultBalance);
-    vaultSupply = ethers.utils.formatUnits(rawVaultSupply, decimals);
-  } catch (error) {
-    console.error('Error converting to CELO:', error);
-  }
+  const vaultDeposit = ethers.utils.formatUnits(rawVaultBalance, decimals);
 
   return {
     available: celoBalance,
-    deposit: vaultSupply,
+    deposit: vaultDeposit,
     depositRaw: vaultRaw,
   };
 }
@@ -95,7 +84,9 @@ async function withdraw(
   return await vaultContract.withdraw(amount);
 }
 
-async function getApy(): Promise<number> {
+async function getApy(): Promise<
+  { token: string; value: number; icon?: string }[]
+> {
   const { status, data } = await MerklApi(
     'https://api.merkl.xyz'
   ).v4.campaigns.get({
@@ -103,9 +94,17 @@ async function getApy(): Promise<number> {
       mainParameter: VAULT_ADDRESS,
     },
   });
-  if (status !== 200) throw 'Failed to fetch APY dat';
+  if (status !== 200) throw 'Failed to fetch APY data';
 
-  return data?.reduce((acc, curr) => acc + (curr.apr || 0), 0) || 0;
+  const celoApr = data?.reduce((acc, curr) => acc + (curr.apr || 0), 0) || 0;
+
+  return [
+    {
+      token: 'CELO',
+      value: celoApr,
+      icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
+    },
+  ];
 }
 
 export function createStCeloStrategy(): VaultStrategy {

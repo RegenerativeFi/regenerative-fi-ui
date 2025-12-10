@@ -10,12 +10,10 @@ export function useVault(
   initialState: Partial<Vault>,
   strategy: VaultStrategy
 ) {
-  const baseApy = initialState.apy || 0;
-
   const vault = reactive<Vault>({
     id,
     title: '',
-    apy: 0,
+    apy: [],
     deposit: '0',
     depositRaw: '0',
     available: '0',
@@ -65,7 +63,7 @@ export function useVault(
       getProviderSafe,
       vault.contractAddress
     );
-    vault.apy = baseApy + dynamicApy;
+    vault.apy = dynamicApy;
     return balances;
   };
 

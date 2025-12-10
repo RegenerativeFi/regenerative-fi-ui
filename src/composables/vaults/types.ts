@@ -1,9 +1,15 @@
 import { ethers } from 'ethers';
 
+export interface ApyComponent {
+  token: string;
+  value: number;
+  icon?: string;
+}
+
 export interface Vault {
   id: string;
   title: string;
-  apy: number;
+  apy: ApyComponent[];
   deposit: string;
   depositRaw: string;
   available: string;
@@ -11,6 +17,7 @@ export interface Vault {
   contractAddress: string;
   supplyBalance?: string;
   tokenAddress?: string;
+  depositTokenIcon?: string;
   price?: number;
 }
 
@@ -37,5 +44,5 @@ export interface VaultStrategy {
   getApy: (
     getProvider: () => ethers.providers.Provider,
     assetAddress: string
-  ) => Promise<number>;
+  ) => Promise<ApyComponent[]>;
 }
