@@ -8,6 +8,8 @@ import useWeb3 from '@/services/web3/useWeb3';
 import { useUserPools } from '@/providers/local/user-pools.provider';
 import { useVaults } from '@/composables/vaults/index';
 import StakePreviewModal from '@/components/contextual/pages/pool/staking/StakePreviewModal.vue';
+import VaultDepositModal from '@/components/modals/VaultDepositModal.vue';
+import VaultWithdrawModal from '@/components/modals/VaultWithdrawModal.vue';
 import { providePoolStaking } from '@/providers/local/pool-staking.provider';
 import { PoolAction } from '../../pools/types';
 
@@ -44,7 +46,7 @@ const {
   refetchAllUserPools,
   isLoading: isLoadingPools,
 } = useUserPools();
-const { vaults, fetchBalances } = useVaults();
+const { vaults, fetchBalances, getComposable } = useVaults();
 const defaultPoolActions = [PoolAction.Add, PoolAction.Remove];
 
 /**
@@ -119,13 +121,13 @@ async function handleStakeSuccess() {
   await refetchAllUserPools();
 }
 
-// async function handleVaultSuccess() {
-//   handleVaultModalClose();
-//   // Refetch vault balances
-//   if (selectedVault.value?.contractAddress && account.value) {
-//     await fetchBalances(selectedVault.value.contractAddress, account.value);
-//   }
-// }
+async function handleVaultSuccess() {
+  handleVaultModalClose();
+  // Refetch vault balances
+  if (selectedVault.value?.contractAddress && account.value) {
+    await fetchBalances(selectedVault.value.contractAddress, account.value);
+  }
+}
 
 onMounted(() => {
   refetchAllUserPools();
@@ -168,76 +170,26 @@ onMounted(() => {
       @close="handleModalClose"
       @success="handleStakeSuccess"
     />
-    <!-- TODO: Integrate VaultDepositModal and VaultWithdrawModal -->
-    <!-- Vault Deposit Modal -->
-    <div
-      v-if="showVaultDepositModal && selectedVault"
-      class="fixed inset-0 z-50"
-    >
-      <!-- This will be replaced with the actual VaultDepositModal component -->
-      <div
-        class="absolute inset-0 bg-black/50"
-        @click="handleVaultModalClose"
-      ></div>
-      <div
-        class="absolute inset-1/2 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2"
-      >
-        <h2 class="mb-4 text-xl font-semibold">
-          Deposit {{ selectedVault.title }}
-        </h2>
-        <p class="mb-4 text-gray-600 dark:text-gray-300">
-          Available: {{ selectedVault.available }}
-        </p>
-        <div class="flex gap-3">
-          <button
-            class="flex-1 py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded"
-            @click="handleVaultModalClose"
-          >
-            Deposit
-          </button>
-          <button
-            class="py-2 px-4 bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 rounded"
-            @click="handleVaultModalClose"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- Vault Withdraw Modal -->
-    <div
-      v-if="showVaultWithdrawModal && selectedVault"
-      class="fixed inset-0 z-50"
-    >
-      <!-- This will be replaced with the actual VaultWithdrawModal component -->
-      <div
-        class="absolute inset-0 bg-black/50"
-        @click="handleVaultModalClose"
-      ></div>
-      <div
-        class="absolute inset-1/2 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2"
-      >
-        <h2 class="mb-4 text-xl font-semibold">
-          Withdraw {{ selectedVault.title }}
-        </h2>
-        <p class="mb-4 text-gray-600 dark:text-gray-300">
-          Deposit: {{ selectedVault.deposit }}
-        </p>
-        <div class="flex gap-3">
-          <button
-            class="flex-1 py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded"
-            @click="handleVaultModalClose"
-          >
-            Withdraw
-          </button>
-          <button
-            class="py-2 px-4 bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 rounded"
-            @click="handleVaultModalClose"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+    <VaultDepositModal
+      v-if="selectedVault"
+      :show="showVaultDepositModal"
+      :vault="selectedVault"
+      :available="selectedVault.available"
+      :contractAddress="selectedVault.contractAddress"
+      :vaultComposable="getComposable(selectedVault.contractAddress)"
+      @close="handleVaultModalClose"
+      @success="handleVaultSuccess"
+    />
+    <VaultWithdrawModal
+      v-if="selectedVault"
+      :show="showVaultWithdrawModal"
+      :vault="selectedVault"
+      :available="selectedVault.depositRaw"
+      :availableRaw="selectedVault.depositRaw"
+      :contractAddress="selectedVault.contractAddress"
+      :vaultComposable="getComposable(selectedVault.contractAddress)"
+      @close="handleVaultModalClose"
+      @success="handleVaultSuccess"
+    />
   </div>
 </template>
