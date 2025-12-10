@@ -20,7 +20,13 @@ const showVaultDepositModal = ref(false);
 const showVaultWithdrawModal = ref(false);
 const selectedVault = ref<any>(undefined);
 const networkName = configService.network.shortName;
-const hiddenColumns = ['poolVolume', 'migrate', 'lockEndDate', 'volume'];
+const hiddenColumns = [
+  'poolVolume',
+  'migrate',
+  'lockEndDate',
+  'totalLiquidity',
+  'volume',
+];
 
 /**
  * PROVIDERS
