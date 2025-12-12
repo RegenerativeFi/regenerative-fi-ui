@@ -36,7 +36,6 @@ export interface VaultStrategy {
   }>;
   deposit: (
     getSigner: () => ethers.Signer,
-    assetAddress: string,
     amount: number,
     tokenAddress?: string
   ) => Promise<ethers.ContractTransaction>;

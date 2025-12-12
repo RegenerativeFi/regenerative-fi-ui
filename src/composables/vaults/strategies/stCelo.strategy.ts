@@ -2,9 +2,9 @@ import { ethers } from 'ethers';
 import { VaultStrategy } from '../types';
 import { MerklApi } from '@merkl/api';
 
-const VAULT_ADDRESS = '0x312F6f5259cCEb789dEf7B3eAAD50b53317129DD';
-const STCELO_ADDRESS = '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24';
-const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
+export const VAULT_ADDRESS = '0x312F6f5259cCEb789dEf7B3eAAD50b53317129DD';
+export const STCELO_ADDRESS = '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24';
+export const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
 const DECIMALS = 18;
 
 const ERC20_ABI = [
@@ -60,7 +60,7 @@ async function deposit(
   getSigner: () => ethers.Signer,
   amount: number,
   tokenAddress?: string
-) {
+): Promise<ethers.ContractTransaction> {
   const signer = getSigner();
   const vaultContract = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, signer);
 
