@@ -7,31 +7,19 @@ import { Vault, VaultStrategy } from './types';
 
 export function useVault(
   id: string,
-  initialState: Partial<Vault>,
+  initialState: Vault,
   strategy: VaultStrategy
 ) {
-  const vault = reactive<Vault>({
-    id,
-    title: '',
-    apy: [],
-    deposit: '0',
-    depositRaw: '0',
-    available: '0',
-    contractAddress: '',
-    ...initialState,
-  });
-
+  const vault = reactive<Vault>(initialState);
   const { account, getProvider } = useWeb3();
   const { priceFor } = useTokens();
 
   const getProviderSafe = (): ethers.providers.Provider => {
     try {
-      const p = getProvider?.();
-      if (p) return p as ethers.providers.Provider;
-    } catch (error) {
-      console.error('Error getting provider:', error);
+      return getProvider?.() as ethers.providers.Provider;
+    } catch {
+      return ethers.getDefaultProvider();
     }
-    return ethers.getDefaultProvider();
   };
 
   const getSigner = () => {
@@ -45,7 +33,8 @@ export function useVault(
   const queryKey = computed(() => [
     'vaults',
     id,
-    { contractAddress: vault.contractAddress, account: account.value },
+    vault.contractAddress,
+    account.value,
   ]);
 
   const queryFn = async () => {
@@ -56,14 +45,8 @@ export function useVault(
       vault.contractAddress
     );
     Object.assign(vault, balances);
-    if (vault.tokenAddress) {
-      vault.price = priceFor(vault.tokenAddress) || 0;
-    }
-    const dynamicApy = await strategy.getApy(
-      getProviderSafe,
-      vault.contractAddress
-    );
-    vault.apy = dynamicApy;
+    if (vault.tokenAddress) vault.price = priceFor(vault.tokenAddress) || 0;
+    vault.apy = await strategy.getApy(getProviderSafe, vault.contractAddress);
     return balances;
   };
 
@@ -73,18 +56,12 @@ export function useVault(
     staleTime: 30_000,
   });
 
-  const depositTx = (amount: number) => {
-    return strategy.deposit(getSigner, vault.contractAddress, amount);
-  };
-
-  const withdrawTx = (amount: string) => {
-    return strategy.withdraw(getSigner, vault.contractAddress, amount);
-  };
-
   return {
     vault,
-    depositTx,
-    withdrawTx,
+    depositTx: (amount: number) =>
+      strategy.deposit(getSigner, vault.contractAddress, amount),
+    withdrawTx: (amount: string) =>
+      strategy.withdraw(getSigner, vault.contractAddress, amount),
     refetch,
     isLoading: isFetching,
     isError,

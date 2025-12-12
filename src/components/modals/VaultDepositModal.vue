@@ -4,7 +4,6 @@ import BalModal from '@/components/_global/BalModal/BalModal.vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import BalActionSteps from '@/components/_global/BalActionSteps/BalActionSteps.vue';
 import ConfirmationIndicator from '@/components/web3/ConfirmationIndicator.vue';
-import useWeb3 from '@/services/web3/useWeb3';
 import { useTxState } from '@/composables/useTxState';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import useTransactions from '@/composables/useTransactions';
@@ -38,49 +37,37 @@ const emit = defineEmits<{
 }>();
 
 const depositAmount = ref('');
-const loading = ref(false);
 const showFireworks = ref(false);
 const showTokenSelector = ref(false);
 const selectedTokenAddress = ref('');
-const selectedToken = computed(() => {
-  return (
-    availableTokens.value.find(
-      token => token.address === selectedTokenAddress.value
-    ) || null
-  );
-});
 
-const { account } = useWeb3();
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
 
-const availableTokens = computed(() => {
-  return props.acceptedTokens;
-});
+const availableTokens = computed(() => props.acceptedTokens);
+const stCeloComposable = computed(() => props.vaultComposable);
 
-const stCeloComposable = computed(() => {
-  return props.vaultComposable;
-});
-
-onMounted(() => {
-  if (availableTokens.value.length > 0 && !selectedTokenAddress.value) {
-    selectedTokenAddress.value = availableTokens.value[0].address;
-  }
-});
+const selectedToken = computed(
+  () =>
+    availableTokens.value.find(
+      token => token.address === selectedTokenAddress.value
+    ) || null
+);
 
 const availableAmount = computed(() => {
-  if (selectedToken.value) {
-    return Number(selectedToken.value.balance) || 0;
-  }
+  if (selectedToken.value) return Number(selectedToken.value.balance) || 0;
   return Number(props.available) > 0
     ? Number(props.available)
     : Number(stCeloComposable.value?.vault?.available || '0');
 });
 
-const displayedAvailable = computed(() => {
-  return availableAmount.value.toLocaleString('en-US', {
-    maximumFractionDigits: 5,
-  });
+const displayedAvailable = computed(() =>
+  availableAmount.value.toLocaleString('en-US', { maximumFractionDigits: 5 })
+);
+
+const canDeposit = computed(() => {
+  const v = Number(depositAmount.value);
+  return v > 0 && v <= availableAmount.value;
 });
 
 const actions = computed(() => [
@@ -89,74 +76,30 @@ const actions = computed(() => [
     loadingLabel: 'Depositing',
     confirmingLabel: 'Confirming',
     action: submit,
-    stepTooltip: 'Deposit stCELO into vault',
+    stepTooltip: 'Deposit into vault',
   },
 ]);
 
-const canDeposit = computed(() => {
-  const v = Number(depositAmount.value);
-  return v > 0 && v <= availableAmount.value;
+onMounted(() => {
+  if (availableTokens.value.length > 0 && !selectedTokenAddress.value) {
+    selectedTokenAddress.value = availableTokens.value[0].address;
+  }
 });
 
 async function submit() {
-  txState.init = true;
-  try {
-    txState.confirming = true;
-
-    // Si tenemos un token seleccionado diferente, usar su método de depósito
-    // de lo contrario usar el método por defecto
-    let tx;
-    if (selectedToken.value && stCeloComposable.value?.depositTxForToken) {
-      tx = await stCeloComposable.value.depositTxForToken(
-        selectedToken.value.address,
-        Number(depositAmount.value)
-      );
-    } else {
-      tx = await stCeloComposable.value?.depositTx?.(
-        Number(depositAmount.value)
-      );
-    }
-
-    if (!tx) {
-      throw new Error('Failed to get transaction from composable');
-    }
-
-    addTransaction({
-      id: tx.hash,
-      type: 'tx',
-      action: 'invest',
-      summary: `Deposit ${depositAmount.value} ${
-        selectedToken.value?.symbol || 'CELO'
-      }`,
-    });
-    return tx;
-  } catch (error) {
-    console.error('Deposit error', error);
-    txState.confirming = false;
-    throw new Error('Failed to submit transaction.', {
-      cause: error,
-    });
-  } finally {
-    txState.init = false;
-  }
-}
-
-function onDepositInput(e: Event) {
-  depositAmount.value = (e.target as HTMLInputElement).value;
+  const amount = Number(depositAmount.value);
+  const tx = await stCeloComposable.value.depositTx(amount);
+  addTransaction({
+    id: tx.hash,
+    type: 'tx',
+    action: 'invest',
+    summary: `Deposit ${amount} ${selectedToken.value?.symbol || 'CELO'}`,
+  });
+  return tx;
 }
 
 function setMaxDeposit() {
   depositAmount.value = String(availableAmount.value);
-}
-
-function handleClose() {
-  showFireworks.value = false;
-  depositAmount.value = '';
-  showTokenSelector.value = false;
-  txState.confirmed = false;
-  txState.receipt = undefined;
-  txState.confirming = false;
-  emit('close');
 }
 
 function selectToken(token: DepositToken) {
@@ -164,41 +107,28 @@ function selectToken(token: DepositToken) {
   showTokenSelector.value = false;
 }
 
-function onStepsSuccess(receipt: TransactionReceipt, confirmedAt?: string) {
-  showFireworks.value = true;
-  txState.receipt = receipt;
-  txState.confirmedAt = confirmedAt || new Date().toISOString();
-  txState.confirmed = true;
-  txState.confirming = false;
-  loading.value = false;
-  emit('success', receipt);
+function onDepositInput(e: Event) {
+  depositAmount.value = (e.target as HTMLInputElement).value;
+}
 
-  // The new useVault refetches on its own, so we just trigger it.
-  if (stCeloComposable.value?.refetch) {
-    stCeloComposable.value.refetch();
-  }
+function handleClose() {
+  depositAmount.value = '';
+  showFireworks.value = false;
+  showTokenSelector.value = false;
+  txState.confirmed = false;
+  txState.receipt = undefined;
+  emit('close');
+}
+
+function onStepsSuccess(receipt: TransactionReceipt) {
+  showFireworks.value = true;
+  emit('success', receipt);
+  stCeloComposable.value?.refetch?.();
 }
 
 function onStepsFailed() {
-  txState.confirming = false;
-  loading.value = false;
+  // BalActionSteps maneja los errores
 }
-
-onMounted(async () => {
-  const tokenAddr =
-    props.contractAddress || (props.vault && props.vault.contractAddress);
-  if (!tokenAddr) return;
-
-  if (account.value) {
-    try {
-      if (stCeloComposable.value?.refetch) {
-        await stCeloComposable.value.refetch();
-      }
-    } catch (e) {
-      console.error('Failed to fetch balances', e);
-    }
-  }
-});
 </script>
 
 <template>
@@ -250,7 +180,7 @@ onMounted(async () => {
               <div class="relative">
                 <button
                   class="flex gap-2 items-center py-2 px-3 text-sm whitespace-nowrap bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-100 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 transition-colors"
-                  :disabled="loading"
+                  :disabled="txState.confirming"
                   @click="showTokenSelector = !showTokenSelector"
                 >
                   <img
@@ -326,7 +256,7 @@ onMounted(async () => {
                 type="number"
                 min="0"
                 step="any"
-                :disabled="loading"
+                :disabled="txState.confirming"
                 placeholder="0.00"
                 class="flex-1 min-w-0 text-2xl font-semibold placeholder-gray-300 text-right bg-transparent outline-none"
                 @input="onDepositInput"
@@ -343,7 +273,7 @@ onMounted(async () => {
               </span>
               <button
                 class="flex-shrink-0 ml-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                :disabled="loading"
+                :disabled="txState.confirming"
                 @click.prevent="setMaxDeposit"
               >
                 Max
@@ -358,7 +288,7 @@ onMounted(async () => {
         <BalActionSteps
           :actions="actions"
           primaryActionType="invest"
-          :disabled="!canDeposit || loading"
+          :disabled="!canDeposit || txState.confirming"
           class="mt-4"
           @success="onStepsSuccess"
           @failed="onStepsFailed"
@@ -441,7 +371,7 @@ onMounted(async () => {
           class="flex-1 w-full"
           label="Continue"
           color="gradient"
-          :disabled="loading"
+          :disabled="txState.confirming"
           @click="handleClose"
         />
       </div>

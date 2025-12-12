@@ -2,9 +2,9 @@ import { ethers } from 'ethers';
 import { VaultStrategy } from '../types';
 import { MerklApi } from '@merkl/api';
 
-const DEFAULT_DECIMALS = 18;
-export const VAULT_ADDRESS = '0x1b8c73e2aB2FB34ADA2dFaCD1F59bEAb76B6C410';
+const VAULT_ADDRESS = '0x1b8c73e2aB2FB34ADA2dFaCD1F59bEAb76B6C410';
 const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
+const DECIMALS = 18;
 
 const ERC20_ABI = [
   'function balanceOf(address) view returns (uint256)',
@@ -24,7 +24,7 @@ async function readBalances(
     celoToken.balanceOf(userAddress),
   ]);
 
-  let decimals = DEFAULT_DECIMALS;
+  let decimals = DECIMALS;
   try {
     decimals = await celoToken.decimals();
   } catch {
@@ -59,7 +59,7 @@ async function deposit(
     signer
   );
 
-  let decimals = DEFAULT_DECIMALS;
+  let decimals = DECIMALS;
   try {
     decimals = await underlyingContract.decimals();
   } catch (error) {
