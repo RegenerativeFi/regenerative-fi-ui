@@ -41,7 +41,6 @@ export interface VaultStrategy {
   ) => Promise<ethers.ContractTransaction>;
   withdraw: (
     getSigner: () => ethers.Signer,
-    assetAddress: string,
     amount: string
   ) => Promise<ethers.ContractTransaction>;
   getApy: (

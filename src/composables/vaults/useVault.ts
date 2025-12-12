@@ -60,11 +60,10 @@ export function useVault(
   return {
     vault,
     depositTx: (amount: number, tokenAddress?: string) =>
-      strategy.deposit(getSigner, vault.contractAddress, amount, tokenAddress),
+      strategy.deposit(getSigner, amount, tokenAddress),
     depositTxForToken: (tokenAddress: string, amount: number) =>
-      strategy.deposit(getSigner, vault.contractAddress, amount, tokenAddress),
-    withdrawTx: (amount: string) =>
-      strategy.withdraw(getSigner, vault.contractAddress, amount),
+      strategy.deposit(getSigner, amount, tokenAddress),
+    withdrawTx: (amount: string) => strategy.withdraw(getSigner, amount),
     refetch,
     isLoading: isFetching,
     isError,

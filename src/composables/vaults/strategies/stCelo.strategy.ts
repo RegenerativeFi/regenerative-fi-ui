@@ -90,11 +90,7 @@ async function deposit(
   throw new Error(`Unsupported token address: ${tokenAddress}`);
 }
 
-async function withdraw(
-  getSigner: () => ethers.Signer,
-  assetAddress: string,
-  amount: string
-) {
+async function withdraw(getSigner: () => ethers.Signer, amount: string) {
   const signer = getSigner();
   const vaultContract = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, signer);
   const tx = await vaultContract.withdraw(amount);
