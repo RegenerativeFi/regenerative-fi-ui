@@ -2,13 +2,21 @@ import { ethers } from 'ethers';
 import { VaultStrategy } from '../types';
 import { MerklApi } from '@merkl/api';
 
-const VAULT_ADDRESS = '0x1b8c73e2aB2FB34ADA2dFaCD1F59bEAb76B6C410';
+const VAULT_ADDRESS = '0x312F6f5259cCEb789dEf7B3eAAD50b53317129DD';
+const STCELO_ADDRESS = '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24';
 const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
 const DECIMALS = 18;
 
 const ERC20_ABI = [
   'function balanceOf(address) view returns (uint256)',
   'function decimals() view returns (uint8)',
+  'function approve(address spender, uint256 amount) returns (bool)',
+];
+
+const VAULT_ABI = [
+  'function deposit() payable',
+  'function depositStCelo(uint256 amount)',
+  'function withdraw(uint256 amount)',
 ];
 
 async function readBalances(
@@ -17,12 +25,16 @@ async function readBalances(
 ) {
   const provider = getProvider();
   const celoToken = new ethers.Contract(CELO_ADDRESS, ERC20_ABI, provider);
+  const stCeloToken = new ethers.Contract(STCELO_ADDRESS, ERC20_ABI, provider);
   const vaultContract = new ethers.Contract(VAULT_ADDRESS, ERC20_ABI, provider);
 
-  const [rawVaultBalance, rawCeloTokenBalance] = await Promise.all([
-    vaultContract.balanceOf(userAddress),
-    celoToken.balanceOf(userAddress),
-  ]);
+  const [rawVaultBalance, rawCeloBalance, rawStCeloBalance] = await Promise.all(
+    [
+      vaultContract.balanceOf(userAddress),
+      celoToken.balanceOf(userAddress),
+      stCeloToken.balanceOf(userAddress),
+    ]
+  );
 
   let decimals = DECIMALS;
   try {
@@ -31,12 +43,14 @@ async function readBalances(
     // fallback
   }
 
-  const celoBalance = ethers.utils.formatUnits(rawCeloTokenBalance, decimals);
+  const celoBalance = ethers.utils.formatUnits(rawCeloBalance, decimals);
+  const stCeloBalance = ethers.utils.formatUnits(rawStCeloBalance, decimals);
   const vaultRaw = rawVaultBalance.toString();
   const vaultDeposit = ethers.utils.formatUnits(rawVaultBalance, decimals);
 
   return {
     available: celoBalance,
+    availableStCelo: stCeloBalance,
     deposit: vaultDeposit,
     depositRaw: vaultRaw,
   };
@@ -45,29 +59,32 @@ async function readBalances(
 async function deposit(
   getSigner: () => ethers.Signer,
   assetAddress: string,
-  amount: number
+  amount: number,
+  tokenAddress?: string
 ) {
   const signer = getSigner();
-  const underlyingContract = new ethers.Contract(
-    assetAddress,
-    ['function decimals() view returns (uint8)'],
-    signer
-  );
-  const vaultContract = new ethers.Contract(
-    VAULT_ADDRESS,
-    ['function deposit() payable'],
-    signer
-  );
+  const vaultContract = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, signer);
 
-  let decimals = DECIMALS;
-  try {
-    decimals = await underlyingContract.decimals();
-  } catch (error) {
-    console.error('Error getting token decimals:', error);
+  // Default: deposit CELO (native)
+  if (!tokenAddress || tokenAddress === CELO_ADDRESS) {
+    const amountBn = ethers.utils.parseUnits(String(amount), DECIMALS);
+    return await vaultContract.deposit({ value: amountBn });
   }
 
-  const amountBn = ethers.utils.parseUnits(String(amount), decimals);
-  return await vaultContract.deposit({ value: amountBn });
+  // Deposit stCELO token
+  if (tokenAddress === STCELO_ADDRESS) {
+    const stCeloToken = new ethers.Contract(STCELO_ADDRESS, ERC20_ABI, signer);
+    const amountBn = ethers.utils.parseUnits(String(amount), DECIMALS);
+
+    // Approve vault to spend stCELO
+    const approveTx = await stCeloToken.approve(VAULT_ADDRESS, amountBn);
+    await approveTx.wait();
+
+    // Deposit stCELO
+    return await vaultContract.depositStCelo(amountBn);
+  }
+
+  throw new Error(`Unsupported token address: ${tokenAddress}`);
 }
 
 async function withdraw(
@@ -76,11 +93,7 @@ async function withdraw(
   amount: string
 ) {
   const signer = getSigner();
-  const vaultContract = new ethers.Contract(
-    VAULT_ADDRESS,
-    ['function withdraw(uint256)'],
-    signer
-  );
+  const vaultContract = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, signer);
   return await vaultContract.withdraw(amount);
 }
 

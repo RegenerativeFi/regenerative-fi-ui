@@ -13,11 +13,13 @@ export interface Vault {
   deposit: string;
   depositRaw: string;
   available: string;
+  availableStCelo?: string;
   icon?: string;
   contractAddress: string;
   supplyBalance?: string;
   tokenAddress?: string;
   depositTokenIcon?: string;
+  stCeloTokenIcon?: string;
   price?: number;
 }
 
@@ -28,13 +30,15 @@ export interface VaultStrategy {
     assetAddress: string
   ) => Promise<{
     available: string;
+    availableStCelo?: string;
     deposit: string;
     depositRaw: string;
   }>;
   deposit: (
     getSigner: () => ethers.Signer,
     assetAddress: string,
-    amount: number
+    amount: number,
+    tokenAddress?: string
   ) => Promise<ethers.ContractTransaction>;
   withdraw: (
     getSigner: () => ethers.Signer,

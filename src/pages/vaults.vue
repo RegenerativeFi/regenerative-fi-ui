@@ -40,6 +40,7 @@
           :deposit="vault.deposit"
           :depositRaw="vault.depositRaw"
           :available="vault.available"
+          :availableStCelo="vault.availableStCelo"
           :icon="vault.icon"
           :depositTokenIcon="vault.depositTokenIcon"
           :contractAddress="vault.contractAddress"
@@ -81,7 +82,12 @@ const averageApy = computed(() => {
   return (totalApy / vaults.length).toFixed(2);
 });
 
-const handleSuccess = (contractAddress?: string) => {
-  refetchVault(contractAddress || vaults[0]?.contractAddress);
+const handleSuccess = async (contractAddress?: string) => {
+  const addr = contractAddress || vaults[0]?.contractAddress;
+  try {
+    await refetchVault(addr);
+  } catch (e) {
+    console.error('Failed to refetch vault:', e);
+  }
 };
 </script>

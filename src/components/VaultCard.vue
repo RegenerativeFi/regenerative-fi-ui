@@ -159,6 +159,7 @@
     :show="showDeposit"
     :vault="{ title, apy, deposit, icon, depositTokenIcon }"
     :available="available"
+    :availableStCelo="availableStCelo"
     :contractAddress="contractAddress"
     :vaultComposable="vaultComposable"
     :acceptedTokens="[
@@ -194,6 +195,7 @@ const props = defineProps<{
   deposit: string;
   depositRaw: string;
   available?: number | string;
+  availableStCelo?: number | string;
   icon?: string;
   depositTokenIcon?: string;
   placeholder?: boolean;

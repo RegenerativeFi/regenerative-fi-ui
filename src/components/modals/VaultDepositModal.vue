@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch, reactive } from 'vue';
 import BalModal from '@/components/_global/BalModal/BalModal.vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import BalActionSteps from '@/components/_global/BalActionSteps/BalActionSteps.vue';
@@ -7,6 +7,8 @@ import ConfirmationIndicator from '@/components/web3/ConfirmationIndicator.vue';
 import { useTxState } from '@/composables/useTxState';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import useTransactions from '@/composables/useTransactions';
+import useWeb3 from '@/services/web3/useWeb3';
+import { ethers } from 'ethers';
 
 interface DepositToken {
   symbol: string;
@@ -15,11 +17,15 @@ interface DepositToken {
   balance: string;
 }
 
+const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
+const STCELO_ADDRESS = '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24';
+
 const props = withDefaults(
   defineProps<{
     show: boolean;
     vault?: any;
     available?: string | number;
+    availableStCelo?: string | number;
     title?: string;
     contractAddress: string;
     vaultComposable?: any;
@@ -27,6 +33,7 @@ const props = withDefaults(
   }>(),
   {
     available: '0',
+    availableStCelo: '0',
     acceptedTokens: () => [],
   }
 );
@@ -39,13 +46,31 @@ const emit = defineEmits<{
 const depositAmount = ref('');
 const showFireworks = ref(false);
 const showTokenSelector = ref(false);
-const selectedTokenAddress = ref('');
+const selectedTokenAddress = ref(CELO_ADDRESS);
 
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
+const { getProvider, account } = useWeb3();
 
-const availableTokens = computed(() => props.acceptedTokens);
 const stCeloComposable = computed(() => props.vaultComposable);
+
+const availableTokens = computed(() => {
+  const tokens: DepositToken[] = [
+    {
+      symbol: 'CELO',
+      address: CELO_ADDRESS,
+      icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
+      balance: String(props.available),
+    },
+    {
+      symbol: 'stCELO',
+      address: STCELO_ADDRESS,
+      icon: 'https://docs.stcelo.xyz/~gitbook/image?url=https%3A%2F%2F3000964912-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FvQimOwyO476OljyCNwuU%252Ficon%252F5v5AoHHdDbNO4xJ9JQ56%252FProperty%25201%253DstCELO.png%3Falt%3Dmedia%26token%3D593a7df1-4f25-42e8-a03a-c12a8056dcdd&width=32&dpr=4&quality=100&sign=41c5cab3&sv=2',
+      balance: String(props.availableStCelo),
+    },
+  ];
+  return tokens;
+});
 
 const selectedToken = computed(
   () =>
@@ -56,9 +81,7 @@ const selectedToken = computed(
 
 const availableAmount = computed(() => {
   if (selectedToken.value) return Number(selectedToken.value.balance) || 0;
-  return Number(props.available) > 0
-    ? Number(props.available)
-    : Number(stCeloComposable.value?.vault?.available || '0');
+  return 0;
 });
 
 const displayedAvailable = computed(() =>
@@ -70,32 +93,139 @@ const canDeposit = computed(() => {
   return v > 0 && v <= availableAmount.value;
 });
 
-const actions = computed(() => [
+const actions = reactive<any[]>([
   {
     label: 'Deposit',
     loadingLabel: 'Depositing',
     confirmingLabel: 'Confirming',
     action: submit,
-    stepTooltip: 'Deposit into vault',
+    stepTooltip: `Deposit CELO into vault`,
   },
 ]);
 
 onMounted(() => {
-  if (availableTokens.value.length > 0 && !selectedTokenAddress.value) {
-    selectedTokenAddress.value = availableTokens.value[0].address;
-  }
+  // Default to CELO
+  selectedTokenAddress.value = CELO_ADDRESS;
 });
 
+// Watch for token changes and update the stepper dynamically
+watch(
+  () => selectedTokenAddress.value,
+  newAddress => {
+    console.log('Token changed to:', newAddress);
+
+    // Recalculate actions based on new token
+    actions.length = 0; // Clear the array
+
+    if (selectedToken.value?.address === STCELO_ADDRESS) {
+      // For stCELO: Approve first, then Deposit
+      actions.push(
+        {
+          label: 'Approve',
+          loadingLabel: 'Approving',
+          confirmingLabel: 'Confirming',
+          action: approveStCelo,
+          stepTooltip: `Approve stCELO for vault deposit`,
+        },
+        {
+          label: 'Deposit',
+          loadingLabel: 'Depositing',
+          confirmingLabel: 'Confirming',
+          action: submit,
+          stepTooltip: `Deposit ${
+            selectedToken.value?.symbol || 'token'
+          } into vault`,
+        }
+      );
+    } else {
+      // For CELO: Just Deposit
+      actions.push({
+        label: 'Deposit',
+        loadingLabel: 'Depositing',
+        confirmingLabel: 'Confirming',
+        action: submit,
+        stepTooltip: `Deposit ${
+          selectedToken.value?.symbol || 'token'
+        } into vault`,
+      });
+    }
+  }
+);
+
+async function approveStCelo() {
+  try {
+    const signer = getProvider()?.getSigner(account.value);
+    const amount = Number(depositAmount.value);
+    const amountBn = ethers.utils.parseUnits(String(amount), 18);
+
+    if (!signer) throw new Error('No signer available');
+
+    const VAULT_ADDRESS = '0x312F6f5259cCEb789dEf7B3eAAD50b53317129DD';
+    const ERC20_ABI = [
+      'function approve(address spender, uint256 amount) returns (bool)',
+    ];
+
+    console.log('Starting approval for amount:', amount);
+    const stCeloToken = new ethers.Contract(STCELO_ADDRESS, ERC20_ABI, signer);
+    const tx = await stCeloToken.approve(VAULT_ADDRESS, amountBn);
+
+    console.log('Approval tx sent:', tx.hash);
+
+    // Wait for confirmation
+    const receipt = await tx.wait();
+    console.log('Approval confirmed:', receipt);
+
+    addTransaction({
+      id: tx.hash,
+      type: 'tx',
+      action: 'approve',
+      summary: `Approve stCELO for vault`,
+    });
+
+    return tx;
+  } catch (error) {
+    console.error('Approval error:', error);
+    throw error;
+  }
+}
+
 async function submit() {
-  const amount = Number(depositAmount.value);
-  const tx = await stCeloComposable.value.depositTx(amount);
-  addTransaction({
-    id: tx.hash,
-    type: 'tx',
-    action: 'invest',
-    summary: `Deposit ${amount} ${selectedToken.value?.symbol || 'CELO'}`,
-  });
-  return tx;
+  try {
+    const amount = Number(depositAmount.value);
+    const tokenAddress = selectedToken.value?.address;
+
+    console.log('Submitting deposit:', {
+      amount,
+      tokenAddress,
+      selectedToken: selectedToken.value?.symbol,
+    });
+
+    // Use appropriate method based on token
+    let tx;
+    if (tokenAddress === CELO_ADDRESS) {
+      console.log('Depositing CELO (native)');
+      tx = await stCeloComposable.value.depositTx(amount);
+    } else if (tokenAddress === STCELO_ADDRESS) {
+      console.log('Depositing stCELO (token)');
+      tx = await stCeloComposable.value.depositTxForToken(tokenAddress, amount);
+    } else {
+      throw new Error('Invalid token selected');
+    }
+
+    console.log('Deposit tx sent:', tx.hash);
+
+    addTransaction({
+      id: tx.hash,
+      type: 'tx',
+      action: 'invest',
+      summary: `Deposit ${amount} ${selectedToken.value?.symbol || 'token'}`,
+    });
+
+    return tx;
+  } catch (error) {
+    console.error('Deposit error:', error);
+    throw error;
+  }
 }
 
 function setMaxDeposit() {
@@ -105,6 +235,12 @@ function setMaxDeposit() {
 function selectToken(token: DepositToken) {
   selectedTokenAddress.value = token.address;
   showTokenSelector.value = false;
+  depositAmount.value = '';
+
+  // Reset transaction state when switching tokens
+  txState.confirmed = false;
+  txState.receipt = undefined;
+  txState.confirming = false;
 }
 
 function onDepositInput(e: Event) {
@@ -121,12 +257,25 @@ function handleClose() {
 }
 
 function onStepsSuccess(receipt: TransactionReceipt) {
+  console.log('Steps success, receipt:', receipt);
+
+  // Set transaction state
+  txState.confirmed = true;
+  txState.receipt = receipt;
+  txState.confirming = false;
+
   showFireworks.value = true;
   emit('success', receipt);
-  stCeloComposable.value?.refetch?.();
+
+  console.log('Refetching balances...');
+  // Refetch balances immediately after successful deposit
+  stCeloComposable.value?.refetch?.().catch((e: any) => {
+    console.error('Failed to refetch balances:', e);
+  });
 }
 
-function onStepsFailed() {
+function onStepsFailed(error?: any) {
+  console.error('Steps failed:', error);
   // BalActionSteps maneja los errores
 }
 </script>
@@ -296,79 +445,75 @@ function onStepsFailed() {
       </div>
       <div v-else>
         <!-- Success State -->
-        <div>
-          <!-- Success Header with Icon -->
-          <div class="flex gap-3 items-center mb-4">
-            <div
-              class="flex flex-shrink-0 justify-center items-center w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full"
-            >
-              <svg
-                class="w-5 h-5 text-green-600 dark:text-green-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Deposit Successful
-            </h3>
-          </div>
-
-          <!-- Deposit Summary -->
-          <p
-            class="mb-4 text-sm font-medium tracking-wide leading-relaxed text-gray-700 dark:text-gray-300"
-          >
-            You added
-            <span class="font-semibold"
-              >{{ depositAmount }} {{ selectedToken?.symbol || 'CELO' }}</span
-            >
-            to the {{ vault?.title || 'CELO' }} vault.
-          </p>
-
-          <!-- Updated Position Card -->
+        <!-- Success Header with Icon -->
+        <div class="flex gap-3 items-center mb-6">
           <div
-            class="pt-4 mb-4 bg-blue-50 dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-gray-700"
+            class="flex flex-shrink-0 justify-center items-center w-10 h-10 bg-green-100 rounded-full dark:bg-green-900/30"
           >
-            <div class="px-4">
-              <p
-                class="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                Updated position (stCELO)
-              </p>
-            </div>
-            <hr class="border-gray-300 dark:border-gray-700" />
-            <div class="flex gap-2 items-center p-4">
-              <img
-                :src="vault?.depositTokenIcon"
-                alt="token"
-                class="w-8 h-8 rounded-full"
+            <svg
+              class="w-6 h-6 text-green-600 dark:text-green-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
               />
-              <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {{
-                  stCeloComposable?.vault?.deposit
-                    ? Number(stCeloComposable.vault.deposit).toLocaleString(
-                        'en-US',
-                        { maximumFractionDigits: 5 }
-                      )
-                    : '0'
-                }}
-              </span>
-            </div>
+            </svg>
           </div>
+          <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Deposit Successful
+          </h3>
+        </div>
 
-          <!-- Transaction Details -->
-          <div class="mb-4">
-            <ConfirmationIndicator :txReceipt="txState.receipt" />
+        <!-- Deposit Summary -->
+        <p class="mb-6 text-sm text-gray-600 dark:text-gray-400">
+          You added
+          <span class="font-semibold text-gray-900 dark:text-gray-100"
+            >{{ depositAmount }} {{ selectedToken?.symbol || 'CELO' }}</span
+          >
+          to the {{ vault?.title || 'CELO' }} vault.
+        </p>
+
+        <!-- Updated Position Card -->
+        <div
+          class="p-4 mb-6 bg-blue-50 rounded-lg border border-blue-200 dark:bg-gray-800/50 dark:border-blue-900/30"
+        >
+          <div class="mb-3">
+            <p
+              class="text-xs font-medium tracking-wide text-gray-600 dark:text-gray-400 uppercase"
+            >
+              Updated position (stCELO)
+            </p>
+          </div>
+          <div class="flex gap-3 items-center">
+            <img
+              :src="vault?.depositTokenIcon"
+              alt="token"
+              class="w-8 h-8 rounded-full"
+            />
+            <span class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {{
+                stCeloComposable?.vault?.deposit
+                  ? Number(stCeloComposable.vault.deposit).toLocaleString(
+                      'en-US',
+                      { maximumFractionDigits: 5 }
+                    )
+                  : '0'
+              }}
+            </span>
           </div>
         </div>
 
+        <!-- Transaction Details -->
+        <div class="pb-6 mb-6 border-b border-gray-200 dark:border-gray-700">
+          <ConfirmationIndicator :txReceipt="txState.receipt" />
+        </div>
+
+        <!-- Continue Button -->
         <BalBtn
-          class="flex-1 w-full"
+          class="w-full h-12"
           label="Continue"
           color="gradient"
           :disabled="txState.confirming"

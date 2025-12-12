@@ -89,9 +89,17 @@ function handleClose() {
 }
 
 function onStepsSuccess() {
+  // Set transaction state
+  txState.confirmed = true;
+  txState.confirming = false;
+
   showFireworks.value = true;
   emit('success');
-  stCeloComposable.value?.refetch?.();
+
+  // Refetch balances immediately after successful withdrawal
+  stCeloComposable.value?.refetch?.().catch((e: any) => {
+    console.error('Failed to refetch balances:', e);
+  });
 }
 
 onMounted(async () => {
@@ -176,12 +184,13 @@ onMounted(async () => {
     </div>
 
     <div v-else>
-      <div class="flex gap-3 items-center mb-4">
+      <!-- Success Header with Icon -->
+      <div class="flex gap-3 items-center mb-6">
         <div
-          class="flex justify-center items-center w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full"
+          class="flex flex-shrink-0 justify-center items-center w-10 h-10 bg-green-100 rounded-full dark:bg-green-900/30"
         >
           <svg
-            class="w-5 h-5 text-green-600"
+            class="w-6 h-6 text-green-600 dark:text-green-400"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -192,17 +201,29 @@ onMounted(async () => {
             />
           </svg>
         </div>
-        <h3 class="text-2xl font-bold">Withdrawal Successful</h3>
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Withdrawal Successful
+        </h3>
       </div>
-      <p class="mb-4 text-sm">
+
+      <!-- Withdrawal Summary -->
+      <p class="mb-6 text-sm text-gray-600 dark:text-gray-400">
         You withdrew
-        <span class="font-semibold">{{ withdrawAmount }} stCELO</span> from the
-        vault.
+        <span class="font-semibold text-gray-900 dark:text-gray-100"
+          >{{ withdrawAmount }} stCELO</span
+        >
+        from the vault.
       </p>
-      <ConfirmationIndicator :txReceipt="txState.receipt" />
+
+      <!-- Transaction Details -->
+      <div class="pb-6 mb-6 border-b border-gray-200 dark:border-gray-700">
+        <ConfirmationIndicator :txReceipt="txState.receipt" />
+      </div>
+
+      <!-- Close Button -->
       <BalBtn
-        class="mt-4 w-full"
-        label="Close"
+        class="w-full h-12"
+        label="Continue"
         color="gradient"
         @click="handleClose"
       />
