@@ -58,7 +58,6 @@ async function readBalances(
 
 async function deposit(
   getSigner: () => ethers.Signer,
-  assetAddress: string,
   amount: number,
   tokenAddress?: string
 ) {
@@ -68,7 +67,9 @@ async function deposit(
   // Default: deposit CELO (native)
   if (!tokenAddress || tokenAddress === CELO_ADDRESS) {
     const amountBn = ethers.utils.parseUnits(String(amount), DECIMALS);
-    return await vaultContract.deposit({ value: amountBn });
+    const tx = await vaultContract.deposit({ value: amountBn });
+    await tx.wait();
+    return tx;
   }
 
   // Deposit stCELO token
@@ -81,7 +82,9 @@ async function deposit(
     await approveTx.wait();
 
     // Deposit stCELO
-    return await vaultContract.depositStCelo(amountBn);
+    const tx = await vaultContract.depositStCelo(amountBn);
+    await tx.wait();
+    return tx;
   }
 
   throw new Error(`Unsupported token address: ${tokenAddress}`);
@@ -94,30 +97,45 @@ async function withdraw(
 ) {
   const signer = getSigner();
   const vaultContract = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, signer);
-  return await vaultContract.withdraw(amount);
+  const tx = await vaultContract.withdraw(amount);
+  await tx.wait();
+  return tx;
 }
 
 async function getApy(): Promise<
   { token: string; value: number; icon?: string }[]
 > {
-  const { status, data } = await MerklApi(
-    'https://api.merkl.xyz'
-  ).v4.campaigns.get({
-    query: {
-      mainParameter: VAULT_ADDRESS,
-    },
-  });
-  if (status !== 200) throw 'Failed to fetch APY data';
+  try {
+    const { status, data } = await MerklApi(
+      'https://api.merkl.xyz'
+    ).v4.campaigns.get({
+      query: {
+        mainParameter: VAULT_ADDRESS,
+      },
+    });
+    if (status !== 200) throw new Error('Failed to fetch APY data');
 
-  const celoApr = data?.reduce((acc, curr) => acc + (curr.apr || 0), 0) || 0;
+    const celoApr =
+      data?.reduce((acc: number, curr: any) => acc + (curr.apr || 0), 0) || 0;
 
-  return [
-    {
-      token: 'CELO',
-      value: celoApr,
-      icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
-    },
-  ];
+    return [
+      {
+        token: 'CELO',
+        value: celoApr,
+        icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
+      },
+    ];
+  } catch (error) {
+    console.error('Error fetching APY:', error);
+    // Fallback to default APY if fetch fails
+    return [
+      {
+        token: 'CELO',
+        value: 0,
+        icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
+      },
+    ];
+  }
 }
 
 export function createStCeloStrategy(): VaultStrategy {

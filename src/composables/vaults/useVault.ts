@@ -46,7 +46,8 @@ export function useVault(
     );
     Object.assign(vault, balances);
     if (vault.tokenAddress) vault.price = priceFor(vault.tokenAddress) || 0;
-    vault.apy = await strategy.getApy(getProviderSafe, vault.contractAddress);
+    const apy = await strategy.getApy(getProviderSafe, vault.contractAddress);
+    vault.apy = apy;
     return balances;
   };
 

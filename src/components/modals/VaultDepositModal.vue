@@ -190,29 +190,20 @@ async function approveStCelo() {
 }
 
 async function submit() {
+  txState.init = true;
   try {
     const amount = Number(depositAmount.value);
     const tokenAddress = selectedToken.value?.address;
 
-    console.log('Submitting deposit:', {
-      amount,
-      tokenAddress,
-      selectedToken: selectedToken.value?.symbol,
-    });
-
-    // Use appropriate method based on token
+    txState.confirming = true;
     let tx;
     if (tokenAddress === CELO_ADDRESS) {
-      console.log('Depositing CELO (native)');
       tx = await stCeloComposable.value.depositTx(amount);
     } else if (tokenAddress === STCELO_ADDRESS) {
-      console.log('Depositing stCELO (token)');
       tx = await stCeloComposable.value.depositTxForToken(tokenAddress, amount);
     } else {
       throw new Error('Invalid token selected');
     }
-
-    console.log('Deposit tx sent:', tx.hash);
 
     addTransaction({
       id: tx.hash,
@@ -223,8 +214,11 @@ async function submit() {
 
     return tx;
   } catch (error) {
+    txState.confirming = false;
     console.error('Deposit error:', error);
     throw error;
+  } finally {
+    txState.init = false;
   }
 }
 
@@ -267,16 +261,13 @@ function onStepsSuccess(receipt: TransactionReceipt) {
   showFireworks.value = true;
   emit('success', receipt);
 
-  console.log('Refetching balances...');
-  // Refetch balances immediately after successful deposit
   stCeloComposable.value?.refetch?.().catch((e: any) => {
     console.error('Failed to refetch balances:', e);
   });
 }
 
-function onStepsFailed(error?: any) {
-  console.error('Steps failed:', error);
-  // BalActionSteps maneja los errores
+function onStepsFailed() {
+  txState.confirming = false;
 }
 </script>
 
@@ -306,7 +297,11 @@ function onStepsFailed(error?: any) {
           </div>
           <hr class="border-gray-300 dark:border-gray-700" />
           <div class="flex gap-2 items-center p-4">
-            <img :src="vault?.icon" alt="stcelo" class="w-8 h-8 rounded-full" />
+            <img
+              :src="vault?.depositTokenIcon"
+              alt="stcelo"
+              class="w-8 h-8 rounded-full"
+            />
             <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {{
                 stCeloComposable?.vault?.deposit
