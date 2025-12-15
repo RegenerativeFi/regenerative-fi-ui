@@ -137,20 +137,7 @@
     :availableRaw="depositRaw"
     :contractAddress="contractAddress"
     :vaultComposable="vaultComposable"
-    :acceptedTokens="[
-      {
-        symbol: 'CELO',
-        address: '0x471EcE3750Da237f93B8E339c536989b8978a438',
-        icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
-        balance: available?.toString() || '0',
-      },
-      {
-        symbol: 'stCELO',
-        address: '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24',
-        icon: 'https://docs.stcelo.xyz/~gitbook/image?url=https%3A%2F%2F3000964912-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FvQimOwyO476OljyCNwuU%252Ficon%252F5v5AoHHdDbNO4xJ9JQ56%252FProperty%25201%253DstCELO.png%3Falt%3Dmedia%26token%3D593a7df1-4f25-42e8-a03a-c12a8056dcdd&width=32&dpr=4&quality=100&sign=41c5cab3&sv=2',
-        balance: available?.toString() || '0',
-      },
-    ]"
+    :acceptedTokens="acceptedWithdrawTokens"
     @close="closeWithdraw"
     @success="handleSucess"
   />
@@ -162,20 +149,7 @@
     :availableStCelo="availableStCelo"
     :contractAddress="contractAddress"
     :vaultComposable="vaultComposable"
-    :acceptedTokens="[
-      {
-        symbol: 'CELO',
-        address: '0x471EcE3750Da237f93B8E339c536989b8978a438',
-        icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
-        balance: available?.toString() || '0',
-      },
-      {
-        symbol: 'stCELO',
-        address: '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24',
-        icon: 'https://docs.stcelo.xyz/~gitbook/image?url=https%3A%2F%2F3000964912-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FvQimOwyO476OljyCNwuU%252Ficon%252F5v5AoHHdDbNO4xJ9JQ56%252FProperty%25201%253DstCELO.png%3Falt%3Dmedia%26token%3D593a7df1-4f25-42e8-a03a-c12a8056dcdd&width=32&dpr=4&quality=100&sign=41c5cab3&sv=2',
-        balance: available?.toString() || '0',
-      },
-    ]"
+    :acceptedTokens="acceptedDepositTokens"
     @close="closeDeposit"
     @success="handleSucess"
   />
@@ -186,7 +160,8 @@ import { ref, computed } from 'vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import VaultDepositModal from '@/components/modals/VaultDepositModal.vue';
 import VaultWithdrawModal from '@/components/modals/VaultWithdrawModal.vue';
-import type { ApyComponent } from '@/composables/vaults/types';
+import type { ApyComponent, VaultComposable } from '@/composables/vaults/types';
+import { VAULT_TOKENS } from '@/composables/vaults/config';
 import BalTooltip from './_global/BalTooltip/BalTooltip.vue';
 
 const props = defineProps<{
@@ -200,11 +175,35 @@ const props = defineProps<{
   depositTokenIcon?: string;
   placeholder?: boolean;
   contractAddress: string;
-  vaultComposable?: any;
+  vaultComposable?: VaultComposable;
 }>();
+
 const emit = defineEmits<{
   (e: 'success', contractAddress?: string): void;
 }>();
+
+// Build accepted tokens from centralized config
+const acceptedDepositTokens = computed(() => [
+  {
+    ...VAULT_TOKENS.CELO,
+    balance: props.available?.toString() || '0',
+  },
+  {
+    ...VAULT_TOKENS.STCELO,
+    balance: props.availableStCelo?.toString() || '0',
+  },
+]);
+
+const acceptedWithdrawTokens = computed(() => [
+  {
+    ...VAULT_TOKENS.STCELO,
+    balance: props.deposit?.toString() || '0',
+  },
+  {
+    ...VAULT_TOKENS.CELO,
+    balance: props.available?.toString() || '0',
+  },
+]);
 
 const showWithdraw = ref(false);
 const showDeposit = ref(false);

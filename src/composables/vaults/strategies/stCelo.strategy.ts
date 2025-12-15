@@ -1,11 +1,14 @@
 import { ethers } from 'ethers';
-import { VaultStrategy } from '../types';
+import { VaultStrategy, VaultBalanceData, ApyComponent } from '../types';
+import { VAULT_TOKENS, TOKEN_ADDRESSES, VAULT_ADDRESSES } from '../config';
 import { MerklApi } from '@merkl/api';
 
-export const VAULT_ADDRESS = '0x312F6f5259cCEb789dEf7B3eAAD50b53317129DD';
-export const STCELO_ADDRESS = '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24';
-export const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
-const DECIMALS = 18;
+// Use centralized config - keep exports for backward compatibility
+export const VAULT_ADDRESS = VAULT_ADDRESSES.STCELO_VAULT;
+export const STCELO_ADDRESS = TOKEN_ADDRESSES.STCELO;
+export const CELO_ADDRESS = TOKEN_ADDRESSES.CELO;
+
+const DECIMALS = VAULT_TOKENS.CELO.decimals;
 
 const ERC20_ABI = [
   'function balanceOf(address) view returns (uint256)',
@@ -22,7 +25,7 @@ const VAULT_ABI = [
 async function readBalances(
   getProvider: () => ethers.providers.Provider,
   userAddress: string
-) {
+): Promise<VaultBalanceData> {
   const provider = getProvider();
   const celoToken = new ethers.Contract(CELO_ADDRESS, ERC20_ABI, provider);
   const stCeloToken = new ethers.Contract(STCELO_ADDRESS, ERC20_ABI, provider);
@@ -98,9 +101,7 @@ async function withdraw(getSigner: () => ethers.Signer, amount: string) {
   return tx;
 }
 
-async function getApy(): Promise<
-  { token: string; value: number; icon?: string }[]
-> {
+async function getApy(): Promise<ApyComponent[]> {
   try {
     const { status, data } = await MerklApi(
       'https://api.merkl.xyz'
@@ -116,9 +117,9 @@ async function getApy(): Promise<
 
     return [
       {
-        token: 'CELO',
+        token: VAULT_TOKENS.CELO.symbol,
         value: celoApr,
-        icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
+        icon: VAULT_TOKENS.CELO.icon,
       },
     ];
   } catch (error) {
@@ -126,9 +127,9 @@ async function getApy(): Promise<
     // Fallback to default APY if fetch fails
     return [
       {
-        token: 'CELO',
+        token: VAULT_TOKENS.CELO.symbol,
         value: 0,
-        icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
+        icon: VAULT_TOKENS.CELO.icon,
       },
     ];
   }

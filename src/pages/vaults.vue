@@ -62,9 +62,7 @@ import BalCard from '@/components/_global/BalCard/BalCard.vue';
 import { useVaults } from '@/composables/vaults/index';
 import { computed } from 'vue';
 
-const { vaults, refetchVault, getComposable } = useVaults();
-
-const isLoading = false;
+const { vaults, refetchVault, getComposable, isLoading } = useVaults();
 
 const totalDeposits = computed(() =>
   vaults.reduce(

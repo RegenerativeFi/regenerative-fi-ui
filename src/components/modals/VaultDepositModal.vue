@@ -9,16 +9,20 @@ import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import useTransactions from '@/composables/useTransactions';
 import useWeb3 from '@/services/web3/useWeb3';
 import { ethers } from 'ethers';
+import {
+  TOKEN_ADDRESSES,
+  VAULT_TOKENS,
+  VAULT_ADDRESSES,
+} from '@/composables/vaults/config';
+import type {
+  VaultComposable,
+  VaultTokenInfo,
+} from '@/composables/vaults/types';
 
-interface DepositToken {
-  symbol: string;
-  address: string;
-  icon: string;
-  balance: string;
-}
-
-const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
-const STCELO_ADDRESS = '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24';
+// Use centralized config
+const CELO_ADDRESS = TOKEN_ADDRESSES.CELO;
+const STCELO_ADDRESS = TOKEN_ADDRESSES.STCELO;
+const VAULT_ADDRESS = VAULT_ADDRESSES.STCELO_VAULT;
 
 const props = withDefaults(
   defineProps<{
@@ -28,8 +32,8 @@ const props = withDefaults(
     availableStCelo?: string | number;
     title?: string;
     contractAddress: string;
-    vaultComposable?: any;
-    acceptedTokens?: DepositToken[];
+    vaultComposable?: VaultComposable;
+    acceptedTokens?: VaultTokenInfo[];
   }>(),
   {
     available: '0',
@@ -46,7 +50,7 @@ const emit = defineEmits<{
 const depositAmount = ref('');
 const showFireworks = ref(false);
 const showTokenSelector = ref(false);
-const selectedTokenAddress = ref(CELO_ADDRESS);
+const selectedTokenAddress = ref<string>(CELO_ADDRESS);
 
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
@@ -54,22 +58,22 @@ const { getProvider, account } = useWeb3();
 
 const stCeloComposable = computed(() => props.vaultComposable);
 
+// Use acceptedTokens from props if available, otherwise build from config
 const availableTokens = computed(() => {
-  const tokens: DepositToken[] = [
+  if (props.acceptedTokens && props.acceptedTokens.length > 0) {
+    return props.acceptedTokens;
+  }
+  // Fallback to centralized config
+  return [
     {
-      symbol: 'CELO',
-      address: CELO_ADDRESS,
-      icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
+      ...VAULT_TOKENS.CELO,
       balance: String(props.available),
     },
     {
-      symbol: 'stCELO',
-      address: STCELO_ADDRESS,
-      icon: 'https://docs.stcelo.xyz/~gitbook/image?url=https%3A%2F%2F3000964912-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FvQimOwyO476OljyCNwuU%252Ficon%252F5v5AoHHdDbNO4xJ9JQ56%252FProperty%25201%253DstCELO.png%3Falt%3Dmedia%26token%3D593a7df1-4f25-42e8-a03a-c12a8056dcdd&width=32&dpr=4&quality=100&sign=41c5cab3&sv=2',
+      ...VAULT_TOKENS.STCELO,
       balance: String(props.availableStCelo),
     },
   ];
-  return tokens;
 });
 
 const selectedToken = computed(
@@ -160,7 +164,6 @@ async function approveStCelo() {
 
     if (!signer) throw new Error('No signer available');
 
-    const VAULT_ADDRESS = '0x312F6f5259cCEb789dEf7B3eAAD50b53317129DD';
     const ERC20_ABI = [
       'function approve(address spender, uint256 amount) returns (bool)',
     ];
@@ -195,6 +198,10 @@ async function submit() {
     const amount = Number(depositAmount.value);
     const tokenAddress = selectedToken.value?.address;
 
+    if (!stCeloComposable.value) {
+      throw new Error('Vault composable not available');
+    }
+
     txState.confirming = true;
     let tx;
     if (tokenAddress === CELO_ADDRESS) {
@@ -226,7 +233,7 @@ function setMaxDeposit() {
   depositAmount.value = String(availableAmount.value);
 }
 
-function selectToken(token: DepositToken) {
+function selectToken(token: VaultTokenInfo) {
   selectedTokenAddress.value = token.address;
   showTokenSelector.value = false;
   depositAmount.value = '';

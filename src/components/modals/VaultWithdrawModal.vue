@@ -15,16 +15,15 @@ import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { TransactionActionInfo } from '@/types/transactions';
 import { ApprovalAction } from '@/composables/approvals/types';
 import { ethers } from 'ethers';
+import { TOKEN_ADDRESSES, VAULT_TOKENS } from '@/composables/vaults/config';
+import type {
+  VaultComposable,
+  VaultTokenInfo,
+} from '@/composables/vaults/types';
 
-interface WithdrawToken {
-  symbol: string;
-  address: string;
-  icon: string;
-  balance: string;
-}
-
-const STCELO_ADDRESS = '0xC668583dcbDc9ae6FA3CE46462758188adfdfC24';
-const CELO_ADDRESS = '0x471EcE3750Da237f93B8E339c536989b8978a438';
+// Use centralized config
+const STCELO_ADDRESS = TOKEN_ADDRESSES.STCELO;
+const CELO_ADDRESS = TOKEN_ADDRESSES.CELO;
 
 const props = withDefaults(
   defineProps<{
@@ -34,8 +33,8 @@ const props = withDefaults(
     availableRaw?: string;
     title?: string;
     contractAddress: string;
-    vaultComposable?: any;
-    acceptedTokens?: WithdrawToken[];
+    vaultComposable?: VaultComposable;
+    acceptedTokens?: VaultTokenInfo[];
   }>(),
   { available: '0', acceptedTokens: () => [] }
 );
@@ -49,7 +48,7 @@ const loading = ref(false);
 const withdrawAmount = ref('');
 const showFireworks = ref(false);
 const showTokenSelector = ref(false);
-const selectedTokenAddress = ref(STCELO_ADDRESS);
+const selectedTokenAddress = ref<string>(STCELO_ADDRESS);
 const userHasInteracted = ref(false);
 const isFetching = ref(false);
 const withdrawnAmount = ref(''); // Track the amount that was actually withdrawn
@@ -61,22 +60,22 @@ const { addTransaction } = useTransactions();
 const { networkConfig } = useNetwork();
 const stCeloComposable = computed(() => props.vaultComposable);
 
+// Use acceptedTokens from props if available, otherwise build from config
 const availableWithdrawTokens = computed(() => {
-  const tokens: WithdrawToken[] = [
+  if (props.acceptedTokens && props.acceptedTokens.length > 0) {
+    return props.acceptedTokens;
+  }
+  // Fallback to centralized config
+  return [
     {
-      symbol: 'stCELO',
-      address: STCELO_ADDRESS,
-      icon: 'https://docs.stcelo.xyz/~gitbook/image?url=https%3A%2F%2F3000964912-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FvQimOwyO476OljyCNwuU%252Ficon%252F5v5AoHHdDbNO4xJ9JQ56%252FProperty%25201%253DstCELO.png%3Falt%3Dmedia%26token%3D593a7df1-4f25-42e8-a03a-c12a8056dcdd&width=32&dpr=4&quality=100&sign=41c5cab3&sv=2',
+      ...VAULT_TOKENS.STCELO,
       balance: String(props.available),
     },
     {
-      symbol: 'CELO',
-      address: CELO_ADDRESS,
-      icon: 'https://cdn.prod.website-files.com/652d421c1214a2eebd967f1d/683f449264407a7213b865fa_Celo.png',
+      ...VAULT_TOKENS.CELO,
       balance: String(props.available),
     },
   ];
-  return tokens;
 });
 
 const selectedToken = computed(
@@ -194,6 +193,10 @@ async function submitWithdraw() {
   stepsInitiated.value = true; // Lock validation for entire sequence
   txState.init = true;
   try {
+    if (!stCeloComposable.value) {
+      throw new Error('Vault composable not available');
+    }
+
     txState.confirming = true;
 
     const tx = await stCeloComposable.value.withdrawTx(
@@ -244,7 +247,7 @@ async function submitSwap() {
   }
 }
 
-function selectToken(token: WithdrawToken) {
+function selectToken(token: VaultTokenInfo) {
   selectedTokenAddress.value = token.address;
   showTokenSelector.value = false;
   withdrawAmount.value = '';
@@ -305,12 +308,12 @@ onMounted(async () => {
   }
 
   setTokenInAddress(STCELO_ADDRESS);
-  setTokenOutAddress('0x471EcE3750Da237f93B8E339c536989b8978a438'); // CELO
+  setTokenOutAddress(CELO_ADDRESS);
   setTokenInAmount('0');
   setTokenOutAmount('0');
   setInitialized(true);
 
-  if (account.value) {
+  if (account.value && stCeloComposable.value) {
     try {
       await stCeloComposable.value.refetch();
       await setTokenApprovalActions();
