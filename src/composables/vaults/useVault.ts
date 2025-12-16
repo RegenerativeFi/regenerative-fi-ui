@@ -53,16 +53,13 @@ export function useVault(
 
   const isEnabled = computed(() => !!vault.contractAddress && !!account.value);
 
-  const { refetch, isError, fetchStatus } = useQuery({
+  const { refetch, isError } = useQuery({
     queryKey,
     queryFn,
     enabled: isEnabled,
     refetchOnWindowFocus: false,
     staleTime: 30_000,
   });
-
-  // Only show loading when actually fetching data (not when query is idle/disabled)
-  const isActuallyLoading = computed(() => fetchStatus.value === 'fetching');
 
   return {
     vault,
@@ -72,7 +69,6 @@ export function useVault(
       strategy.deposit(getSigner, amount, tokenAddress),
     withdrawTx: (amount: string) => strategy.withdraw(getSigner, amount),
     refetch,
-    isLoading: isActuallyLoading,
     isError,
     getProvider: getProviderSafe,
   };

@@ -53,6 +53,8 @@ const userHasInteracted = ref(false);
 const isFetching = ref(false);
 const withdrawnAmount = ref(''); // Track the amount that was actually withdrawn
 const stepsInitiated = ref(false); // Lock validation once steps start
+const showPreview = ref(false); // Toggle between input and preview screens
+const showDetailsInTokens = ref(true); // Toggle between TOKENS and USD display
 
 const { account } = useWeb3();
 const { txState } = useTxState();
@@ -123,6 +125,69 @@ const canWithdraw = computed(
         ethers.BigNumber.from(props.availableRaw || '0')
       ))
 );
+
+// Preview calculations (mocked fees for now)
+const MOCK_MINT_FEE_PERCENT = 0.01; // 0.01% fee
+const estimatedReceived = computed(() => {
+  const amount = Number(withdrawAmount.value) || 0;
+  // Apply mock fee
+  const fee = amount * MOCK_MINT_FEE_PERCENT;
+  return Math.max(0, amount - fee);
+});
+
+const mintFee = computed(() => {
+  const amount = Number(withdrawAmount.value) || 0;
+  return amount * MOCK_MINT_FEE_PERCENT;
+});
+
+const formattedWithdrawAmount = computed(() => {
+  const amount = Number(withdrawAmount.value) || 0;
+  return amount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+});
+
+const formattedEstimatedReceived = computed(() => {
+  return estimatedReceived.value.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+});
+
+const formattedMintFee = computed(() => {
+  return mintFee.value.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+});
+
+// USD values (mocked 1:1 for now)
+const withdrawAmountUsd = computed(() => {
+  const amount = Number(withdrawAmount.value) || 0;
+  return `$${amount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+});
+
+const estimatedReceivedUsd = computed(() => {
+  return `$${estimatedReceived.value.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+});
+
+const mintFeeUsd = computed(() => {
+  return `$${mintFee.value.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+});
+
+const priceImpactPercent = computed(() => {
+  return `${(MOCK_MINT_FEE_PERCENT * 100).toFixed(2)}%`;
+});
 
 const actions = computed((): TransactionActionInfo[] => {
   const arr: any[] = [
@@ -269,10 +334,19 @@ function handleClose() {
   withdrawAmount.value = '';
   showFireworks.value = false;
   showTokenSelector.value = false;
+  showPreview.value = false;
   txState.confirmed = false;
   txState.receipt = undefined;
   stepsInitiated.value = false; // Reset for next withdrawal
   emit('close');
+}
+
+function goToPreview() {
+  showPreview.value = true;
+}
+
+function goBackToInput() {
+  showPreview.value = false;
 }
 
 function onWithdrawAmountInput(e: Event) {
@@ -328,45 +402,81 @@ onMounted(async () => {
   <BalModal :show="show" :fireworks="showFireworks" @close="handleClose">
     <template #header>
       <div class="flex gap-3 items-center">
+        <!-- Back button when in preview mode -->
+        <button
+          v-if="showPreview && !txState.confirmed"
+          class="flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+          @click="goBackToInput"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
         <div class="flex justify-center items-center w-10 h-10 rounded-full">
           <img :src="vault?.icon" alt="token" class="w-8 h-8 rounded-full" />
         </div>
         <div>
-          <h3 class="text-2xl font-semibold">{{ vault?.title || title }}</h3>
+          <h3 class="text-2xl font-semibold">
+            Withdraw from {{ vault?.title || title }}
+          </h3>
         </div>
       </div>
     </template>
 
     <transition>
       <div v-if="!txState.confirmed || !txState.receipt">
-        <!-- My Position Section -->
-        <div
-          class="pt-4 mb-6 bg-blue-50 dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-gray-700"
-        >
-          <div class="px-4">
-            <p class="mb-2 text-sm text-gray-600 dark:text-gray-400">
-              My position (stCELO)
-            </p>
+        <!-- STEP 1: Input Screen -->
+        <div v-if="!showPreview">
+          <!-- My Position Section -->
+          <div
+            class="pt-4 mb-6 bg-blue-50 dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-gray-700"
+          >
+            <div class="px-4">
+              <p class="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                My position (stCELO)
+              </p>
+            </div>
+            <hr class="border-gray-300 dark:border-gray-700" />
+            <div class="flex gap-2 items-center p-4">
+              <img
+                :src="vault?.depositTokenIcon"
+                alt="stcelo"
+                class="w-8 h-8 rounded-full"
+              />
+              <div class="flex flex-col">
+                <span
+                  class="text-2xl font-bold text-gray-900 dark:text-gray-100"
+                >
+                  {{
+                    Number(available).toLocaleString('en-US', {
+                      maximumFractionDigits: 2,
+                    })
+                  }}
+                  stCELO
+                </span>
+                <span class="text-sm text-gray-500"
+                  >${{
+                    Number(available).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  }}</span
+                >
+              </div>
+            </div>
           </div>
-          <hr class="border-gray-300 dark:border-gray-700" />
-          <div class="flex gap-2 items-center p-4">
-            <img
-              :src="vault?.depositTokenIcon"
-              alt="stcelo"
-              class="w-8 h-8 rounded-full"
-            />
-            <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {{
-                Number(available).toLocaleString('en-US', {
-                  maximumFractionDigits: 5,
-                })
-              }}
-            </span>
-          </div>
-        </div>
 
-        <!-- Withdraw Input -->
-        <div>
+          <!-- Withdraw Input -->
           <div
             class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
           >
@@ -454,7 +564,7 @@ onMounted(async () => {
                 min="0"
                 step="any"
                 :disabled="loading"
-                placeholder="0.00"
+                placeholder="0.0"
                 class="flex-1 min-w-0 text-2xl font-semibold placeholder-gray-300 text-right bg-transparent outline-none"
                 @input="onWithdrawAmountInput"
               />
@@ -481,89 +591,161 @@ onMounted(async () => {
               </button>
             </div>
           </div>
-          <div class="mt-4">
-            <hr class="border-t border-gray-200 dark:border-gray-700" />
-          </div>
+
+          <!-- Preview Withdrawal Button -->
+          <BalBtn
+            class="mt-4 w-full h-12"
+            label="Preview Withdrawal"
+            color="gradient"
+            :disabled="!canWithdraw"
+            @click="goToPreview"
+          />
         </div>
 
-        <!-- Loading indicator while fetching slippage data -->
-        <transition>
+        <!-- STEP 2: Preview Screen -->
+        <div v-else>
+          <!-- Withdrawal Preview Card -->
           <div
-            v-if="isFetching && userHasInteracted"
-            class="flex gap-2 justify-center items-center p-4 mb-4 bg-blue-50 rounded-lg border border-blue-200 dark:border-blue-700 dark:bg-blue-900/20"
+            class="pt-4 mb-4 bg-blue-50 dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-gray-700"
           >
-            <svg
-              class="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              />
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
-            <span class="text-sm font-medium text-blue-600 dark:text-blue-400">
-              Calculating slippage...
-            </span>
-          </div>
-        </transition>
-
-        <!-- Slippage Alert -->
-        <!-- <transition>
-          <BalAlert
-            v-if="showSlippageAlert"
-            type="warning"
-            size="md"
-            block
-            title="High demand detected"
-            class="p-4 mb-4"
-          >
-            <div class="flex flex-col gap-4 text-sm">
-              <p class="text-gray-700 dark:text-gray-300">
-                Current demand may cause significant slippage on your
-                withdrawal. You can:
+            <div class="px-4">
+              <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">
+                Withdrawal Preview
               </p>
-              <ul
-                class="ml-1 space-y-2 list-disc list-inside text-gray-700 dark:text-gray-300"
-              >
-                <li>Continue anyway</li>
-                <li>Withdraw less to reduce slippage</li>
-                <li>Wait for lower demand to receive more CELO</li>
-              </ul>
-              <label
-                class="flex gap-3 items-center mt-3 cursor-pointer select-none"
-              >
-                <input
-                  v-model="acknowledgedSlippage"
-                  type="checkbox"
-                  class="rounded"
-                />
-                <span class="font-medium text-gray-700 dark:text-gray-300">
-                  I acknowledge the slippage and want to proceed
-                </span>
-              </label>
             </div>
-          </BalAlert>
-        </transition> -->
+            <hr class="border-gray-300 dark:border-gray-700" />
 
-        <BalActionSteps
-          :actions="actions"
-          primaryActionType="withdraw"
-          :disabled="!canWithdraw || loading"
-          class="mt-4"
-          @success="onStepsSuccess"
-          @failed="onStepsFailed"
-        />
+            <!-- From: stCELO amount -->
+            <div class="flex gap-3 items-center p-4">
+              <img
+                :src="vault?.depositTokenIcon"
+                alt="stcelo"
+                class="w-10 h-10 rounded-full"
+              />
+              <div class="flex-1">
+                <span
+                  class="text-xl font-bold text-gray-900 dark:text-gray-100"
+                >
+                  {{ formattedWithdrawAmount }} stCELO
+                </span>
+                <p class="text-sm text-gray-500">{{ withdrawAmountUsd }}</p>
+              </div>
+            </div>
+
+            <!-- Arrow indicator -->
+            <div class="flex justify-end px-4 -my-2">
+              <div
+                class="flex justify-center items-center w-8 h-8 bg-white dark:bg-gray-700 rounded-full border border-gray-200 dark:border-gray-600"
+              >
+                <svg
+                  class="w-4 h-4 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <!-- To: Selected token amount -->
+            <div class="flex gap-3 items-center p-4 pt-2">
+              <img
+                :src="selectedToken?.icon"
+                alt="token"
+                class="w-10 h-10 rounded-full"
+              />
+              <div class="flex-1">
+                <span
+                  class="text-xl font-bold text-gray-900 dark:text-gray-100"
+                >
+                  {{ formattedEstimatedReceived }} {{ selectedToken?.symbol }}
+                </span>
+                <p class="text-sm text-gray-500">
+                  {{ estimatedReceivedUsd }} / Mint price impact:
+                  {{ priceImpactPercent }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Swap Details Card -->
+          <div
+            class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+          >
+            <!-- Header with toggle -->
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-sm font-medium text-gray-900 dark:text-white">
+                Swap details
+              </span>
+              <div
+                class="flex p-0.5 text-xs bg-gray-100 dark:bg-gray-700 rounded-lg"
+              >
+                <button
+                  class="py-1 px-2 rounded-md transition-colors"
+                  :class="
+                    showDetailsInTokens
+                      ? 'bg-white dark:bg-gray-600 shadow-sm font-medium'
+                      : 'text-gray-500'
+                  "
+                  @click="showDetailsInTokens = true"
+                >
+                  TOKENS
+                </button>
+                <button
+                  class="py-1 px-2 rounded-md transition-colors"
+                  :class="
+                    !showDetailsInTokens
+                      ? 'bg-white dark:bg-gray-600 shadow-sm font-medium'
+                      : 'text-gray-500'
+                  "
+                  @click="showDetailsInTokens = false"
+                >
+                  USD
+                </button>
+              </div>
+            </div>
+
+            <!-- Details rows -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Estimated total received</span>
+                <span class="font-medium text-gray-900 dark:text-white">
+                  {{
+                    showDetailsInTokens
+                      ? `${formattedEstimatedReceived} ${selectedToken?.symbol}`
+                      : estimatedReceivedUsd
+                  }}
+                </span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Fee (mint price)</span>
+                <span class="font-medium text-gray-900 dark:text-white">
+                  {{
+                    showDetailsInTokens
+                      ? `${formattedMintFee} ${selectedToken?.symbol}`
+                      : mintFeeUsd
+                  }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Steps -->
+          <BalActionSteps
+            :actions="actions"
+            primaryActionType="withdraw"
+            :disabled="!canWithdraw || loading"
+            class="mt-4"
+            @success="onStepsSuccess"
+            @failed="onStepsFailed"
+          />
+        </div>
       </div>
       <div v-else>
         <!-- Success State -->

@@ -18,6 +18,12 @@ const ST_CELO_VAULT: Vault = {
   tokenAddress: stCeloConfig.tokenAddress,
   icon: stCeloConfig.icon,
   depositTokenIcon: stCeloConfig.depositTokenIcon,
+  protocolIcon: stCeloConfig.protocolIcon,
+  protocolInfo: stCeloConfig.protocolInfo,
+  userDepositLimit: stCeloConfig.userDepositLimit,
+  limitTokenSymbol: stCeloConfig.limitTokenSymbol,
+  vaultCapacityLimit: stCeloConfig.vaultCapacityLimit,
+  vaultCapacityUsed: stCeloConfig.vaultCapacityUsed,
   stCeloTokenIcon: VAULT_TOKENS.STCELO.icon,
 };
 

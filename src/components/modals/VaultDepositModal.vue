@@ -13,6 +13,7 @@ import {
   TOKEN_ADDRESSES,
   VAULT_TOKENS,
   VAULT_ADDRESSES,
+  getVaultConfigByAddress,
 } from '@/composables/vaults/config';
 import type {
   VaultComposable,
@@ -50,6 +51,7 @@ const emit = defineEmits<{
 const depositAmount = ref('');
 const showFireworks = ref(false);
 const showTokenSelector = ref(false);
+const showLimitBanner = ref(true);
 const selectedTokenAddress = ref<string>(CELO_ADDRESS);
 
 const { txState } = useTxState();
@@ -57,6 +59,19 @@ const { addTransaction } = useTransactions();
 const { getProvider, account } = useWeb3();
 
 const stCeloComposable = computed(() => props.vaultComposable);
+
+// Get vault config for user deposit limit
+const vaultConfig = computed(() =>
+  getVaultConfigByAddress(props.contractAddress)
+);
+
+const userDepositLimit = computed(
+  () => vaultConfig.value?.userDepositLimit ?? 1000
+);
+
+const limitTokenSymbol = computed(
+  () => vaultConfig.value?.limitTokenSymbol ?? 'stCELO'
+);
 
 // Use acceptedTokens from props if available, otherwise build from config
 const availableTokens = computed(() => {
@@ -252,6 +267,7 @@ function handleClose() {
   depositAmount.value = '';
   showFireworks.value = false;
   showTokenSelector.value = false;
+  showLimitBanner.value = true;
   txState.confirmed = false;
   txState.receipt = undefined;
   emit('close');
@@ -434,6 +450,56 @@ function onStepsFailed() {
           <div class="mt-4">
             <hr class="border-t border-gray-200 dark:border-gray-700" />
           </div>
+        </div>
+
+        <!-- User Deposit Limit Banner (dismissible) -->
+        <div
+          v-if="showLimitBanner"
+          class="flex gap-3 items-start p-4 mt-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+        >
+          <div class="flex-shrink-0 mt-0.5">
+            <svg
+              class="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+              Max vault balance limit
+            </h4>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Your current limit is {{ userDepositLimit.toLocaleString() }}
+              {{ limitTokenSymbol }}. You can deposit up to your remaining
+              available balance.
+            </p>
+          </div>
+          <button
+            class="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            @click="showLimitBanner = false"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
 
         <BalActionSteps

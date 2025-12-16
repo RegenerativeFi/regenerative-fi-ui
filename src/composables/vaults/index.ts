@@ -34,26 +34,12 @@ export function useVaults() {
   };
 
   /**
-   * Check if any vault is currently loading
-   * Returns false if user is not connected (nothing to load)
-   */
-  const isLoading = computed(() => {
-    const loading = stCelo.isLoading;
-    // stCelo.isLoading is now a ComputedRef<boolean>
-    return loading?.value ?? false;
-  });
-
-  /**
    * Check if any vault has an error
    */
-  const isError = computed(() => {
-    const error = stCelo.isError;
-    return error?.value ?? false;
-  });
+  const isError = computed(() => stCelo.isError?.value ?? false);
 
   return {
     vaults,
-    isLoading,
     isError,
     refetchVault: (contractAddress?: string) =>
       getComposable(contractAddress).refetch(),

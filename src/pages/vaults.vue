@@ -34,7 +34,6 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       <div v-for="vault in vaults" :key="vault.id">
         <VaultCard
-          v-if="!isLoading"
           :title="vault.title"
           :apy="vault.apy"
           :deposit="vault.deposit"
@@ -43,13 +42,14 @@
           :availableStCelo="vault.availableStCelo"
           :icon="vault.icon"
           :depositTokenIcon="vault.depositTokenIcon"
+          :protocolIcon="vault.protocolIcon"
+          :protocolInfo="vault.protocolInfo"
+          :vaultCapacityLimit="vault.vaultCapacityLimit"
+          :vaultCapacityUsed="vault.vaultCapacityUsed"
+          :limitTokenSymbol="vault.limitTokenSymbol"
           :contractAddress="vault.contractAddress"
           :vaultComposable="getComposable(vault.contractAddress)"
           @success="handleSuccess"
-        />
-        <div
-          v-else
-          class="p-6 h-40 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"
         />
       </div>
     </div>
@@ -62,7 +62,7 @@ import BalCard from '@/components/_global/BalCard/BalCard.vue';
 import { useVaults } from '@/composables/vaults/index';
 import { computed } from 'vue';
 
-const { vaults, refetchVault, getComposable, isLoading } = useVaults();
+const { vaults, refetchVault, getComposable } = useVaults();
 
 const totalDeposits = computed(() =>
   vaults.reduce(

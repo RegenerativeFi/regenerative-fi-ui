@@ -47,6 +47,22 @@ export interface Vault {
   tokenAddress?: string;
   depositTokenIcon?: string;
   stCeloTokenIcon?: string;
+  /** Protocol icon shown next to APY */
+  protocolIcon?: string;
+  /** Protocol information items for tooltip */
+  protocolInfo?: Array<{
+    label: string;
+    value: string;
+    url?: string;
+  }>;
+  /** User's maximum deposit limit (in tokens) */
+  userDepositLimit?: number;
+  /** Symbol of the limit token for display */
+  limitTokenSymbol?: string;
+  /** Global vault capacity limit (max tokens the vault can hold) */
+  vaultCapacityLimit?: number;
+  /** Current vault capacity used */
+  vaultCapacityUsed?: number;
 
   // Dynamic properties (fetched/calculated)
   apy: ApyComponent[];
@@ -133,8 +149,6 @@ export interface VaultComposable {
   withdrawTx: (amount: string) => Promise<ethers.ContractTransaction>;
   /** Refetch vault data */
   refetch: () => Promise<unknown>;
-  /** Loading state */
-  isLoading: Ref<boolean> | boolean;
   /** Error state */
   isError: Ref<boolean> | boolean;
   /** Get provider */

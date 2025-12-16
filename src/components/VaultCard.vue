@@ -10,7 +10,64 @@
         </div>
         <div v-else class="h-10" />
 
-        <div v-if="!placeholder" class="flex items-center">
+        <div v-if="!placeholder" class="flex gap-2 items-center">
+          <!-- Protocol Icon Tooltip -->
+          <BalTooltip v-if="protocolIcon" placement="top" noPad>
+            <template #activator>
+              <img
+                :src="protocolIcon"
+                alt="protocol"
+                class="w-8 h-8 rounded-lg cursor-pointer"
+              />
+            </template>
+            <div
+              class="py-3 px-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg min-w-[220px]"
+            >
+              <div class="flex flex-col gap-2">
+                <div
+                  v-for="(item, index) in protocolInfo"
+                  :key="index"
+                  class="flex gap-6 justify-between items-center"
+                >
+                  <span class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ item.label }}
+                  </span>
+                  <!-- If URL exists, render as link -->
+                  <a
+                    v-if="item.url"
+                    :href="item.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex gap-1 items-center text-sm font-medium text-gray-900 dark:text-white hover:underline"
+                  >
+                    {{ item.value }}
+                    <svg
+                      class="w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                      />
+                    </svg>
+                  </a>
+                  <!-- If no URL, render as plain text -->
+                  <span
+                    v-else
+                    class="text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    {{ item.value }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </BalTooltip>
+
+          <!-- APY Tooltip -->
           <BalTooltip placement="top" noPad>
             <template #activator>
               <div
@@ -89,7 +146,7 @@
           class="p-6 text-center rounded-xl border-2 border-dashed border-teal-200 bg-teal-50 dark:bg-teal-900/20 dark:border-teal-800"
         >
           <div class="text-sm text-gray-500">My Deposit</div>
-          <div class="flex gap-1 justify-center items-center mt-3">
+          <div class="flex gap-2 justify-center items-center mt-3">
             <!-- Vault Token Icon (stCELO) -->
             <div class="flex relative items-center">
               <img
@@ -101,10 +158,54 @@
             <!-- Deposit Amount -->
             <div class="text-2xl font-semibold">{{ formattedDeposit }}</div>
           </div>
+          <!-- USD Value -->
+          <div class="mt-1 text-sm font-normal leading-5 text-[#818D98]">
+            ${{ formattedDepositUsd }}
+          </div>
+        </div>
+
+        <!-- Vault Capacity -->
+        <div class="flex flex-row gap-3 justify-between items-center mt-4">
+          <span class="text-xs font-normal text-[#646D76] leading-[18px]">
+            Vault capacity:
+          </span>
+          <div class="flex gap-2 items-center">
+            <span
+              class="text-xs font-normal whitespace-nowrap text-[#646D76] leading-[18px]"
+            >
+              {{ formattedCapacityUsed }} / {{ formattedCapacityLimit }}
+              {{ limitTokenSymbol }}
+            </span>
+            <div class="relative w-5 h-5">
+              <svg class="w-5 h-5 -rotate-90" viewBox="0 0 20 20">
+                <!-- Background circle -->
+                <circle
+                  cx="10"
+                  cy="10"
+                  r="8"
+                  stroke="#E5E7EB"
+                  stroke-width="2"
+                  fill="none"
+                  class="dark:stroke-gray-700"
+                />
+                <!-- Progress circle -->
+                <circle
+                  cx="10"
+                  cy="10"
+                  r="8"
+                  :stroke="isVaultFull ? '#EF4444' : '#3B82F6'"
+                  stroke-width="2"
+                  fill="none"
+                  :stroke-dasharray="`${capacityPercent * 0.5} 50`"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
         </div>
 
         <!-- Footer divider (extend to card edges compensating internal padding) -->
-        <hr class="my-6 -mx-6 border-t border-gray-200 dark:border-gray-700" />
+        <hr class="my-4 -mx-6 border-t border-gray-200 dark:border-gray-700" />
 
         <div class="flex flex-row gap-4 items-center">
           <!-- Abrir modal en lugar de emitir directamente -->
@@ -118,7 +219,24 @@
             @click="openWithdrawModal"
           />
 
+          <!-- Deposit Button with Tooltip when Vault is Full -->
+          <BalTooltip v-if="isVaultFull" placement="top" class="flex-1">
+            <template #activator>
+              <BalBtn
+                label="Deposit"
+                color="gradient"
+                class="w-full h-12"
+                disabled
+              />
+            </template>
+            <span class="text-sm">
+              This vault has reached its maximum capacity. The manager may
+              increase the limit in the future.
+            </span>
+          </BalTooltip>
+
           <BalBtn
+            v-else
             label="Deposit"
             color="gradient"
             class="flex-1 w-full h-12"
@@ -173,6 +291,15 @@ const props = defineProps<{
   availableStCelo?: number | string;
   icon?: string;
   depositTokenIcon?: string;
+  protocolIcon?: string;
+  protocolInfo?: Array<{
+    label: string;
+    value: string;
+    url?: string;
+  }>;
+  vaultCapacityLimit?: number;
+  vaultCapacityUsed?: number;
+  limitTokenSymbol?: string;
   placeholder?: boolean;
   contractAddress: string;
   vaultComposable?: VaultComposable;
@@ -217,10 +344,38 @@ const formattedDeposit = computed(() => {
   }).format(num);
 });
 
+// TODO: Get actual USD price from oracle/API
+const formattedDepositUsd = computed(() => {
+  const num = Number(props.deposit) || 0;
+  // Placeholder: using 1:1 ratio for now, should be replaced with actual stCELO price
+  const usdValue = num * 1;
+  return new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(usdValue);
+});
+
 const formattedApy = computed(() => {
   if (!props.apy || props.apy.length === 0) return 0;
   return props.apy.reduce((sum, component) => sum + component.value, 0);
 });
+
+// Vault capacity calculations
+const vaultCapacityLimit = computed(() => props.vaultCapacityLimit ?? 100000);
+const vaultCapacityUsed = computed(() => props.vaultCapacityUsed ?? 0);
+const capacityPercent = computed(() => {
+  if (vaultCapacityLimit.value === 0) return 0;
+  return (vaultCapacityUsed.value / vaultCapacityLimit.value) * 100;
+});
+const isVaultFull = computed(
+  () => vaultCapacityUsed.value >= vaultCapacityLimit.value
+);
+const formattedCapacityUsed = computed(() =>
+  vaultCapacityUsed.value.toLocaleString('en-US')
+);
+const formattedCapacityLimit = computed(() =>
+  vaultCapacityLimit.value.toLocaleString('en-US')
+);
 
 const handleSucess = () => {
   // emit contract address so parent can refetch only this vault
