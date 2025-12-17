@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import useWeb3 from '@/services/web3/useWeb3';
 import { useTokens } from '@/providers/tokens.provider';
 import { Vault, VaultStrategy } from './types';
+import { DEFAULT_USER_MAX_DEPOSIT } from './config';
 
 export function useVault(
   id: string,
@@ -15,19 +16,16 @@ export function useVault(
   const { priceFor } = useTokens();
 
   const getProviderSafe = (): ethers.providers.Provider => {
-    try {
-      return getProvider?.() as ethers.providers.Provider;
-    } catch {
-      return ethers.getDefaultProvider();
-    }
+    return (
+      (getProvider?.() as ethers.providers.Provider) ??
+      ethers.getDefaultProvider()
+    );
   };
 
   const getSigner = () => {
-    const prov = getProviderSafe();
-    if ((prov as any).getSigner && account.value) {
-      return (prov as any).getSigner(account.value);
-    }
-    throw new Error('No signer available. Connect wallet.');
+    const prov = getProviderSafe() as any;
+    if (prov.getSigner && account.value) return prov.getSigner(account.value);
+    throw new Error('No signer available');
   };
 
   const queryKey = computed(() => [
@@ -37,11 +35,9 @@ export function useVault(
     account.value,
   ]);
 
-  // User deposit limit: 1000 stCELO per user
-  const USER_MAX_DEPOSIT = 1000;
-
   const queryFn = async () => {
     if (!account.value) throw new Error('User not connected');
+
     const balances = await strategy.readBalances(
       getProviderSafe,
       account.value,
@@ -49,31 +45,28 @@ export function useVault(
     );
     Object.assign(vault, balances);
 
-    // Update vault capacity from contract data
-    if (balances.vaultMaxCapacity) {
+    if (balances.vaultMaxCapacity)
       vault.vaultCapacityLimit = Number(balances.vaultMaxCapacity);
-    }
-    if (balances.vaultTotalDeposits) {
+    if (balances.vaultTotalDeposits)
       vault.vaultCapacityUsed = Number(balances.vaultTotalDeposits);
-    }
 
-    // Calculate user's remaining deposit allowance (1000 - current deposit)
-    const currentDeposit = Number(balances.deposit) || 0;
-    vault.userDepositLimit = USER_MAX_DEPOSIT;
-    vault.userRemainingDeposit = Math.max(0, USER_MAX_DEPOSIT - currentDeposit);
+    const maxDeposit = vault.userDepositLimit ?? DEFAULT_USER_MAX_DEPOSIT;
+    vault.userDepositLimit = maxDeposit;
+    vault.userRemainingDeposit = Math.max(
+      0,
+      maxDeposit - (Number(balances.deposit) || 0)
+    );
 
     if (vault.tokenAddress) vault.price = priceFor(vault.tokenAddress) || 0;
-    const apy = await strategy.getApy(getProviderSafe, vault.contractAddress);
-    vault.apy = apy;
+    vault.apy = await strategy.getApy(getProviderSafe, vault.contractAddress);
+
     return balances;
   };
-
-  const isEnabled = computed(() => !!vault.contractAddress && !!account.value);
 
   const { refetch, isError } = useQuery({
     queryKey,
     queryFn,
-    enabled: isEnabled,
+    enabled: computed(() => !!vault.contractAddress && !!account.value),
     refetchOnWindowFocus: false,
     staleTime: 30_000,
   });

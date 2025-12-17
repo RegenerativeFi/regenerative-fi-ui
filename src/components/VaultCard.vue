@@ -11,61 +11,69 @@
         <div v-else class="h-10" />
 
         <div v-if="!placeholder" class="flex gap-2 items-center">
-          <!-- Protocol Icon Tooltip -->
-          <BalTooltip v-if="protocolIcon" placement="top" noPad>
-            <template #activator>
-              <img
-                :src="protocolIcon"
-                alt="protocol"
-                class="w-8 h-8 rounded-lg cursor-pointer"
-              />
-            </template>
-            <div
-              class="py-3 px-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg min-w-[220px]"
-            >
-              <div class="flex flex-col gap-2">
-                <div
-                  v-for="(item, index) in protocolInfo"
-                  :key="index"
-                  class="flex gap-6 justify-between items-center"
-                >
-                  <span class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ item.label }}
-                  </span>
-                  <!-- If URL exists, render as link -->
-                  <a
-                    v-if="item.url"
-                    :href="item.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="flex gap-1 items-center text-sm font-medium text-gray-900 dark:text-white hover:underline"
+          <!-- Protocol Icon Tooltip - Custom interactive tooltip -->
+          <div
+            v-if="protocolIcon"
+            class="relative"
+            @mouseenter="showProtocolTooltip = true"
+            @mouseleave="showProtocolTooltip = false"
+          >
+            <img
+              :src="protocolIcon"
+              alt="protocol"
+              class="w-8 h-8 rounded-lg cursor-pointer"
+            />
+            <!-- Custom Tooltip Content -->
+            <Transition name="fade">
+              <div
+                v-if="showProtocolTooltip"
+                class="absolute right-0 z-50 py-3 px-4 mt-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg min-w-[220px]"
+              >
+                <div class="flex flex-col gap-2">
+                  <div
+                    v-for="(item, index) in protocolInfoWithLinks"
+                    :key="index"
+                    class="flex gap-6 justify-between items-center"
                   >
-                    {{ item.value }}
-                    <svg
-                      class="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                      {{ item.label }}
+                    </span>
+                    <!-- If URL exists, render as link -->
+                    <a
+                      v-if="item.url"
+                      :href="item.url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex gap-1 items-center text-sm font-medium text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400 hover:underline"
+                      @click.stop
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M7 17L17 7M17 7H7M17 7V17"
-                      />
-                    </svg>
-                  </a>
-                  <!-- If no URL, render as plain text -->
-                  <span
-                    v-else
-                    class="text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    {{ item.value }}
-                  </span>
+                      {{ item.value }}
+                      <svg
+                        class="w-4 h-4 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M7 17L17 7M17 7H7M17 7V17"
+                        />
+                      </svg>
+                    </a>
+                    <!-- If no URL, render as plain text -->
+                    <span
+                      v-else
+                      class="text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      {{ item.value }}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </BalTooltip>
+            </Transition>
+          </div>
 
           <!-- APY Tooltip -->
           <BalTooltip placement="top" noPad>
@@ -97,9 +105,12 @@
               </div>
 
               <!-- APY Components -->
-              <div v-if="apy && apy.length > 0" class="py-3 px-4 space-y-2">
+              <div
+                v-if="filteredApy && filteredApy.length > 0"
+                class="py-3 px-4 space-y-2"
+              >
                 <div
-                  v-for="component in apy"
+                  v-for="component in filteredApy"
                   :key="component.token"
                   class="flex justify-between items-center py-2 text-sm"
                 >
@@ -341,6 +352,26 @@ const acceptedWithdrawTokens = computed(() => [
 const showWithdraw = ref(false);
 const showDeposit = ref(false);
 const depositAmount = ref('');
+const showProtocolTooltip = ref(false);
+
+// Protocol info with default links for testing
+const protocolInfoWithLinks = computed(() => {
+  if (!props.protocolInfo) return [];
+
+  return props.protocolInfo.map(item => {
+    // Add default URL for Managed by and Advanced info if not provided
+    if (
+      !item.url &&
+      (item.label === 'Managed by' || item.label === 'Advanced info')
+    ) {
+      return {
+        ...item,
+        url: 'https://celopg.eco',
+      };
+    }
+    return item;
+  });
+});
 
 const formattedDeposit = computed(() => {
   const num = Number(props.deposit) || 0;
@@ -364,6 +395,12 @@ const formattedDepositUsd = computed(() => {
 const formattedApy = computed(() => {
   if (!props.apy || props.apy.length === 0) return 0;
   return props.apy.reduce((sum, component) => sum + component.value, 0);
+});
+
+// Filter out APY components with value 0
+const filteredApy = computed(() => {
+  if (!props.apy) return [];
+  return props.apy.filter(component => component.value > 0);
 });
 
 // Vault capacity calculations
@@ -409,3 +446,15 @@ const closeDeposit = () => {
   depositAmount.value = '';
 };
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

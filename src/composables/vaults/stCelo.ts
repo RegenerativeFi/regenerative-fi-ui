@@ -3,28 +3,27 @@ import { createStCeloStrategy } from './strategies/stCelo.strategy';
 import { Vault } from './types';
 import { VAULT_CONFIGS, VAULT_TOKENS } from './config';
 
-// Get static config from centralized configuration
-const stCeloConfig = VAULT_CONFIGS.stCelo;
+const config = VAULT_CONFIGS.stCelo;
 
 const ST_CELO_VAULT: Vault = {
-  id: stCeloConfig.id,
-  title: stCeloConfig.title,
-  apy: [{ token: VAULT_TOKENS.CELO.symbol, value: 0 }], // Will be updated by getApy()
+  id: config.id,
+  title: config.title,
+  apy: [{ token: VAULT_TOKENS.CELO.symbol, value: 0 }],
   deposit: '0',
   depositRaw: '0',
   available: '0',
   availableStCelo: '0',
-  contractAddress: stCeloConfig.contractAddress,
-  tokenAddress: stCeloConfig.tokenAddress,
-  icon: stCeloConfig.icon,
-  depositTokenIcon: stCeloConfig.depositTokenIcon,
-  protocolIcon: stCeloConfig.protocolIcon,
-  protocolInfo: stCeloConfig.protocolInfo,
-  userDepositLimit: 1000, // Will be updated dynamically
-  userRemainingDeposit: 1000, // Will be calculated based on user's current deposit
-  limitTokenSymbol: stCeloConfig.limitTokenSymbol,
-  vaultCapacityLimit: 0, // Will be fetched from contract (maxCapacity)
-  vaultCapacityUsed: 0, // Will be fetched from contract (totalSupply)
+  contractAddress: config.contractAddress,
+  tokenAddress: config.tokenAddress,
+  icon: config.icon,
+  depositTokenIcon: config.depositTokenIcon,
+  protocolIcon: config.protocolIcon,
+  protocolInfo: config.protocolInfo,
+  userDepositLimit: config.userDepositLimit,
+  userRemainingDeposit: config.userDepositLimit,
+  limitTokenSymbol: config.limitTokenSymbol,
+  vaultCapacityLimit: 0,
+  vaultCapacityUsed: 0,
   stCeloTokenIcon: VAULT_TOKENS.STCELO.icon,
 };
 

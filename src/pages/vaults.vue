@@ -11,7 +11,7 @@
           </h4>
         </template>
         <p class="text-lg sm:text-xl font-medium">
-          ${{ totalDeposits.toFixed(2) }}
+          ${{ totalDepositsUsd.toFixed(2) }}
         </p>
       </BalCard>
 
@@ -22,6 +22,16 @@
           </h4>
         </template>
         <p class="text-lg sm:text-xl font-medium">{{ averageApy }}%</p>
+      </BalCard>
+      <BalCard class="flex-1 p-3 sm:p-4 card-gap">
+        <template #header>
+          <h4 class="text-sm sm:text-base font-normal text-[#7B7B7B]">
+            Total Deposits in Vaults
+          </h4>
+        </template>
+        <p class="text-lg sm:text-xl font-medium">
+          {{ globalDepositsUsd.toFixed(2) }} $
+        </p>
       </BalCard>
     </div>
 
@@ -63,25 +73,15 @@
 import VaultCard from '@/components/VaultCard.vue';
 import BalCard from '@/components/_global/BalCard/BalCard.vue';
 import { useVaults } from '@/composables/vaults/index';
-import { computed } from 'vue';
 
-const { vaults, refetchVault, getComposable } = useVaults();
-
-const totalDeposits = computed(() =>
-  vaults.reduce(
-    (acc, vault) => acc + Number(vault.deposit) * (vault.price || 0),
-    0
-  )
-);
-
-const averageApy = computed(() => {
-  if (vaults.length === 0) return 0;
-  const totalApy = vaults.reduce(
-    (acc, vault) => acc + vault.apy.reduce((sum, comp) => sum + comp.value, 0),
-    0
-  );
-  return (totalApy / vaults.length).toFixed(2);
-});
+const {
+  vaults,
+  refetchVault,
+  getComposable,
+  totalDepositsUsd,
+  globalDepositsUsd,
+  averageApy,
+} = useVaults();
 
 const handleSuccess = async (contractAddress?: string) => {
   const addr = contractAddress || vaults[0]?.contractAddress;

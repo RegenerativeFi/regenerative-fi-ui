@@ -1,8 +1,3 @@
-/**
- * Centralized token configuration for vaults
- * All token addresses, icons, and metadata should be defined here
- */
-
 export interface TokenConfig {
   symbol: string;
   address: string;
@@ -25,22 +20,19 @@ export const VAULT_TOKENS = {
   },
 } as const;
 
-// Type-safe token addresses
 export const TOKEN_ADDRESSES = {
   CELO: VAULT_TOKENS.CELO.address,
   STCELO: VAULT_TOKENS.STCELO.address,
 } as const;
 
-// Helper to get token config by address
 export function getTokenByAddress(address: string): TokenConfig | undefined {
   return Object.values(VAULT_TOKENS).find(
-    token => token.address.toLowerCase() === address.toLowerCase()
+    t => t.address.toLowerCase() === address.toLowerCase()
   );
 }
 
-// Helper to get token config by symbol
 export function getTokenBySymbol(symbol: string): TokenConfig | undefined {
   return Object.values(VAULT_TOKENS).find(
-    token => token.symbol.toLowerCase() === symbol.toLowerCase()
+    t => t.symbol.toLowerCase() === symbol.toLowerCase()
   );
 }
