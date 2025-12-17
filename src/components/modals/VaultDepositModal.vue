@@ -13,7 +13,6 @@ import {
   TOKEN_ADDRESSES,
   VAULT_TOKENS,
   VAULT_ADDRESSES,
-  getVaultConfigByAddress,
 } from '@/composables/vaults/config';
 import type {
   VaultComposable,
@@ -35,11 +34,20 @@ const props = withDefaults(
     contractAddress: string;
     vaultComposable?: VaultComposable;
     acceptedTokens?: VaultTokenInfo[];
+    /** User's maximum deposit limit (in tokens) */
+    userDepositLimit?: number;
+    /** User's remaining deposit allowance */
+    userRemainingDeposit?: number;
+    /** Symbol of the limit token for display */
+    limitTokenSymbol?: string;
   }>(),
   {
     available: '0',
     availableStCelo: '0',
     acceptedTokens: () => [],
+    userDepositLimit: 1000,
+    userRemainingDeposit: 1000,
+    limitTokenSymbol: 'stCELO',
   }
 );
 
@@ -60,18 +68,10 @@ const { getProvider, account } = useWeb3();
 
 const stCeloComposable = computed(() => props.vaultComposable);
 
-// Get vault config for user deposit limit
-const vaultConfig = computed(() =>
-  getVaultConfigByAddress(props.contractAddress)
-);
-
-const userDepositLimit = computed(
-  () => vaultConfig.value?.userDepositLimit ?? 1000
-);
-
-const limitTokenSymbol = computed(
-  () => vaultConfig.value?.limitTokenSymbol ?? 'stCELO'
-);
+// Use props for user deposit limit (calculated dynamically from contract data)
+const userDepositLimit = computed(() => props.userDepositLimit ?? 1000);
+const userRemainingDeposit = computed(() => props.userRemainingDeposit ?? 1000);
+const limitTokenSymbol = computed(() => props.limitTokenSymbol ?? 'stCELO');
 
 // Use acceptedTokens from props if available, otherwise build from config
 const availableTokens = computed(() => {
@@ -109,7 +109,8 @@ const displayedAvailable = computed(() =>
 
 const canDeposit = computed(() => {
   const v = Number(depositAmount.value);
-  return v > 0 && v <= availableAmount.value;
+  // Check: amount > 0, within wallet balance, and within remaining deposit limit
+  return v > 0 && v <= availableAmount.value && v <= userRemainingDeposit.value;
 });
 
 const actions = reactive<any[]>([
@@ -455,11 +456,19 @@ function onStepsFailed() {
         <!-- User Deposit Limit Banner (dismissible) -->
         <div
           v-if="showLimitBanner"
-          class="flex gap-3 items-start p-4 mt-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+          class="flex gap-3 items-start p-4 mt-4 rounded-lg border"
+          :class="
+            userRemainingDeposit <= 0
+              ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+              : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+          "
         >
           <div class="flex-shrink-0 mt-0.5">
             <svg
-              class="w-5 h-5 text-gray-400"
+              class="w-5 h-5"
+              :class="
+                userRemainingDeposit <= 0 ? 'text-red-500' : 'text-gray-400'
+              "
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -473,17 +482,50 @@ function onStepsFailed() {
             </svg>
           </div>
           <div class="flex-1">
-            <h4 class="text-sm font-medium text-gray-900 dark:text-white">
-              Max vault balance limit
+            <h4
+              class="text-sm font-medium"
+              :class="
+                userRemainingDeposit <= 0
+                  ? 'text-red-800 dark:text-red-200'
+                  : 'text-gray-900 dark:text-white'
+              "
+            >
+              {{
+                userRemainingDeposit <= 0
+                  ? 'Deposit limit reached'
+                  : 'Max vault balance limit'
+              }}
             </h4>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Your current limit is {{ userDepositLimit.toLocaleString() }}
-              {{ limitTokenSymbol }}. You can deposit up to your remaining
-              available balance.
+            <p
+              class="mt-1 text-sm"
+              :class="
+                userRemainingDeposit <= 0
+                  ? 'text-red-600 dark:text-red-300'
+                  : 'text-gray-500 dark:text-gray-400'
+              "
+            >
+              <template v-if="userRemainingDeposit <= 0">
+                You have reached your maximum deposit of
+                {{ userDepositLimit.toLocaleString() }} {{ limitTokenSymbol }}.
+              </template>
+              <template v-else>
+                Your limit is {{ userDepositLimit.toLocaleString() }}
+                {{ limitTokenSymbol }}. You can deposit up to
+                <span class="font-medium text-gray-900 dark:text-white">
+                  {{ userRemainingDeposit.toLocaleString() }}
+                  {{ limitTokenSymbol }}
+                </span>
+                more.
+              </template>
             </p>
           </div>
           <button
-            class="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            class="flex-shrink-0 p-1 transition-colors"
+            :class="
+              userRemainingDeposit <= 0
+                ? 'text-red-400 hover:text-red-600 dark:hover:text-red-300'
+                : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+            "
             @click="showLimitBanner = false"
           >
             <svg

@@ -28,6 +28,10 @@ export interface VaultBalanceData {
   available: string;
   /** Formatted available balance of secondary token (e.g., stCELO) */
   availableStCelo?: string;
+  /** Total deposits in the vault (from totalSupply) */
+  vaultTotalDeposits?: string;
+  /** Maximum capacity of the vault (from maxCapacity) */
+  vaultMaxCapacity?: string;
 }
 
 // =============================================================================
@@ -61,8 +65,10 @@ export interface Vault {
   limitTokenSymbol?: string;
   /** Global vault capacity limit (max tokens the vault can hold) */
   vaultCapacityLimit?: number;
-  /** Current vault capacity used */
+  /** Current vault capacity used (total deposits) */
   vaultCapacityUsed?: number;
+  /** User's remaining deposit allowance (calculated from limit - current deposit) */
+  userRemainingDeposit?: number;
 
   // Dynamic properties (fetched/calculated)
   apy: ApyComponent[];

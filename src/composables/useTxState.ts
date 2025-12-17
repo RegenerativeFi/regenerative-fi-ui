@@ -18,6 +18,7 @@ export function useTxState() {
     confirming: false,
     confirmed: false,
     confirmedAt: '',
+    receipt: undefined, // Initialize to enable reactivity when set later
   });
 
   const txInProgress = computed(
@@ -30,6 +31,7 @@ export function useTxState() {
       confirming: false,
       confirmed: false,
       confirmedAt: '',
+      receipt: undefined,
     });
   }
 

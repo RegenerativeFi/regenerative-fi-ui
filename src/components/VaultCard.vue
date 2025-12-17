@@ -268,6 +268,9 @@
     :contractAddress="contractAddress"
     :vaultComposable="vaultComposable"
     :acceptedTokens="acceptedDepositTokens"
+    :userDepositLimit="userDepositLimit"
+    :userRemainingDeposit="userRemainingDeposit"
+    :limitTokenSymbol="limitTokenSymbol"
     @close="closeDeposit"
     @success="handleSucess"
   />
@@ -299,10 +302,13 @@ const props = defineProps<{
   }>;
   vaultCapacityLimit?: number;
   vaultCapacityUsed?: number;
+  userDepositLimit?: number;
+  userRemainingDeposit?: number;
   limitTokenSymbol?: string;
   placeholder?: boolean;
   contractAddress: string;
   vaultComposable?: VaultComposable;
+  tokenPrice?: number;
 }>();
 
 const emit = defineEmits<{
@@ -344,11 +350,11 @@ const formattedDeposit = computed(() => {
   }).format(num);
 });
 
-// TODO: Get actual USD price from oracle/API
+// USD value using actual token price
 const formattedDepositUsd = computed(() => {
   const num = Number(props.deposit) || 0;
-  // Placeholder: using 1:1 ratio for now, should be replaced with actual stCELO price
-  const usdValue = num * 1;
+  const price = props.tokenPrice ?? 0;
+  const usdValue = num * price;
   return new Intl.NumberFormat(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -376,6 +382,10 @@ const formattedCapacityUsed = computed(() =>
 const formattedCapacityLimit = computed(() =>
   vaultCapacityLimit.value.toLocaleString('en-US')
 );
+
+// User deposit limit calculations
+const userDepositLimit = computed(() => props.userDepositLimit ?? 1000);
+const userRemainingDeposit = computed(() => props.userRemainingDeposit ?? 1000);
 
 const handleSucess = () => {
   // emit contract address so parent can refetch only this vault

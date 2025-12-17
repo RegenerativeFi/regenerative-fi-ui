@@ -20,10 +20,11 @@ const ST_CELO_VAULT: Vault = {
   depositTokenIcon: stCeloConfig.depositTokenIcon,
   protocolIcon: stCeloConfig.protocolIcon,
   protocolInfo: stCeloConfig.protocolInfo,
-  userDepositLimit: stCeloConfig.userDepositLimit,
+  userDepositLimit: 1000, // Will be updated dynamically
+  userRemainingDeposit: 1000, // Will be calculated based on user's current deposit
   limitTokenSymbol: stCeloConfig.limitTokenSymbol,
-  vaultCapacityLimit: stCeloConfig.vaultCapacityLimit,
-  vaultCapacityUsed: stCeloConfig.vaultCapacityUsed,
+  vaultCapacityLimit: 0, // Will be fetched from contract (maxCapacity)
+  vaultCapacityUsed: 0, // Will be fetched from contract (totalSupply)
   stCeloTokenIcon: VAULT_TOKENS.STCELO.icon,
 };
 

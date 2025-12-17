@@ -46,9 +46,12 @@
           :protocolInfo="vault.protocolInfo"
           :vaultCapacityLimit="vault.vaultCapacityLimit"
           :vaultCapacityUsed="vault.vaultCapacityUsed"
+          :userDepositLimit="vault.userDepositLimit"
+          :userRemainingDeposit="vault.userRemainingDeposit"
           :limitTokenSymbol="vault.limitTokenSymbol"
           :contractAddress="vault.contractAddress"
           :vaultComposable="getComposable(vault.contractAddress)"
+          :tokenPrice="vault.price"
           @success="handleSuccess"
         />
       </div>

@@ -16,6 +16,7 @@ import { TransactionActionInfo } from '@/types/transactions';
 import { ApprovalAction } from '@/composables/approvals/types';
 import { ethers } from 'ethers';
 import { TOKEN_ADDRESSES, VAULT_TOKENS } from '@/composables/vaults/config';
+import { useTokens } from '@/providers/tokens.provider';
 import type {
   VaultComposable,
   VaultTokenInfo,
@@ -60,6 +61,7 @@ const { account } = useWeb3();
 const { txState } = useTxState();
 const { addTransaction } = useTransactions();
 const { networkConfig } = useNetwork();
+const { priceFor } = useTokens();
 const stCeloComposable = computed(() => props.vaultComposable);
 
 // Use acceptedTokens from props if available, otherwise build from config
@@ -126,18 +128,32 @@ const canWithdraw = computed(
       ))
 );
 
-// Preview calculations (mocked fees for now)
-const MOCK_MINT_FEE_PERCENT = 0.01; // 0.01% fee
+// Preview calculations - use real swap data when available
+const isSwapRequired = computed(
+  () => selectedToken.value?.address === CELO_ADDRESS
+);
+
+// Get estimated output from swap
 const estimatedReceived = computed(() => {
-  const amount = Number(withdrawAmount.value) || 0;
-  // Apply mock fee
-  const fee = amount * MOCK_MINT_FEE_PERCENT;
-  return Math.max(0, amount - fee);
+  if (!isSwapRequired.value) {
+    // No swap needed - stCELO withdrawal, 1:1
+    return Number(withdrawAmount.value) || 0;
+  }
+  // Use the swap output amount from SOR
+  const swapOutput = Number(swapping.tokenOutAmountInput.value) || 0;
+  if (swapOutput > 0) {
+    return swapOutput;
+  }
+  // Fallback to input amount if swap not calculated yet
+  return Number(withdrawAmount.value) || 0;
 });
 
+// Calculate fee as the difference between input and output (the "cost" of the swap)
 const mintFee = computed(() => {
-  const amount = Number(withdrawAmount.value) || 0;
-  return amount * MOCK_MINT_FEE_PERCENT;
+  const inputAmount = Number(withdrawAmount.value) || 0;
+  if (!isSwapRequired.value || inputAmount === 0) return 0;
+  // Fee is the difference between what we put in and what we get out
+  return Math.max(0, inputAmount - estimatedReceived.value);
 });
 
 const formattedWithdrawAmount = computed(() => {
@@ -162,31 +178,54 @@ const formattedMintFee = computed(() => {
   });
 });
 
-// USD values (mocked 1:1 for now)
+// Token prices from provider
+const stCeloPrice = computed(() => priceFor(STCELO_ADDRESS) || 0);
+const celoPrice = computed(() => priceFor(CELO_ADDRESS) || 0);
+
+// USD values using real token prices
 const withdrawAmountUsd = computed(() => {
   const amount = Number(withdrawAmount.value) || 0;
-  return `$${amount.toLocaleString('en-US', {
+  const usdValue = amount * stCeloPrice.value;
+  return `$${usdValue.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
 });
 
 const estimatedReceivedUsd = computed(() => {
-  return `$${estimatedReceived.value.toLocaleString('en-US', {
+  // Use the price of the output token
+  const outputPrice = isSwapRequired.value
+    ? celoPrice.value
+    : stCeloPrice.value;
+  const usdValue = estimatedReceived.value * outputPrice;
+  return `$${usdValue.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
 });
 
 const mintFeeUsd = computed(() => {
-  return `$${mintFee.value.toLocaleString('en-US', {
+  // Fee is in output token units
+  const outputPrice = isSwapRequired.value
+    ? celoPrice.value
+    : stCeloPrice.value;
+  const usdValue = mintFee.value * outputPrice;
+  return `$${usdValue.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
 });
 
-const priceImpactPercent = computed(() => {
-  return `${(MOCK_MINT_FEE_PERCENT * 100).toFixed(2)}%`;
+// const priceImpactPercent = computed(() => {
+//   // Use the real price impact from the swap
+//   const impact = swapPriceImpact.value * 100;
+//   return `${impact.toFixed(2)}%`;
+// });
+
+// Check if swap quote is loading
+const isSwapLoading = computed(() => {
+  if (!isSwapRequired.value) return false;
+  return swapping.isLoading.value;
 });
 
 const actions = computed((): TransactionActionInfo[] => {
@@ -247,7 +286,7 @@ async function setTokenApprovalActions() {
       actionType: ApprovalAction.Swapping,
       forceMax: false,
     });
-    tokenApprovalActions.value = actions;
+    tokenApprovalActions.value = actions; // Replace, don't append
   } catch (e) {
     console.error('❌ Failed to get token approval actions', e);
     tokenApprovalActions.value = [];
@@ -256,13 +295,10 @@ async function setTokenApprovalActions() {
 
 async function submitWithdraw() {
   stepsInitiated.value = true; // Lock validation for entire sequence
-  txState.init = true;
   try {
     if (!stCeloComposable.value) {
       throw new Error('Vault composable not available');
     }
-
-    txState.confirming = true;
 
     const tx = await stCeloComposable.value.withdrawTx(
       rawWithdrawAmount.value.toString()
@@ -280,35 +316,79 @@ async function submitWithdraw() {
     // Store withdrawn amount before refetch updates balance
     withdrawnAmount.value = rawWithdrawAmount.value.toString();
 
-    // Refetch balances after successful withdrawal
-    await stCeloComposable.value?.refetch?.();
-
+    // Return tx immediately - BalActionSteps will handle confirmation
     return tx;
   } catch (error) {
     console.error('❌ Failed to submit withdraw transaction:', error);
-    txState.confirming = false;
     stepsInitiated.value = false; // Unlock validation on error
-    throw new Error('Failed to submit withdraw transaction.', {
-      cause: error,
-    });
-  } finally {
-    txState.init = false;
+    throw error;
   }
 }
 
 async function submitSwap() {
-  txState.init = true;
   try {
-    txState.confirming;
+    // Recalculate swap with the actual withdrawn amount
+    // This ensures we swap exactly what was withdrawn, avoiding slippage issues
+    if (withdrawnAmount.value) {
+      const actualAmount = ethers.utils.formatUnits(withdrawnAmount.value, 18);
+      console.log('📊 Setting swap input amount:', actualAmount);
+      setTokenInAmount(actualAmount);
+      await swapping.handleAmountChange();
+
+      // Wait a bit for the quote to be calculated
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    console.log('🔄 Executing swap...');
+    console.log('   Token In:', swapping.tokenInAddressInput?.value);
+    console.log('   Token Out:', swapping.tokenOutAddressInput?.value);
+    console.log('   Amount In:', swapping.tokenInAmountInput?.value);
+
     const tx = await swapping.swap(() => {
       swapping.resetAmounts();
     });
+
+    if (!tx) {
+      throw new Error(
+        'Swap transaction was not created. This may be due to insufficient liquidity.'
+      );
+    }
+
+    console.log('✅ Swap transaction submitted:', tx.hash);
     return tx;
-  } catch (e) {
-    txState.confirming = false;
-    throw new Error('Failed to submit swap transaction.');
-  } finally {
-    txState.init = false;
+  } catch (e: any) {
+    console.error('❌ Swap failed:', e);
+
+    // Provide more specific error messages
+    const errorMessage = e?.message || 'Unknown error';
+    if (
+      errorMessage.includes('slippage') ||
+      errorMessage.includes('INSUFFICIENT_OUTPUT')
+    ) {
+      throw new Error(
+        'Swap failed due to price movement. Try increasing slippage tolerance in settings.'
+      );
+    } else if (
+      errorMessage.includes('allowance') ||
+      errorMessage.includes('approve')
+    ) {
+      throw new Error('Token approval required. Please approve and try again.');
+    } else if (
+      errorMessage.includes('INSUFFICIENT') ||
+      errorMessage.includes('balance')
+    ) {
+      throw new Error('Insufficient balance for swap.');
+    } else if (
+      errorMessage.includes('No potential swap paths') ||
+      errorMessage.includes('NoSwap') ||
+      errorMessage.includes('route')
+    ) {
+      throw new Error(
+        'No swap route found between stCELO and CELO. The liquidity pool may not be available.'
+      );
+    }
+
+    throw new Error(`Swap failed: ${errorMessage}`);
   }
 }
 
@@ -342,6 +422,11 @@ function handleClose() {
 }
 
 function goToPreview() {
+  // If swapping to CELO, ensure swap calculation is triggered
+  if (selectedToken.value?.address === CELO_ADDRESS && !withdrawnAmount.value) {
+    setTokenInAmount(ethers.utils.formatUnits(rawWithdrawAmount.value, 18));
+    swapping.handleAmountChange();
+  }
   showPreview.value = true;
 }
 
@@ -359,17 +444,17 @@ function onWithdrawAmountInput(e: Event) {
 function onStepsSuccess(receipt: TransactionReceipt) {
   txState.confirmed = true;
   txState.receipt = receipt;
-  txState.confirming = false;
   showFireworks.value = true;
   emit('success', receipt);
 
+  // Refetch balances after successful withdrawal
   stCeloComposable.value?.refetch?.().catch((e: any) => {
     console.error('Failed to refetch balances:', e);
   });
 }
 
 function onStepsFailed() {
-  txState.confirming = false;
+  stepsInitiated.value = false;
 }
 
 onMounted(async () => {
@@ -632,12 +717,29 @@ onMounted(async () => {
               </div>
             </div>
 
-            <!-- Arrow indicator -->
+            <!-- Arrow/Swap indicator -->
             <div class="flex justify-end px-4 -my-2">
               <div
                 class="flex justify-center items-center w-8 h-8 bg-white dark:bg-gray-700 rounded-full border border-gray-200 dark:border-gray-600"
               >
+                <!-- Swap icon when swapping to CELO -->
                 <svg
+                  v-if="isSwapRequired"
+                  class="w-4 h-4 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                  />
+                </svg>
+                <!-- Simple arrow when no swap needed -->
+                <svg
+                  v-else
                   class="w-4 h-4 text-blue-500"
                   fill="none"
                   stroke="currentColor"
@@ -661,21 +763,53 @@ onMounted(async () => {
                 class="w-10 h-10 rounded-full"
               />
               <div class="flex-1">
-                <span
-                  class="text-xl font-bold text-gray-900 dark:text-gray-100"
-                >
-                  {{ formattedEstimatedReceived }} {{ selectedToken?.symbol }}
-                </span>
-                <p class="text-sm text-gray-500">
-                  {{ estimatedReceivedUsd }} / Mint price impact:
-                  {{ priceImpactPercent }}
-                </p>
+                <!-- Loading state -->
+                <div v-if="isSwapLoading" class="flex gap-2 items-center">
+                  <svg
+                    class="w-5 h-5 text-blue-500 animate-spin"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    />
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  <span class="text-sm text-gray-500">Calculating...</span>
+                </div>
+                <!-- Loaded state -->
+                <template v-else>
+                  <span
+                    class="text-xl font-bold text-gray-900 dark:text-gray-100"
+                  >
+                    {{ formattedEstimatedReceived }}
+                    {{ selectedToken?.symbol }}
+                  </span>
+                  <p class="text-sm text-gray-500">
+                    {{ estimatedReceivedUsd }}
+                    <template v-if="isSwapRequired && mintFee > 0">
+                      / Swap fee: {{ formattedMintFee }}
+                      {{ selectedToken?.symbol }}
+                    </template>
+                  </p>
+                </template>
               </div>
             </div>
           </div>
 
           <!-- Swap Details Card -->
+          <!-- Swap Details - Only show when swap is required -->
           <div
+            v-if="isSwapRequired"
             class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
           >
             <!-- Header with toggle -->
@@ -711,8 +845,34 @@ onMounted(async () => {
               </div>
             </div>
 
+            <!-- Loading state -->
+            <div v-if="isSwapLoading" class="flex gap-2 items-center py-2">
+              <svg
+                class="w-4 h-4 text-blue-500 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                />
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              <span class="text-sm text-gray-500">
+                Calculating swap quote...
+              </span>
+            </div>
+
             <!-- Details rows -->
-            <div class="space-y-2">
+            <div v-else class="space-y-2">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-500">Estimated total received</span>
                 <span class="font-medium text-gray-900 dark:text-white">
@@ -724,7 +884,7 @@ onMounted(async () => {
                 </span>
               </div>
               <div class="flex justify-between text-sm">
-                <span class="text-gray-500">Fee (mint price)</span>
+                <span class="text-gray-500">Swap fee</span>
                 <span class="font-medium text-gray-900 dark:text-white">
                   {{
                     showDetailsInTokens

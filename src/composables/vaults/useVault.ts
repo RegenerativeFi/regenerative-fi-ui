@@ -37,6 +37,9 @@ export function useVault(
     account.value,
   ]);
 
+  // User deposit limit: 1000 stCELO per user
+  const USER_MAX_DEPOSIT = 1000;
+
   const queryFn = async () => {
     if (!account.value) throw new Error('User not connected');
     const balances = await strategy.readBalances(
@@ -45,6 +48,20 @@ export function useVault(
       vault.contractAddress
     );
     Object.assign(vault, balances);
+
+    // Update vault capacity from contract data
+    if (balances.vaultMaxCapacity) {
+      vault.vaultCapacityLimit = Number(balances.vaultMaxCapacity);
+    }
+    if (balances.vaultTotalDeposits) {
+      vault.vaultCapacityUsed = Number(balances.vaultTotalDeposits);
+    }
+
+    // Calculate user's remaining deposit allowance (1000 - current deposit)
+    const currentDeposit = Number(balances.deposit) || 0;
+    vault.userDepositLimit = USER_MAX_DEPOSIT;
+    vault.userRemainingDeposit = Math.max(0, USER_MAX_DEPOSIT - currentDeposit);
+
     if (vault.tokenAddress) vault.price = priceFor(vault.tokenAddress) || 0;
     const apy = await strategy.getApy(getProviderSafe, vault.contractAddress);
     vault.apy = apy;

@@ -679,6 +679,7 @@ export default function useSor({
           successCallback();
         }
         trackSwapEvent();
+        return tx;
       } catch (error) {
         console.error(error);
         handleSwapException(error as Error, tokenInAddress, tokenOutAddress);
@@ -701,6 +702,7 @@ export default function useSor({
           successCallback();
         }
         trackSwapEvent();
+        return tx;
       } catch (error) {
         console.error(error);
         handleSwapException(error as Error, tokenInAddress, tokenOutAddress);
