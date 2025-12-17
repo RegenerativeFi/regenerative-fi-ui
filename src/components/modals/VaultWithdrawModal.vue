@@ -52,10 +52,10 @@ const showTokenSelector = ref(false);
 const selectedTokenAddress = ref<string>(STCELO_ADDRESS);
 const userHasInteracted = ref(false);
 const isFetching = ref(false);
-const withdrawnAmount = ref(''); // Track the amount that was actually withdrawn
-const stepsInitiated = ref(false); // Lock validation once steps start
-const showPreview = ref(false); // Toggle between input and preview screens
-const showDetailsInTokens = ref(true); // Toggle between TOKENS and USD display
+const withdrawnAmount = ref('');
+const stepsInitiated = ref(false);
+const showPreview = ref(false);
+const showDetailsInTokens = ref(true);
 
 const { account } = useWeb3();
 const { txState } = useTxState();
@@ -64,12 +64,10 @@ const { networkConfig } = useNetwork();
 const { priceFor } = useTokens();
 const stCeloComposable = computed(() => props.vaultComposable);
 
-// Use acceptedTokens from props if available, otherwise build from config
 const availableWithdrawTokens = computed(() => {
   if (props.acceptedTokens && props.acceptedTokens.length > 0) {
     return props.acceptedTokens;
   }
-  // Fallback to centralized config
   return [
     {
       ...VAULT_TOKENS.STCELO,
@@ -119,7 +117,6 @@ const rawWithdrawAmount = computed(() => {
 
 const canWithdraw = computed(
   () =>
-    // Once steps are initiated (stepsInitiated = true), always allow
     stepsInitiated.value ||
     (!isFetching.value &&
       rawWithdrawAmount.value.gt(0) &&
@@ -128,31 +125,24 @@ const canWithdraw = computed(
       ))
 );
 
-// Preview calculations - use real swap data when available
 const isSwapRequired = computed(
   () => selectedToken.value?.address === CELO_ADDRESS
 );
 
-// Get estimated output from swap
 const estimatedReceived = computed(() => {
   if (!isSwapRequired.value) {
-    // No swap needed - stCELO withdrawal, 1:1
     return Number(withdrawAmount.value) || 0;
   }
-  // Use the swap output amount from SOR
   const swapOutput = Number(swapping.tokenOutAmountInput.value) || 0;
   if (swapOutput > 0) {
     return swapOutput;
   }
-  // Fallback to input amount if swap not calculated yet
   return Number(withdrawAmount.value) || 0;
 });
 
-// Calculate fee as the difference between input and output (the "cost" of the swap)
 const mintFee = computed(() => {
   const inputAmount = Number(withdrawAmount.value) || 0;
   if (!isSwapRequired.value || inputAmount === 0) return 0;
-  // Fee is the difference between what we put in and what we get out
   return Math.max(0, inputAmount - estimatedReceived.value);
 });
 
@@ -178,11 +168,9 @@ const formattedMintFee = computed(() => {
   });
 });
 
-// Token prices from provider
 const stCeloPrice = computed(() => priceFor(STCELO_ADDRESS) || 0);
 const celoPrice = computed(() => priceFor(CELO_ADDRESS) || 0);
 
-// USD values using real token prices
 const withdrawAmountUsd = computed(() => {
   const amount = Number(withdrawAmount.value) || 0;
   const usdValue = amount * stCeloPrice.value;
@@ -193,7 +181,6 @@ const withdrawAmountUsd = computed(() => {
 });
 
 const estimatedReceivedUsd = computed(() => {
-  // Use the price of the output token
   const outputPrice = isSwapRequired.value
     ? celoPrice.value
     : stCeloPrice.value;
@@ -216,13 +203,6 @@ const mintFeeUsd = computed(() => {
   })}`;
 });
 
-// const priceImpactPercent = computed(() => {
-//   // Use the real price impact from the swap
-//   const impact = swapPriceImpact.value * 100;
-//   return `${impact.toFixed(2)}%`;
-// });
-
-// Check if swap quote is loading
 const isSwapLoading = computed(() => {
   if (!isSwapRequired.value) return false;
   return swapping.isLoading.value;
@@ -239,7 +219,6 @@ const actions = computed((): TransactionActionInfo[] => {
     },
   ];
 
-  // Only add approval and swap if withdrawing to CELO
   if (selectedToken.value?.address === CELO_ADDRESS) {
     arr.push(...tokenApprovalActions.value);
     arr.push({
@@ -256,7 +235,6 @@ const actions = computed((): TransactionActionInfo[] => {
 
 watch(rawWithdrawAmount, async newVal => {
   if (selectedToken.value?.address === CELO_ADDRESS) {
-    // Only recalculate approval if we haven't withdrawn yet
     if (!withdrawnAmount.value) {
       await setTokenApprovalActions();
       setTokenInAmount(ethers.utils.formatUnits(newVal.toString(), 18));
@@ -265,7 +243,6 @@ watch(rawWithdrawAmount, async newVal => {
   }
 });
 
-// Updates token approval actions for the current withdraw amount
 async function setTokenApprovalActions() {
   if (!account.value) return;
   const amt = ethers.utils.formatUnits(rawWithdrawAmount.value, 18);
@@ -286,7 +263,7 @@ async function setTokenApprovalActions() {
       actionType: ApprovalAction.Swapping,
       forceMax: false,
     });
-    tokenApprovalActions.value = actions; // Replace, don't append
+    tokenApprovalActions.value = actions;
   } catch (e) {
     console.error('❌ Failed to get token approval actions', e);
     tokenApprovalActions.value = [];
@@ -294,7 +271,7 @@ async function setTokenApprovalActions() {
 }
 
 async function submitWithdraw() {
-  stepsInitiated.value = true; // Lock validation for entire sequence
+  stepsInitiated.value = true;
   try {
     if (!stCeloComposable.value) {
       throw new Error('Vault composable not available');
@@ -313,36 +290,26 @@ async function submitWithdraw() {
       )} stCELO`,
     });
 
-    // Store withdrawn amount before refetch updates balance
     withdrawnAmount.value = rawWithdrawAmount.value.toString();
 
-    // Return tx immediately - BalActionSteps will handle confirmation
     return tx;
   } catch (error) {
     console.error('❌ Failed to submit withdraw transaction:', error);
-    stepsInitiated.value = false; // Unlock validation on error
+    stepsInitiated.value = false;
     throw error;
   }
 }
 
 async function submitSwap() {
   try {
-    // Recalculate swap with the actual withdrawn amount
-    // This ensures we swap exactly what was withdrawn, avoiding slippage issues
     if (withdrawnAmount.value) {
       const actualAmount = ethers.utils.formatUnits(withdrawnAmount.value, 18);
       console.log('📊 Setting swap input amount:', actualAmount);
       setTokenInAmount(actualAmount);
       await swapping.handleAmountChange();
 
-      // Wait a bit for the quote to be calculated
       await new Promise(resolve => setTimeout(resolve, 500));
     }
-
-    console.log('🔄 Executing swap...');
-    console.log('   Token In:', swapping.tokenInAddressInput?.value);
-    console.log('   Token Out:', swapping.tokenOutAddressInput?.value);
-    console.log('   Amount In:', swapping.tokenInAmountInput?.value);
 
     const tx = await swapping.swap(() => {
       swapping.resetAmounts();
@@ -358,37 +325,7 @@ async function submitSwap() {
     return tx;
   } catch (e: any) {
     console.error('❌ Swap failed:', e);
-
-    // Provide more specific error messages
-    const errorMessage = e?.message || 'Unknown error';
-    if (
-      errorMessage.includes('slippage') ||
-      errorMessage.includes('INSUFFICIENT_OUTPUT')
-    ) {
-      throw new Error(
-        'Swap failed due to price movement. Try increasing slippage tolerance in settings.'
-      );
-    } else if (
-      errorMessage.includes('allowance') ||
-      errorMessage.includes('approve')
-    ) {
-      throw new Error('Token approval required. Please approve and try again.');
-    } else if (
-      errorMessage.includes('INSUFFICIENT') ||
-      errorMessage.includes('balance')
-    ) {
-      throw new Error('Insufficient balance for swap.');
-    } else if (
-      errorMessage.includes('No potential swap paths') ||
-      errorMessage.includes('NoSwap') ||
-      errorMessage.includes('route')
-    ) {
-      throw new Error(
-        'No swap route found between stCELO and CELO. The liquidity pool may not be available.'
-      );
-    }
-
-    throw new Error(`Swap failed: ${errorMessage}`);
+    throw new Error(`Swap failed: ${e.message}`);
   }
 }
 
@@ -399,9 +336,8 @@ function selectToken(token: VaultTokenInfo) {
   txState.confirmed = false;
   txState.receipt = undefined;
 
-  // Reset swap state when changing tokens
   if (token.address === CELO_ADDRESS) {
-    setTokenInAddress(STCELO_ADDRESS); // El token que estamos swapeando es stCELO
+    setTokenInAddress(STCELO_ADDRESS);
     setTokenOutAddress(CELO_ADDRESS);
   }
 }
@@ -417,12 +353,11 @@ function handleClose() {
   showPreview.value = false;
   txState.confirmed = false;
   txState.receipt = undefined;
-  stepsInitiated.value = false; // Reset for next withdrawal
+  stepsInitiated.value = false;
   emit('close');
 }
 
 function goToPreview() {
-  // If swapping to CELO, ensure swap calculation is triggered
   if (selectedToken.value?.address === CELO_ADDRESS && !withdrawnAmount.value) {
     setTokenInAmount(ethers.utils.formatUnits(rawWithdrawAmount.value, 18));
     swapping.handleAmountChange();
@@ -447,7 +382,6 @@ function onStepsSuccess(receipt: TransactionReceipt) {
   showFireworks.value = true;
   emit('success', receipt);
 
-  // Refetch balances after successful withdrawal
   stCeloComposable.value?.refetch?.().catch((e: any) => {
     console.error('Failed to refetch balances:', e);
   });
@@ -461,7 +395,6 @@ onMounted(async () => {
   const tokenAddr = props.contractAddress;
   if (!tokenAddr) return;
 
-  // Inicializar token selector con stCELO por defecto
   if (availableWithdrawTokens.value.length > 0 && !selectedTokenAddress.value) {
     selectedTokenAddress.value = availableWithdrawTokens.value[0].address;
   }
@@ -487,7 +420,6 @@ onMounted(async () => {
   <BalModal :show="show" :fireworks="showFireworks" @close="handleClose">
     <template #header>
       <div class="flex gap-3 items-center">
-        <!-- Back button when in preview mode -->
         <button
           v-if="showPreview && !txState.confirmed"
           class="flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
