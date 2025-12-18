@@ -26,7 +26,7 @@ export interface VaultStaticConfig {
 }
 
 export const VAULT_ADDRESSES = {
-  STCELO_VAULT: '0xdbEE9E979736fB7b6f319907211d507589B4817e',
+  STCELO_VAULT: '0x57a4750f4Eb15C16CE65651a6Fc661081be12Dab',
 } as const;
 
 export const VAULT_CONFIGS: Record<string, VaultStaticConfig> = {
