@@ -43,7 +43,7 @@ export default function useGraphQuery<T>(
     try {
       if (shouldUseSubgraphFallbackUrl) {
         const response = await subgraphFallbackService.get(payload);
-        return response?.data.data;
+        return response?.data?.data || {};
       }
       const {
         data: { data },
@@ -55,7 +55,8 @@ export default function useGraphQuery<T>(
         { headers }
       );
 
-      return data;
+      // Ensure we never return undefined - return empty object if data is undefined
+      return data || {};
     } catch (error) {
       console.error(
         `GraphQL request to [${subgraphUrl}] failed. Payload:`,

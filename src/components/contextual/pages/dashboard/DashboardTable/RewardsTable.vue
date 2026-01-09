@@ -50,7 +50,7 @@ const { data, isLoading } = useRewardsQuery();
 const columns = ref<ColumnDefinition<RewardRow>[]>([
   {
     name: 'Token',
-    id: 'rewards',
+    id: 'token',
     accessor: 'rewardTokens',
     Cell: 'rewardsColumnCell',
     align: 'left',
@@ -58,7 +58,7 @@ const columns = ref<ColumnDefinition<RewardRow>[]>([
   },
   {
     name: 'Amount',
-    id: 'rewards',
+    id: 'amount',
     accessor: 'rewardTokens',
     Cell: 'amountColumnCell',
     align: 'left',

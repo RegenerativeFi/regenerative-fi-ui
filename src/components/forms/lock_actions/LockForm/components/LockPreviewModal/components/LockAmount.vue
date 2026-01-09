@@ -3,7 +3,6 @@
 
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 // import { useTokens } from '@/providers/tokens.provider';
-import { Pool } from '@/services/pool/types';
 // import { PoolToken } from '@regenerative/sdk';
 import { TokenInfo } from '@/types/TokenList';
 
@@ -12,7 +11,6 @@ import { TokenInfo } from '@/types/TokenList';
  */
 type Props = {
   lockableTokenInfo: TokenInfo;
-  lockablePool: Pool;
   totalLpTokens: string;
 };
 

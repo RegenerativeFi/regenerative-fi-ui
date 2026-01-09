@@ -2,16 +2,12 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { Pool } from '@/services/pool/types';
 import { TokenInfo } from '@/types/TokenList';
-
-import useNetwork from '@/composables/useNetwork';
 
 /**
  * TYPES
  */
 type Props = {
-  lockablePool: Pool;
   lockablePoolTokenInfo: TokenInfo;
 };
 
@@ -24,7 +20,6 @@ const props = defineProps<Props>();
  * COMPOSABLES
  */
 const { t } = useI18n();
-const { networkSlug } = useNetwork();
 
 /**
  * COMPUTED
@@ -68,16 +63,7 @@ const steps = computed(() => [
           <ol class="text-sm steps">
             <li>
               {{ $t('getVeBAL.howToLock.steps.investPart1') }}
-              <BalLink
-                tag="router-link"
-                :to="{
-                  name: 'add-liquidity',
-                  params: { networkSlug, id: lockablePool.id },
-                }"
-                external
-              >
-                {{ lockablePoolTokenInfo.symbol }}
-              </BalLink>
+              <strong>{{ lockablePoolTokenInfo.symbol }}</strong>
               {{ $t('getVeBAL.howToLock.steps.investPart2') }}
             </li>
             <li v-for="(step, i) in steps" :key="i" v-html="step" />

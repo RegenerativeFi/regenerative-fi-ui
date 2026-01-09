@@ -12,8 +12,11 @@ export default function useREFI() {
    * COMPUTED
    */
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const ReFiTokenInfo = computed(() => getToken(networkConfig.addresses.ReFi!));
+  const ReFiTokenInfo = computed(() =>
+    networkConfig.addresses.ReFi
+      ? getToken(networkConfig.addresses.ReFi) || null
+      : null
+  );
 
   const ReFiBalance = computed(() =>
     networkConfig.addresses.ReFi

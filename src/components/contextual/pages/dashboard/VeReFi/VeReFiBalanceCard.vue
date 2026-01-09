@@ -2,6 +2,7 @@
 import Logo from '@/assets/images/icons/VeREFI/logo-light.svg';
 import Unlocked from '@/assets/images/icons/VeREFI/unlock.svg';
 import useNumbers from '@/composables/useNumbers';
+import useNetwork from '@/composables/useNetwork';
 import { TokenInfo } from '@/types/TokenList';
 const props = withDefaults(
   defineProps<{
@@ -14,6 +15,7 @@ const props = withDefaults(
 );
 
 const { toFiat } = useNumbers();
+const { networkSlug } = useNetwork();
 
 const ReFiBalance = computed(() => Number(props.balance).toFixed(2));
 const ReFiBalanceFiat = computed(() =>
@@ -24,48 +26,42 @@ const ReFiBalanceFiat = computed(() =>
 </script>
 
 <template>
-  <BalTooltip
-    text="REFI token launching soon."
-    class="w-full opacity-50 cursor-not-allowed"
-    placement="bottom"
-  >
-    <template #activator>
-      <BalCard noPad class="flex-1 gap-4 p-8 card-gap">
-        <template #header>
-          <div class="flex flex-row flex-1 justify-between items-center">
-            <h4 class="text-lg font-medium">Available REFI</h4>
-            <img :src="Unlocked" />
-          </div>
-        </template>
-        <div>
-          <div class="flex flex-row gap-2 items-center">
-            <img :src="Logo" width="18" height="18" class="h-[18px] w-[18px]" />
-            <p class="text-xl font-medium">{{ ReFiBalance }}</p>
-          </div>
-          <span class="block text-sm text-left text-disabled">
-            ${{ ReFiBalanceFiat }}</span
-          >
-        </div>
-        <template #footer>
-          <BalBtn
-            size="sm"
-            color="blue"
-            flat="true"
-            outline="true"
-            class="font-medium cursor-not-allowed"
-            @click="
-              () => {}
-              // $router.push({
-              //   name: 'get-verefi',
-              //   query: { returnRoute: 'dashboard' },
-              // })
-            "
-            >Lock for VeREFI</BalBtn
-          >
-        </template>
-      </BalCard>
+  <BalCard noPad class="flex-1 gap-4 p-8 card-gap">
+    <template #header>
+      <div class="flex flex-row flex-1 justify-between items-center">
+        <h4 class="text-lg font-medium">Available REFI</h4>
+        <img :src="Unlocked" />
+      </div>
     </template>
-  </BalTooltip>
+    <div>
+      <div class="flex flex-row gap-2 items-center">
+        <img :src="Logo" width="18" height="18" class="h-[18px] w-[18px]" />
+        <p class="text-xl font-medium">{{ ReFiBalance }}</p>
+      </div>
+      <span class="block text-sm text-left text-disabled">
+        ${{ ReFiBalanceFiat }}</span
+      >
+    </div>
+    <template #footer>
+      <BalBtn
+        size="sm"
+        color="blue"
+        :flat="true"
+        :outline="true"
+        class="font-medium"
+        @click="
+          () => {
+            $router.push({
+              name: 'get-verefi',
+              params: { networkSlug },
+              query: { returnRoute: 'dashboard' },
+            });
+          }
+        "
+        >Lock for VeREFI</BalBtn
+      >
+    </template>
+  </BalCard>
 </template>
 
 <style scoped>

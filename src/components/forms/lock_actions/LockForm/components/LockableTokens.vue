@@ -3,19 +3,13 @@ import { computed } from 'vue';
 
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import { useTokens } from '@/providers/tokens.provider';
-import useNetwork from '@/composables/useNetwork';
-import { bnum } from '@/lib/utils';
-import { VeBalLockInfo } from '@/services/balancer/contracts/contracts/veBAL';
-import { Pool } from '@/services/pool/types';
 import { TokenInfo } from '@/types/TokenList';
 
 /**
  * TYPES
  */
 type Props = {
-  lockablePool: Pool;
   lockablePoolTokenInfo: TokenInfo;
-  veBalLockInfo?: VeBalLockInfo;
 };
 
 /**
@@ -27,19 +21,17 @@ const props = defineProps<Props>();
  * COMPOSABLES
  */
 const { balanceFor } = useTokens();
-const { fNum } = useNumbers();
-const { networkSlug } = useNetwork();
+const { fNum, toFiat } = useNumbers();
 
 /**
  * COMPUTED
  */
-const bptBalance = computed(() => balanceFor(props.lockablePool.address));
+const tokenBalance = computed(() =>
+  balanceFor(props.lockablePoolTokenInfo.address)
+);
 
 const fiatTotal = computed((): string =>
-  bnum(props.lockablePool.totalLiquidity)
-    .div(props.lockablePool.totalShares)
-    .times(bptBalance.value)
-    .toString()
+  toFiat(tokenBalance.value, props.lockablePoolTokenInfo.address)
 );
 </script>
 
@@ -53,27 +45,12 @@ const fiatTotal = computed((): string =>
     <div class="p-4 -mt-2">
       <div class="flex justify-between">
         <div>{{ lockablePoolTokenInfo.symbol }}</div>
-        <div>{{ fNum(bptBalance, FNumFormats.token) }}</div>
+        <div>{{ fNum(tokenBalance, FNumFormats.token) }}</div>
       </div>
       <div class="flex justify-between text-secondary">
         <div>{{ lockablePoolTokenInfo.name }}</div>
         <div>{{ fNum(fiatTotal, FNumFormats.fiat) }}</div>
       </div>
-      <BalLink
-        tag="router-link"
-        :to="{
-          name: 'add-liquidity',
-          params: { networkSlug, id: lockablePool.id },
-        }"
-        external
-        class="block mt-2 text-sm"
-      >
-        {{
-          $t('getVeBAL.lockableTokens.getMoreVeBAL', [
-            lockablePoolTokenInfo.symbol,
-          ])
-        }}
-      </BalLink>
     </div>
   </BalCard>
 </template>

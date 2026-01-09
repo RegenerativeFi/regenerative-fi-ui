@@ -1,3 +1,4 @@
+import { reactive, computed } from 'vue';
 import QUERY_KEYS from '@/constants/queryKeys';
 import useGraphQuery from './useGraphQuery';
 import useNetwork from '../useNetwork';
@@ -40,7 +41,7 @@ export function useOmniEscrowLocksQuery(account: ComputedRef<string>) {
    */
   const queryKey = QUERY_KEYS.Gauges.OmniEscrowLocks(networkId, account);
 
-  return useGraphQuery<OmniEscrowLockResponse>(
+  const queryResult = useGraphQuery<OmniEscrowLockResponse>(
     config[Network.ALFAJORES].subgraphs.gauge,
     queryKey,
     () => ({
@@ -57,6 +58,15 @@ export function useOmniEscrowLocksQuery(account: ComputedRef<string>) {
     reactive({
       enabled: useOmniEscrowLocksQueryEnabled,
       refetchOnWindowFocus: false,
+      // Ensure we always return a value, never undefined
+      select: (data: OmniEscrowLockResponse | undefined) => {
+        if (!data || !data.omniVotingEscrowLocks) {
+          return { omniVotingEscrowLocks: [] };
+        }
+        return data;
+      },
     })
   );
+
+  return queryResult;
 }

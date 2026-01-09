@@ -6,7 +6,6 @@ import { LockType } from '@/components/forms/lock_actions/LockForm/types';
 import { expectedVeBal } from '@/composables/useVeBAL';
 import { VeBalLockInfo } from '@/services/balancer/contracts/contracts/veBAL';
 import { configService } from '@/services/config/config.service';
-import { Pool } from '@/services/pool/types';
 import useWeb3 from '@/services/web3/useWeb3';
 import { TokenInfo } from '@/types/TokenList';
 
@@ -22,7 +21,6 @@ import Summary from './components/Summary.vue';
  * TYPES
  */
 type Props = {
-  lockablePool: Pool;
   lockablePoolTokenInfo: TokenInfo;
   veBalLockInfo?: VeBalLockInfo;
 };
@@ -135,10 +133,7 @@ function handleShowPreviewModal() {
       </div>
     </template>
 
-    <LockAmount
-      :lockablePool="lockablePool"
-      :lockablePoolTokenInfo="lockablePoolTokenInfo"
-    />
+    <LockAmount :lockablePoolTokenInfo="lockablePoolTokenInfo" />
 
     <LockEndDate
       :minLockEndDateTimestamp="minLockEndDateTimestamp"
@@ -169,8 +164,7 @@ function handleShowPreviewModal() {
   </BalCard>
   <teleport to="#modal">
     <LockPreviewModal
-      v-if="showPreviewModal && veBalLockInfo"
-      :lockablePool="lockablePool"
+      v-if="showPreviewModal"
       :lockablePoolTokenInfo="lockablePoolTokenInfo"
       :lockAmount="lockAmount"
       :lockEndDate="lockEndDate"

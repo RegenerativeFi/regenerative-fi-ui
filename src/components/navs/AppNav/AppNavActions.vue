@@ -5,6 +5,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 
 import { Goals, trackGoal } from '@/composables/useFathom';
 import AppNavAccountBtn from './AppNavAccountBtn.vue';
+import AppNavActivityBtn from './AppNavActivityBtn/AppNavActivityBtn.vue';
 import AppNavNetworkSelect from './AppNavNetworkSelect.vue';
 import DarkModeToggle from '@/components/btns/DarkModeToggle.vue';
 

@@ -6,7 +6,6 @@ import { LockType } from '@/components/forms/lock_actions/LockForm/types';
 import useVeBalLockInfoQuery from '@/composables/queries/useVeBalLockInfoQuery';
 import { expectedVeBal } from '@/composables/useVeBAL';
 import { VeBalLockInfo } from '@/services/balancer/contracts/contracts/veBAL';
-import { Pool } from '@/services/pool/types';
 import { TokenInfo } from '@/types/TokenList';
 
 import useLockState from '../../composables/useLockState';
@@ -18,12 +17,11 @@ import LockSummary from './components/LockSummary.vue';
  * TYPES
  */
 type Props = {
-  lockablePool: Pool;
   lockablePoolTokenInfo: TokenInfo;
   lockAmount: string;
   lockEndDate: string;
   lockType: LockType[];
-  veBalLockInfo: VeBalLockInfo;
+  veBalLockInfo?: VeBalLockInfo;
   totalLpTokens: string;
 };
 
@@ -40,7 +38,6 @@ const emit = defineEmits<{
  * STATE
  */
 const lockConfirmed = ref(false);
-const lockablePool = ref(props.lockablePool);
 const lockablePoolTokenInfo = ref(props.lockablePoolTokenInfo);
 const lockAmount = ref(props.lockAmount);
 const lockEndDate = ref(props.lockEndDate);
@@ -109,12 +106,11 @@ function handleSuccess() {
 
     <LockAmount
       :lockableTokenInfo="lockablePoolTokenInfo"
-      :lockablePool="lockablePool"
       :totalLpTokens="totalLpTokens"
     />
 
     <LockSummary
-      :lockablePool="lockablePool"
+      :lockablePoolTokenInfo="lockablePoolTokenInfo"
       :totalLpTokens="totalLpTokens"
       :lockAmount="lockAmount"
       :lockEndDate="lockEndDate"

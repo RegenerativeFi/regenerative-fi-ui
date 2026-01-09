@@ -2,17 +2,15 @@
 import { computed } from 'vue';
 
 import TokenInput from '@/components/inputs/TokenInput/TokenInput.vue';
-import { bnum } from '@/lib/utils';
-import { Pool } from '@/services/pool/types';
 import { TokenInfo } from '@/types/TokenList';
 
 import useLockState from '../../../composables/useLockState';
+import useNumbers from '@/composables/useNumbers';
 
 /**
  * TYPES
  */
 type Props = {
-  lockablePool: Pool;
   lockablePoolTokenInfo: TokenInfo;
 };
 
@@ -25,15 +23,13 @@ const props = defineProps<Props>();
  * COMPOSABLES
  */
 const { lockAmount } = useLockState();
+const { toFiat } = useNumbers();
 
 /**
  * COMPUTED
  */
 const lockAmountFiatValue = computed(() =>
-  bnum(props.lockablePool.totalLiquidity)
-    .div(props.lockablePool.totalShares)
-    .times(lockAmount.value)
-    .toString()
+  toFiat(lockAmount.value, props.lockablePoolTokenInfo.address)
 );
 </script>
 

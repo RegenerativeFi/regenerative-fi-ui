@@ -88,11 +88,13 @@ export default function useVeBal() {
    */
   const veBalTokenInfo = computed(() =>
     networkConfig.addresses.veBAL
-      ? getToken(networkConfig.addresses.veBAL)
+      ? getToken(networkConfig.addresses.veBAL) || null
       : null
   );
   const ReFiTokenInfo = computed(() =>
-    networkConfig.addresses.ReFi ? getToken(networkConfig.addresses.ReFi) : null
+    networkConfig.addresses.ReFi
+      ? getToken(networkConfig.addresses.ReFi) || null
+      : null
   );
 
   const ReFiBalance = computed(() =>

@@ -6,9 +6,8 @@ import { PRETTY_DATE_FORMAT } from '@/components/forms/lock_actions/constants';
 import { LockType } from '@/components/forms/lock_actions/LockForm/types';
 import useNumbers, { FNumFormats } from '@/composables/useNumbers';
 import useVeBal from '@/composables/useVeBAL';
-import { bnum } from '@/lib/utils';
 import { VeBalLockInfo } from '@/services/balancer/contracts/contracts/veBAL';
-import { Pool } from '@/services/pool/types';
+import { TokenInfo } from '@/types/TokenList';
 
 import VeBalTooltipExplainer from './VeBalTooltipExplainer.vue';
 
@@ -16,13 +15,13 @@ import VeBalTooltipExplainer from './VeBalTooltipExplainer.vue';
  * TYPES
  */
 type Props = {
-  lockablePool: Pool;
+  lockablePoolTokenInfo: TokenInfo;
   totalLpTokens: string;
   lockEndDate: string;
   lockAmount: string;
   expectedVeBalAmount: string;
   lockType: LockType[];
-  veBalLockInfo: VeBalLockInfo;
+  veBalLockInfo?: VeBalLockInfo;
 };
 
 /**
@@ -33,26 +32,26 @@ const props = defineProps<Props>();
 /**
  * COMPOSABLES
  */
-const { fNum } = useNumbers();
+const { fNum, toFiat } = useNumbers();
 const { veBalTokenInfo } = useVeBal();
 
 /**
  * COMPUTED
  */
-const poolShares = computed(() =>
-  bnum(props.lockablePool.totalLiquidity).div(props.lockablePool.totalShares)
-);
-
-const fiatTotalLockedAmount = computed(() =>
-  poolShares.value.times(props.veBalLockInfo.lockedAmount).toString()
-);
+const fiatTotalLockedAmount = computed(() => {
+  if (!props.veBalLockInfo) return '0';
+  return toFiat(
+    props.veBalLockInfo.lockedAmount,
+    props.lockablePoolTokenInfo.address
+  );
+});
 
 const fiatTotalLockAmount = computed(() =>
-  poolShares.value.times(props.lockAmount).toString()
+  toFiat(props.lockAmount, props.lockablePoolTokenInfo.address)
 );
 
 const fiatTotalLpTokens = computed(() =>
-  poolShares.value.times(props.totalLpTokens).toString()
+  toFiat(props.totalLpTokens, props.lockablePoolTokenInfo.address)
 );
 
 const isExtendLockOnly = computed(
