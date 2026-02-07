@@ -50,7 +50,7 @@ export default function useTokenPricesQuery(
     return prices;
   }
 
-  const api = 'https://regenerative-prices.deno.dev/tokens';
+  const api = 'https://prices.regenerativefi.workers.dev/tokens';
 
   // const idToAddressMap = Tokens.celo.mocks.reduce((map, item) => {
   //   const key = Object.keys(item)[0];
